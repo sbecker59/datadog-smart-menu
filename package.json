@@ -1,6 +1,6 @@
 {
     "name": "datadog-smart-menu",
-    "version": "1.2.0",
+    "version": "1.0.0",
     "description": "Filters the Datadog interface menu based on each user's role and required permissions",
     "author": "Sébastien BECKER",
     "private": true,
