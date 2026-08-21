@@ -33,10 +33,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 20
 
@@ -56,7 +56,8 @@ jobs:
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-          scopes: 'https://www.googleapis.com/auth/chromewebstore'
+          access_token_scopes: |
+            https://www.googleapis.com/auth/chromewebstore
           token_format: 'access_token'
 
       - name: Upload extension to Chrome Web Store
