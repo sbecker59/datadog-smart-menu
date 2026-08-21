@@ -15,7 +15,8 @@ jobs:
         id: release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          release-type: node # ou "simple" selon ton projet
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
 
   publish-extension:
     needs: release-please
@@ -41,12 +42,10 @@ jobs:
           cd dist # Remplace "dist" par ton dossier de build
           zip -r ../extension.zip .
 
-      - name: Upload & Publish to Chrome Web Store
-        uses: chrome-stats/chrome-extension-upload@v2
-        with:
-          extension-id: ${{ secrets.EXTENSION_ID }}
-          client-id: ${{ secrets.CLIENT_ID }}
-          client-secret: ${{ secrets.CLIENT_SECRET }}
-          refresh-token: ${{ secrets.REFRESH_TOKEN }}
-          file-path: extension.zip
-          publish: false # Mettre à false si tu veux juste upload en brouillon
+      - name: Upload extension to Chrome Web Store
+        env:
+          EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+        run: npx chrome-webstore-upload upload --source extension.zip

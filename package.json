@@ -4,6 +4,12 @@
     "description": "Filters the Datadog interface menu based on each user's role and required permissions",
     "author": "Sébastien BECKER",
     "private": true,
+    "scripts": {
+        "build": "node scripts/build.js"
+    },
+    "devDependencies": {
+        "chrome-webstore-upload-cli": "^3.0.0"
+    },
     "license": "MIT",
     "repository": {
         "type": "git",
