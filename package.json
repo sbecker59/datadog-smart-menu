@@ -7,9 +7,6 @@
     "scripts": {
         "build": "node scripts/build.js"
     },
-    "devDependencies": {
-        "chrome-webstore-upload-cli": "^3.0.0"
-    },
     "license": "MIT",
     "repository": {
         "type": "git",
