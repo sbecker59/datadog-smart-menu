@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/sbecker59/datadog-smart-menu/compare/datadog-smart-menu-v1.1.0...datadog-smart-menu-v1.2.0) (2026-08-21)
+
+
+### Features
+
+* update release workflow to authenticate with Google Cloud and upload extension to Chrome Web Store ([6e6f625](https://github.com/sbecker59/datadog-smart-menu/commit/6e6f6259746b30097c5380bc9ba7b66ed3e93cbe))
+
 ## [1.1.0](https://github.com/sbecker59/datadog-smart-menu/compare/datadog-smart-menu-v1.0.0...datadog-smart-menu-v1.1.0) (2026-08-21)
 
 
