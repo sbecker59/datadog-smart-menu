@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Datadog Smart Menu Configuration</title>
+  <link rel="stylesheet" href="options.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img class="logo-img" src="../icons/icon48.png" alt="Husky Smart Menu" width="32" height="32" style="border-radius: 6px; vertical-align: middle;">
+        <div class="title-group">
+          <h2>Datadog Smart Menu</h2>
+          <span class="badge">v1.0.0</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <a href="#general" class="nav-item active">
+          <span>⚙️</span> General Settings
+        </a>
+        <a href="#profiles" class="nav-item">
+          <span>👤</span> Profiles & Roles
+        </a>
+        <a href="#custom-rights" class="nav-item">
+          <span>🛠️</span> Menu Matrix
+        </a>
+        <a href="#import-export" class="nav-item">
+          <span>💾</span> Import / Export
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="top-bar">
+        <h1>Datadog Permissions Configuration & Filtering</h1>
+        <div class="actions">
+          <button id="btn-reset" class="btn btn-secondary">Reset</button>
+          <button id="btn-save" class="btn btn-primary">Save changes</button>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <!-- Notification Banner -->
+        <div id="toast-notification" class="toast hidden">
+          <span id="toast-message">Changes saved successfully!</span>
+        </div>
+
+        <!-- Section: General Settings -->
+        <section id="general" class="card">
+          <div class="card-header">
+            <h3>Extension General Settings</h3>
+            <p>Manage the global behavior of the extension on Datadog HQ.</p>
+          </div>
+          <div class="card-body form-grid">
+            <div class="form-row">
+              <div class="form-label">
+                <strong>Enable smart filtering</strong>
+                <p>Automatically hides unnecessary menus in Datadog</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="opt-enabled" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <div class="form-label">
+                <strong>Automatic session permissions detection</strong>
+                <p>Analyzes the permissions of the logged-in user on Datadog</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="opt-auto-detect" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <div class="form-label">
+                <strong>Quick Command Palette (Ctrl+M / Cmd+M)</strong>
+                <p>Quickly search and open any authorized menu</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="opt-command-palette" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <div class="form-label">
+                <strong>Collapse instead of hide (Grayed-out Mode)</strong>
+                <p>Keeps unauthorized menus in a collapsible section</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="opt-collapse-hidden" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section: Profiles & Persona Roles -->
+        <section id="profiles" class="card">
+          <div class="card-header">
+            <h3>Profiles and Roles</h3>
+            <p>Choose the main role that matches your daily activity in Datadog.</p>
+          </div>
+          <div class="card-body">
+            <div class="profiles-list" id="profiles-detail-list">
+              <!-- Dynamically rendered profile cards -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Section: Custom Rights Matrix -->
+        <section id="custom-rights" class="card">
+          <div class="card-header">
+            <h3>Datadog Menu Matrix</h3>
+            <p>Check the menus you want to make accessible in the Custom profile.</p>
+          </div>
+          <div class="card-body">
+            <div class="menu-matrix-grid" id="menu-matrix-grid">
+              <!-- Dynamically populated matrix -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Section: Import / Export -->
+        <section id="import-export" class="card">
+          <div class="card-header">
+            <h3>Profile Backup & Sharing</h3>
+            <p>Export your configuration for your team or import a shared profile.</p>
+          </div>
+          <div class="card-body form-grid">
+            <div class="io-actions">
+              <button id="btn-export" class="btn btn-secondary">
+                📤 Export configuration (JSON)
+              </button>
+              <label class="btn btn-secondary btn-file">
+                📥 Import configuration (JSON)
+                <input type="file" id="file-import" accept=".json" style="display:none;">
+              </label>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="options.js"></script>
+</body>
+
+</html>
