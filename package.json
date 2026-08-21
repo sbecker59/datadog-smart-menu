@@ -1,0 +1,16 @@
+{
+    "name": "datadog-smart-menu",
+    "version": "1.0.0",
+    "description": "Filters the Datadog interface menu based on each user's role and required permissions",
+    "author": "Sébastien BECKER",
+    "private": true,
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/sbecker59/datadog-smart-menu.git"
+    },
+    "bugs": {
+        "url": "https://github.com/sbecker59/datadog-smart-menu/issues"
+    },
+    "homepage": "https://github.com/sbecker59/datadog-smart-menu#readme"
+}
