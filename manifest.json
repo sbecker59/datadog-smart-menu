@@ -10,15 +10,11 @@
     "128": "icons/icon128.png"
   },
   "permissions": [
-    "storage",
-    "activeTab",
-    "scripting"
+    "storage"
   ],
   "host_permissions": [
     "*://*.datadoghq.com/*",
     "*://*.datadoghq.eu/*",
-    "*://*.us3.datadoghq.com/*",
-    "*://*.us5.datadoghq.com/*",
     "*://*.ddog-gov.com/*"
   ],
   "action": {
@@ -40,8 +36,6 @@
       "matches": [
         "*://*.datadoghq.com/*",
         "*://*.datadoghq.eu/*",
-        "*://*.us3.datadoghq.com/*",
-        "*://*.us5.datadoghq.com/*",
         "*://*.ddog-gov.com/*"
       ],
       "js": [
@@ -56,13 +50,14 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "shared/profiles.js",
         "icons/icon16.png",
         "icons/icon48.png",
         "icons/icon128.png"
       ],
       "matches": [
-        "<all_urls>"
+        "*://*.datadoghq.com/*",
+        "*://*.datadoghq.eu/*",
+        "*://*.ddog-gov.com/*"
       ]
     }
   ]
