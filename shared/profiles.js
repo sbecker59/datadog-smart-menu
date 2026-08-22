@@ -173,31 +173,13 @@ export const DATADOG_MENUS = [
   }
 ];
 
-export const ROLE_PROFILES = {
-  all: {
-    id: 'all',
-    name: 'All Menus (Unfiltered)',
-    icon: '🔓',
-    description: 'Full unfiltered access to all Datadog sections.',
-    allowedMenus: DATADOG_MENUS.map(m => m.id)
-  },
-  custom: {
-    id: 'custom',
-    name: 'Custom (Permissions)',
-    icon: '⚙️',
-    description: 'Menu filtering derived from real Datadog RBAC permissions.',
-    allowedMenus: []
-  }
-};
-
 export const DEFAULT_SETTINGS = {
   enabled: true,
   activeProfile: 'all',
   customMenus: ['dashboards', 'apm', 'logs', 'monitors', 'infrastructure'],
   autoDetectRights: true,
   enableCommandPalette: true,
-  collapseHiddenItems: true,
-  highlightActiveProfile: true
+  collapseHiddenItems: true
 };
 
 /**

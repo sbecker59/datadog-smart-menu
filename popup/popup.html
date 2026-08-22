@@ -53,6 +53,36 @@
         </div>
       </div>
 
+      <!-- Admin Configuration (visible for identified admins only) -->
+      <section class="section hidden" id="admin-section">
+        <h2 class="section-title">Admin configuration</h2>
+
+        <div class="option-row">
+          <div class="option-info">
+            <span class="option-title">Auto permissions detection</span>
+            <span class="option-desc">Filter from the session's real permissions</span>
+          </div>
+          <label class="switch small">
+            <input type="checkbox" id="toggle-auto-detect" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+
+        <div class="option-row role-lookup">
+          <div class="option-info">
+            <span class="option-title">Apply a Datadog role</span>
+            <span class="option-desc">Load a role's permissions by name</span>
+          </div>
+        </div>
+        <div class="role-row">
+          <input type="text" id="role-name-input" placeholder="e.g. Developer">
+          <button id="btn-load-role" class="btn-mini">Load</button>
+        </div>
+        <div class="feedback hidden" id="admin-feedback"></div>
+
+        <button id="btn-reset" class="link-btn">Reset default configuration</button>
+      </section>
+
       <!-- Options Toggles -->
       <section class="section options-section">
         <div class="option-row">
@@ -78,12 +108,6 @@
         </div>
       </section>
     </main>
-
-    <footer class="footer">
-      <button class="btn btn-primary" id="btn-open-options" title="Access advanced settings">
-        ⚙️ Settings
-      </button>
-    </footer>
   </div>
 
   <script type="module" src="popup.js"></script>

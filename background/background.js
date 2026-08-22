@@ -4,6 +4,12 @@
 
 import { DEFAULT_SETTINGS, DATADOG_MENUS, mapPermissionsToMenus } from '../shared/profiles.js';
 
+const DATADOG_TAB_PATTERNS = [
+  '*://*.datadoghq.com/*',
+  '*://*.datadoghq.eu/*',
+  '*://*.ddog-gov.com/*'
+];
+
 // Initialize extension settings on install
 chrome.runtime.onInstalled.addListener(async () => {
   const existing = await chrome.storage.sync.get('settings');
@@ -30,7 +36,7 @@ function updateBadge(settings) {
   chrome.action.setBadgeBackgroundColor({ color: '#7C3AED' });
 }
 
-// Listen for settings changes from popup/options or content script
+// Listen for settings changes from popup or content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'GET_SETTINGS') {
     chrome.storage.sync.get('settings', (result) => {
@@ -49,7 +55,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       updateBadge(request.settings);
       
       // Notify active Datadog tabs to re-apply menu filters
-      chrome.tabs.query({ url: ['*://*.datadoghq.com/*', '*://*.datadoghq.eu/*', '*://*.us3.datadoghq.com/*', '*://*.us5.datadoghq.com/*'] }, (tabs) => {
+      chrome.tabs.query({ url: DATADOG_TAB_PATTERNS }, (tabs) => {
         tabs.forEach((tab) => {
           chrome.tabs.sendMessage(tab.id, { action: 'APPLY_FILTERS', settings: request.settings }).catch(() => {
             // Tab might not have content script loaded yet
@@ -88,9 +94,7 @@ async function handleFetchRoleMenus(roleName) {
   const name = (roleName || '').trim();
   if (!name) throw new Error('Role name is required.');
 
-  const tabs = await chrome.tabs.query({
-    url: ['*://*.datadoghq.com/*', '*://*.datadoghq.eu/*', '*://*.ddog-gov.com/*']
-  });
+  const tabs = await chrome.tabs.query({ url: DATADOG_TAB_PATTERNS });
   if (!tabs || tabs.length === 0) {
     throw new Error('Open a Datadog tab first, then try again.');
   }

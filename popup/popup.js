@@ -33,10 +33,18 @@ function saveSettings() {
   });
 }
 
+function showFeedback(message, isError = false) {
+  const el = document.getElementById('admin-feedback');
+  el.textContent = message;
+  el.classList.toggle('error', isError);
+  el.classList.remove('hidden');
+}
+
 function updateUI() {
   document.getElementById('master-toggle').checked = currentSettings.enabled;
   document.getElementById('toggle-palette').checked = currentSettings.enableCommandPalette;
   document.getElementById('toggle-collapse').checked = currentSettings.collapseHiddenItems;
+  document.getElementById('toggle-auto-detect').checked = currentSettings.autoDetectRights;
 
   const profileLabel = currentSettings.activeProfile === 'custom'
     ? 'Filtered by permissions'
@@ -48,16 +56,16 @@ function updateUI() {
   const sourceBadgeEl = document.getElementById('detection-source-badge');
 
   if (detectedUserInfo && detectedUserInfo.email) {
-    if (userEmailEl) userEmailEl.textContent = `${detectedUserInfo.email} (${detectedUserInfo.title || 'Datadog'})`;
-    if (sourceBadgeEl) sourceBadgeEl.textContent = detectedUserInfo.source || 'Auto';
+    userEmailEl.textContent = `${detectedUserInfo.email} (${detectedUserInfo.title || 'Datadog'})`;
+    sourceBadgeEl.textContent = detectedUserInfo.source || 'Auto';
   } else {
-    if (userEmailEl) userEmailEl.textContent = 'Not connected to Datadog HQ';
-    if (sourceBadgeEl) sourceBadgeEl.textContent = 'Manual';
+    userEmailEl.textContent = 'Not connected to Datadog HQ';
+    sourceBadgeEl.textContent = 'Manual';
   }
 
-  // Settings entry point is reserved for identified admins
+  // Configuration section is strictly reserved for identified admins
   const isAdmin = !!detectedUserInfo && detectedUserInfo.isAdmin === true;
-  document.getElementById('btn-open-options').style.display = isAdmin ? '' : 'none';
+  document.getElementById('admin-section').classList.toggle('hidden', !isAdmin);
 
   const visibleCount = currentSettings.activeProfile === 'custom'
     ? (currentSettings.customMenus || []).length
@@ -84,11 +92,47 @@ function attachEventListeners() {
     saveSettings();
   });
 
-  document.getElementById('btn-open-options').addEventListener('click', () => {
-    if (chrome.runtime.openOptionsPage) {
-      chrome.runtime.openOptionsPage();
-    } else {
-      window.open(chrome.runtime.getURL('options/options.html'));
+  document.getElementById('toggle-auto-detect').addEventListener('change', (e) => {
+    currentSettings.autoDetectRights = e.target.checked;
+    saveSettings();
+  });
+
+  document.getElementById('btn-load-role').addEventListener('click', () => {
+    const input = document.getElementById('role-name-input');
+    const btn = document.getElementById('btn-load-role');
+    const roleName = input.value.trim();
+    if (!roleName) {
+      showFeedback('Enter a Datadog role name first.', true);
+      return;
     }
+
+    btn.disabled = true;
+    btn.textContent = '…';
+    chrome.runtime.sendMessage({ action: 'FETCH_ROLE_MENUS', roleName }, (res) => {
+      btn.disabled = false;
+      btn.textContent = 'Load';
+
+      if (chrome.runtime.lastError || !res || !res.ok) {
+        showFeedback((res && res.error) || 'Failed to fetch role (open a Datadog tab first).', true);
+        return;
+      }
+
+      // A manually loaded role IS the source of truth: disable session
+      // auto-detection so it cannot overwrite this configuration on the
+      // next Datadog page load. Re-enable "Auto permissions detection"
+      // to switch back to permission auto mode.
+      currentSettings.activeProfile = 'custom';
+      currentSettings.customMenus = res.menus;
+      currentSettings.autoDetectRights = false;
+      saveSettings();
+      showFeedback(`Applied "${res.roleName}": ${res.menus.length} menus. Auto-detection disabled.`);
+    });
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    if (!confirm('Reset the extension to its default configuration?')) return;
+    currentSettings = { ...DEFAULT_SETTINGS };
+    saveSettings();
+    showFeedback('Configuration reset to defaults.');
   });
 }

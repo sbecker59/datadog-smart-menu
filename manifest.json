@@ -26,7 +26,6 @@
     },
     "default_title": "Datadog Smart Menu"
   },
-  "options_page": "options/options.html",
   "background": {
     "service_worker": "background/background.js",
     "type": "module"

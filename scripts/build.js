@@ -9,7 +9,6 @@ const filesToCopy = [
     'background',
     'content',
     'icons',
-    'options',
     'popup',
     'shared'
 ];

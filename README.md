@@ -12,7 +12,7 @@
    - Unauthorized menus are hidden or collapsed — end users simply see fewer options.
 
 2. **👤 Role-Based Configuration (Admin Only)**:
-   - Identified admins (`org_management`, `user_access_manage` or an admin role) can load any **Datadog role's permissions** by name from the Settings page.
+   - Identified admins (`org_management`, `user_access_manage` or an admin role) get an **Admin configuration** section in the popup where they can load any **Datadog role's permissions** by name.
    - The extension fetches `/api/v2/roles/{id}/permissions` and builds the filtered menu from it.
    - Non-admin users never see configuration options.
 
@@ -42,7 +42,7 @@
 5. **Use the extension**:
    - Pin the 🐶 icon to the Chrome toolbar.
    - Open [app.datadoghq.com](https://app.datadoghq.com): filtering is applied automatically based on your permissions.
-   - Admins can open the popup → ⚙️ Settings to apply a specific role's permissions.
+   - Admins can open the popup → *Admin configuration* to apply a specific role's permissions.
 
 ---
 
@@ -73,13 +73,9 @@ datadog-smart-menu/
 ├── shared/
 │   └── profiles.js          # Menu definitions, permission→menu mapping table
 ├── popup/
-│   ├── popup.html           # Toolbar popup interface
+│   ├── popup.html           # Toolbar popup (status, toggles, admin configuration)
 │   ├── popup.css            # Popup styles & Datadog theme
-│   └── popup.js             # Popup interface controller
-├── options/
-│   ├── options.html         # Admin settings page (role loading)
-│   ├── options.css          # Admin panel styles
-│   └── options.js           # Settings controller with admin gating
+│   └── popup.js             # Popup controller with admin gating & role loading
 ├── scripts/
 │   └── build.js             # Build script (copies sources to dist/)
 └── icons/

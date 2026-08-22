@@ -26,10 +26,7 @@ const DATADOG_MENUS = [
   { id: 'organization_settings', name: 'Organization Settings', icon: '⚙️', selector: 'organization_settings, /organization-settings', keywords: ['user', 'role', 'permission', 'team'], category: 'Admin' }
 ];
 
-const ROLE_PROFILES = {
-  all: DATADOG_MENUS.map(m => m.id),
-  custom: ['dashboards', 'apm', 'logs', 'monitors']
-};
+const ALL_MENU_IDS = DATADOG_MENUS.map(m => m.id);
 
 let currentSettings = null;
 let commandPaletteElement = null;
@@ -243,6 +240,16 @@ function debounce(func, wait) {
   };
 }
 
+/**
+ * Menus the current settings allow: either the permission-derived custom
+ * list, or everything (unfiltered mode).
+ */
+function getAllowedMenus() {
+  return currentSettings.activeProfile === 'custom'
+    ? (currentSettings.customMenus || [])
+    : ALL_MENU_IDS;
+}
+
 // Core Menu Filtering Logic
 function applyMenuFilters() {
   if (!isExtensionContextValid()) return;
@@ -251,9 +258,7 @@ function applyMenuFilters() {
     return;
   }
 
-  const allowedList = currentSettings.activeProfile === 'custom'
-    ? (currentSettings.customMenus || [])
-    : (ROLE_PROFILES[currentSettings.activeProfile] || ROLE_PROFILES.all);
+  const allowedList = getAllowedMenus();
 
   const navContainers = document.querySelectorAll('nav, [data-testid="sidebar"], .druids-sidebar, [class*="sidebar"]');
   if (!navContainers || navContainers.length === 0) return;
@@ -423,9 +428,7 @@ function renderPaletteResults(query) {
 
   paletteSelectedIndex = 0; // Reset active selection index
 
-  const allowedList = currentSettings.activeProfile === 'custom'
-    ? (currentSettings.customMenus || [])
-    : (ROLE_PROFILES[currentSettings.activeProfile] || ROLE_PROFILES.all);
+  const allowedList = getAllowedMenus();
 
   const filterText = query.toLowerCase().trim();
 
@@ -471,7 +474,7 @@ function renderPaletteResults(query) {
         if (pageLink && pageLink.href) {
           window.location.href = pageLink.href;
         } else {
-          window.location.href = `https://app.datadoghq.com/${id}`;
+          window.location.href = `${window.location.origin}/${id}`;
         }
       }
     });

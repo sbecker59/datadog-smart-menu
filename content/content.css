@@ -22,54 +22,12 @@
 }
 
 /* Custom indicator badge on active Datadog sidebar */
-.dd-smart-menu-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: linear-gradient(135deg, #7C3AED 0%, #632CA6 100%);
-  color: #FFFFFF;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.3);
-  margin-left: auto;
-}
 
 /* Collapsible Hidden Menus Folder inside Datadog sidebar */
-.dd-smart-menu-folder {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: 8px;
-  padding-top: 8px;
-}
 
-.dd-smart-menu-folder-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #9CA3AF;
-  cursor: pointer;
-  border-radius: 6px;
-  user-select: none;
-  transition: background 0.15s ease, color 0.15s ease;
-}
 
-.dd-smart-menu-folder-header:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #F3F4F6;
-}
 
-.dd-smart-menu-folder-content {
-  display: none;
-  padding-left: 8px;
-}
 
-.dd-smart-menu-folder.open .dd-smart-menu-folder-content {
-  display: block;
-}
 
 /* Datadog Command Palette Modal (Ctrl+M) */
 #dd-smart-menu-palette-overlay {
