@@ -23,8 +23,9 @@
 }
 
 body {
+  /* Popup height adapts to content: compact for end-users,
+     taller when the admin configuration section is visible. */
   width: 360px;
-  min-height: 480px;
   background-color: var(--bg-primary);
   color: var(--text-main);
   font-family: var(--font-family);
