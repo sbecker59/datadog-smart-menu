@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Datadog Smart Menu",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Filters the Datadog interface menu based on each user's role and required permissions",
   "author": "Sébastien BECKER",
   "icons": {
