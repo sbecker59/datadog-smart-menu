@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.0](https://github.com/sbecker59/datadog-smart-menu/compare/datadog-smart-menu-v1.0.1...datadog-smart-menu-v1.1.0) (2026-08-22)
+
+
+### Features
+
+* Enhance Datadog Smart Menu with role-based permissions and UI updates ([bf97fcf](https://github.com/sbecker59/datadog-smart-menu/commit/bf97fcfb4914cdb9721a5fe67746af5e1b45b60d))
+* Refactor menu filtering logic and update version display in options page ([ed7feb9](https://github.com/sbecker59/datadog-smart-menu/commit/ed7feb95903dd5eb79904f9a62dbb3b72b22d8c8))
+* Update README.md to enhance clarity on role-based permissions and filtering mechanisms ([44ff532](https://github.com/sbecker59/datadog-smart-menu/commit/44ff53219908cdc961c72cf4359b12949200004b))
+
+
+### Bug Fixes
+
+* remove confirmation prompt for resetting extension configuration ([5d8f34a](https://github.com/sbecker59/datadog-smart-menu/commit/5d8f34aed3a6ac0c177ec279d84d4c4ab8244cbc))
+
 ## [1.0.1](https://github.com/sbecker59/datadog-smart-menu/compare/datadog-smart-menu-v1.0.0...datadog-smart-menu-v1.0.1) (2026-08-22)
 
 
