@@ -28,6 +28,30 @@ export const DATADOG_MENUS = [
     category: 'Core'
   },
   {
+    id: 'error_tracking',
+    name: 'Error Tracking',
+    icon: '🐛',
+    selector: '[data-dd-action-name="error_tracking"], a[href*="/error-tracking"]',
+    keywords: ['error tracking'],
+    category: 'Telemetry'
+  },
+  {
+    id: 'observability_pipelines',
+    name: 'Observability Pipelines',
+    icon: '🛠️',
+    selector: '[data-dd-action-name="observability_pipelines"], a[href*="/observability-pipelines"], a[href*="/op-pipelines"]',
+    keywords: ['observability pipelines'],
+    category: 'Telemetry'
+  },
+  {
+    id: 'logs_archives',
+    name: 'Log Archives',
+    icon: '🗄️',
+    selector: '[data-dd-action-name="logs_archives"], a[href*="/logs/archives"], a[href*="/archives"]',
+    keywords: ['archive'],
+    category: 'Telemetry'
+  },
+  {
     id: 'apm',
     name: 'APM & Tracing',
     icon: '⚡',
@@ -76,6 +100,38 @@ export const DATADOG_MENUS = [
     category: 'Telemetry'
   },
   {
+    id: 'automation',
+    name: 'Automation',
+    icon: '🤖',
+    selector: '[data-dd-action-name="automation"], a[href*="/workflow-automation"], a[href*="/automations"]',
+    keywords: ['automation', 'app builder', 'workflow automation'],
+    category: 'Operations'
+  },
+  {
+    id: 'bits_ai',
+    name: 'Bits AI',
+    icon: '✨',
+    selector: '[data-dd-action-name="bits_ai"], a[href*="/bits"], [data-testid*="bits"]',
+    keywords: ['bits assistant', 'bits ai', 'bits chat'],
+    category: 'Operations'
+  },
+  {
+    id: 'ci_visibility',
+    name: 'CI Visibility',
+    icon: '🧪',
+    selector: '[data-dd-action-name="ci_visibility"], a[href*="/ci"], a[href*="/ci-visibility"]',
+    keywords: ['ci visibility', 'test optimization'],
+    category: 'Operations'
+  },
+  {
+    id: 'llm_observability',
+    name: 'LLM Observability',
+    icon: '🧠',
+    selector: '[data-dd-action-name="llm_observability"], a[href*="/llm-observability"], a[href*="/llmobs"]',
+    keywords: ['llm observability'],
+    category: 'Telemetry'
+  },
+  {
     id: 'incidents',
     name: 'Service Mgmt & Incidents',
     icon: '🚨',
@@ -104,7 +160,7 @@ export const DATADOG_MENUS = [
     name: 'Integrations',
     icon: '🔌',
     selector: '[data-dd-action-name="integrations"], a[href*="/account/settings"]',
-    keywords: ['api', 'plugins', 'aws', 'datadog agent'],
+    keywords: ['integrations', 'api', 'plugins', 'aws configurations', 'gcp', 'azure', 'datadog agent'],
     category: 'Admin'
   },
   {
@@ -118,63 +174,75 @@ export const DATADOG_MENUS = [
 ];
 
 export const ROLE_PROFILES = {
-  dev: {
-    id: 'dev',
-    name: 'Developer (Dev)',
-    icon: '💻',
-    description: 'Focused on APM, Tracing, application logs, metrics, and incident resolution.',
-    allowedMenus: ['dashboards', 'apm', 'logs', 'metrics', 'notebooks', 'incidents']
-  },
-  sre: {
-    id: 'sre',
-    name: 'SRE / DevOps',
-    icon: '🛠️',
-    description: 'Full observability access: Infrastructure, Monitors, APM, Logs, Metrics & Network.',
-    allowedMenus: ['dashboards', 'infrastructure', 'monitors', 'apm', 'logs', 'metrics', 'network', 'incidents', 'notebooks']
-  },
-  security: {
-    id: 'security',
-    name: 'Security & Compliance',
-    icon: '🛡️',
-    description: 'Dedicated to threat monitoring, container security, audit trail, and compliance.',
-    allowedMenus: ['dashboards', 'security', 'logs', 'incidents', 'notebooks', 'organization_settings']
-  },
-  product: {
-    id: 'product',
-    name: 'Product Manager / UX',
-    icon: '🎨',
-    description: 'Focused on User Experience, Real User Monitoring (RUM), Synthetics & Dashboards.',
-    allowedMenus: ['dashboards', 'ux_monitoring', 'monitors', 'notebooks']
-  },
-  finops: {
-    id: 'finops',
-    name: 'FinOps / Executive',
-    icon: '💼',
-    description: 'Cloud cost overview, key metrics, usage attribution, and billing management.',
-    allowedMenus: ['dashboards', 'cost_management', 'notebooks']
-  },
   all: {
     id: 'all',
-    name: 'All Menus (Admin)',
+    name: 'All Menus (Unfiltered)',
     icon: '🔓',
-    description: 'Full unfiltered access to all Datadog sections and organization settings.',
+    description: 'Full unfiltered access to all Datadog sections.',
     allowedMenus: DATADOG_MENUS.map(m => m.id)
   },
   custom: {
     id: 'custom',
-    name: 'Custom Profile',
+    name: 'Custom (Permissions)',
     icon: '⚙️',
-    description: 'Manually select allowed Datadog menu sections tailored to your organization.',
-    allowedMenus: ['dashboards', 'apm', 'logs', 'monitors']
+    description: 'Menu filtering derived from real Datadog RBAC permissions.',
+    allowedMenus: []
   }
 };
 
 export const DEFAULT_SETTINGS = {
   enabled: true,
-  activeProfile: 'dev',
+  activeProfile: 'all',
   customMenus: ['dashboards', 'apm', 'logs', 'monitors', 'infrastructure'],
   autoDetectRights: true,
   enableCommandPalette: true,
   collapseHiddenItems: true,
   highlightActiveProfile: true
 };
+
+/**
+ * Ordered permission-to-menu mapping, most specific rules first.
+ * Source: https://docs.datadoghq.com/account_management/rbac/permissions/
+ */
+export const PERMISSION_MENU_MAP = [
+  ['logs_archives', ['logs_read_archives', 'logs_write_archives', 'logs_write_archive_search']],
+  ['observability_pipelines', ['observability_pipeline']],
+  ['error_tracking', ['error_tracking']],
+  ['llm_observability', ['llm_observability']],
+  ['ci_visibility', ['ci_visibility', 'test_optimization', 'ci_provider', 'ci_ingestion', 'cd_visibility', 'code_analysis', 'code_coverage', 'dora_', 'quality_gates', 'static_analysis']],
+  ['bits_ai', ['assistant_access', 'bits_investigations', 'bits_dev_']],
+  ['security', ['bits_security', 'security_', 'appsec_', 'ai_guard', 'data_scanner', 'audit_logs_']],
+  ['automation', ['workflows_', 'workflow_automation', 'apps_', 'agent_builder', 'actions_interface', 'connections_', 'execution_groups', 'on_prem_runner', 'app_builder', 'mcp_']],
+  ['incidents', ['incident_', 'cases_', 'on_call_', 'status_pages']],
+  ['ux_monitoring', ['rum_', 'synthetics_', 'product_analytics', 'audience_management', 'dem_journey', 'feature_flag']],
+  ['cost_management', ['cloud_cost_management', 'ccm_', 'billing_', 'usage_']],
+  ['integrations', ['integrations', 'aws_configuration', 'azure_configuration', 'gcp_configuration', 'oci_configuration', 'api_keys', 'client_tokens', 'org_app_keys', 'user_app_keys', 'repo_info', 'repo_settings']],
+  ['organization_settings', ['org_management', 'org_group', 'org_connections', 'user_access', 'service_account', 'teams_manage', 'governance_console', 'workload_identity', 'coterm']],
+  ['infrastructure', ['infrastructure_', 'guardrails', 'agent_upgrade', 'agent_flare', 'fleet_policies', 'orchestration_', 'terraform_state', 'process_tags', 'processes_generate', 'containers_generate', 'disaster_recovery', 'serverless_']],
+  ['apm', ['apm_', 'continuous_profiler', 'debugger_', 'live_debugger', 'dbm_', 'data_streams_']],
+  ['monitors', ['monitors_', 'monitor_config', 'slos_', 'watchdog']],
+  ['network', ['network_connections', 'network_health', 'ndm_']],
+  ['logs', ['logs_', 'telemetry_rules', 'events_write', 'event_correlation', 'generate_log_reports', 'manage_log_reports', 'saved_views', 'facets_']],
+  ['metrics', ['metric_tags', 'metrics_metadata', 'host_tags', 'reference_tables', 'ddsql_editor']],
+  ['notebooks', ['notebooks']],
+  ['dashboards', ['dashboards_', 'embeddable_graphs', 'product_dashboards']]
+];
+
+/**
+ * Map list of technical permission names to accessible Datadog menu IDs
+ */
+export function mapPermissionsToMenus(permNames) {
+  const menus = new Set();
+  menus.add('dashboards'); // Dashboards basic access
+
+  permNames.forEach(p => {
+    for (const [menuId, tokens] of PERMISSION_MENU_MAP) {
+      if (tokens.some(token => p.includes(token))) {
+        menus.add(menuId);
+        break;
+      }
+    }
+  });
+
+  return Array.from(menus);
+}

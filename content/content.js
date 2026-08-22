@@ -6,25 +6,27 @@ const DATADOG_MENUS = [
   { id: 'dashboards', name: 'Dashboards', icon: '📊', selector: 'dashboards, /dashboard, /dash', keywords: ['dashboard', 'overview', 'chart', 'widget'], category: 'Core' },
   { id: 'infrastructure', name: 'Infrastructure', icon: '🖥️', selector: 'infrastructure, /infrastructure, /host', keywords: ['host', 'container', 'k8s', 'kubernetes', 'serverless', 'process'], category: 'Core' },
   { id: 'monitors', name: 'Monitors & Alerts', icon: '🔔', selector: 'monitors, /monitors, /watchdog', keywords: ['alert', 'watchdog', 'downtime', 'slo'], category: 'Core' },
+  { id: 'error_tracking', name: 'Error Tracking', icon: '🐛', selector: 'error tracking, /error-tracking', keywords: ['error tracking'], category: 'Telemetry' },
+  { id: 'observability_pipelines', name: 'Observability Pipelines', icon: '🛠️', selector: 'observability pipelines, /observability-pipelines', keywords: ['observability pipelines'], category: 'Telemetry' },
+  { id: 'logs_archives', name: 'Log Archives', icon: '🗄️', selector: 'logs archives, /logs/archives, /archives', keywords: ['archive'], category: 'Telemetry' },
   { id: 'apm', name: 'APM & Tracing', icon: '⚡', selector: 'apm, /apm, /services', keywords: ['service', 'trace', 'catalog', 'profiling', 'error'], category: 'Telemetry' },
   { id: 'logs', name: 'Logs', icon: '📝', selector: 'logs, /logs', keywords: ['log', 'pattern', 'pipeline', 'analytics'], category: 'Telemetry' },
   { id: 'metrics', name: 'Metrics', icon: '📈', selector: 'metrics, /metric', keywords: ['explorer', 'summary', 'custom metric'], category: 'Telemetry' },
   { id: 'ux_monitoring', name: 'Digital Experience (UX / RUM)', icon: '👥', selector: 'ux_monitoring, /rum, /synthetics', keywords: ['rum', 'synthetics', 'session', 'replay', 'product'], category: 'Experience' },
   { id: 'security', name: 'Security & Compliance', icon: '🛡️', selector: 'security, /security, /appsec', keywords: ['security', 'appsec', 'audit', 'csm', 'threat', 'vulnerability'], category: 'Security' },
   { id: 'network', name: 'Network', icon: '🌐', selector: 'network, /network', keywords: ['npm', 'network', 'dns', 'device'], category: 'Telemetry' },
+  { id: 'automation', name: 'Automation', icon: '🤖', selector: 'automation, /workflow-automation, /automations', keywords: ['automation', 'app builder', 'workflow automation'], category: 'Operations' },
+  { id: 'bits_ai', name: 'Bits AI', icon: '✨', selector: 'bits assistant, bits ai, /bits', keywords: ['bits assistant', 'bits ai', 'bits chat'], category: 'Operations' },
+  { id: 'ci_visibility', name: 'CI Visibility', icon: '🧪', selector: 'ci visibility, /ci', keywords: ['ci visibility', 'test optimization'], category: 'Operations' },
+  { id: 'llm_observability', name: 'LLM Observability', icon: '🧠', selector: 'llm observability, /llm-observability, /llmobs', keywords: ['llm observability'], category: 'Telemetry' },
   { id: 'incidents', name: 'Service Mgmt & Incidents', icon: '🚨', selector: 'incidents, /incidents, /on-call', keywords: ['incident', 'on-call', 'change', 'workflow'], category: 'Operations' },
   { id: 'notebooks', name: 'Notebooks', icon: '📓', selector: 'notebooks, /notebook', keywords: ['note', 'postmortem', 'runbook'], category: 'Operations' },
   { id: 'cost_management', name: 'Cloud Cost Mgmt (FinOps)', icon: '💰', selector: 'cost_management, /cost, /billing', keywords: ['finops', 'billing', 'cost', 'usage', 'budget'], category: 'Business' },
-  { id: 'integrations', name: 'Integrations', icon: '🔌', selector: 'integrations, /account/settings', keywords: ['api', 'plugin', 'aws', 'agent'], category: 'Admin' },
+  { id: 'integrations', name: 'Integrations', icon: '🔌', selector: 'integrations, /account/settings', keywords: ['integrations', 'api', 'plugin', 'aws configurations', 'gcp', 'azure', 'agent'], category: 'Admin' },
   { id: 'organization_settings', name: 'Organization Settings', icon: '⚙️', selector: 'organization_settings, /organization-settings', keywords: ['user', 'role', 'permission', 'team'], category: 'Admin' }
 ];
 
 const ROLE_PROFILES = {
-  dev: ['dashboards', 'apm', 'logs', 'metrics', 'notebooks', 'incidents'],
-  sre: ['dashboards', 'infrastructure', 'monitors', 'apm', 'logs', 'metrics', 'network', 'incidents', 'notebooks'],
-  security: ['dashboards', 'security', 'logs', 'incidents', 'notebooks', 'organization_settings'],
-  product: ['dashboards', 'ux_monitoring', 'monitors', 'notebooks'],
-  finops: ['dashboards', 'cost_management', 'notebooks'],
   all: DATADOG_MENUS.map(m => m.id),
   custom: ['dashboards', 'apm', 'logs', 'monitors']
 };
@@ -129,43 +131,31 @@ async function fetchDatadogUserProfile() {
       console.log('[Datadog Smart Menu] Detected RBAC roles:', roleNames);
       console.log('[Datadog Smart Menu] Total RBAC permissions:', permNames.length);
 
-      // Determine profile from RBAC role names & permission list
-      let detectedProfile = 'dev';
-      const roleStr = roleNames.join(' ').toLowerCase();
+      // Admin detection: org/user management rights or an admin role
+      const isAdmin = permNames.includes('org_management') ||
+                      permNames.includes('user_access_manage') ||
+                      roleNames.some(r => r.toLowerCase().includes('admin'));
 
-      if (roleStr.includes('admin') || permNames.includes('admin') || permNames.includes('org_management')) {
-        detectedProfile = 'all';
-      } else if (roleStr.includes('sre') || roleStr.includes('devops') || roleStr.includes('infra')) {
-        detectedProfile = 'sre';
-      } else if (roleStr.includes('security') || roleStr.includes('secops') || permNames.some(p => p.includes('security'))) {
-        detectedProfile = 'security';
-      } else if (roleStr.includes('product') || roleStr.includes('ux') || permNames.some(p => p.includes('rum'))) {
-        detectedProfile = 'product';
-      } else if (roleStr.includes('finops') || roleStr.includes('billing') || permNames.some(p => p.includes('cost') || p.includes('billing'))) {
-        detectedProfile = 'finops';
-      } else if (roleStr.includes('dev') || roleStr.includes('engineer') || permNames.some(p => p.includes('apm') || p.includes('logs'))) {
-        detectedProfile = 'dev';
-      }
-
-      // Dynamically map permissions to allowed Datadog menu IDs
+      // Map real RBAC permissions to allowed Datadog menu IDs
       const allowedFromPermissions = mapPermissionsToMenus(permNames);
 
       detectedUserInfo = {
         email,
         name,
         title: roleNames.length > 0 ? roleNames.join(', ') : (userAttr.title || 'Datadog User'),
-        detectedProfile,
         roles: roleNames,
+        isAdmin,
         permissionsCount: permNames.length,
         allowedFromPermissions,
         source: 'API RBAC Datadog v2'
       };
 
-      if (currentSettings && currentSettings.autoDetectRights) {
-        currentSettings.activeProfile = detectedProfile;
-        if (allowedFromPermissions.length > 0) {
-          currentSettings.customMenus = allowedFromPermissions;
-        }
+      // Permission-based filtering is the source of truth for end-users.
+      // If no permissions are returned, keep current settings untouched
+      // (admin-configured profile or unfiltered default).
+      if (currentSettings && currentSettings.autoDetectRights && permNames.length > 0 && allowedFromPermissions.length > 0) {
+        currentSettings.activeProfile = 'custom';
+        currentSettings.customMenus = allowedFromPermissions;
         safeSendMessage({ 
           action: 'SAVE_SETTINGS', 
           settings: currentSettings,
@@ -189,11 +179,38 @@ async function fetchDatadogUserProfile() {
       email,
       name: email.split('@')[0],
       title: 'Session Datadog',
-      detectedProfile: 'dev',
       source: 'DOM Datadog'
     };
   }
 }
+
+/**
+ * Ordered permission-to-menu mapping, most specific rules first.
+ * Source: https://docs.datadoghq.com/account_management/rbac/permissions/
+ */
+const PERMISSION_MENU_MAP = [
+  ['logs_archives', ['logs_read_archives', 'logs_write_archives', 'logs_write_archive_search']],
+  ['observability_pipelines', ['observability_pipeline']],
+  ['error_tracking', ['error_tracking']],
+  ['llm_observability', ['llm_observability']],
+  ['ci_visibility', ['ci_visibility', 'test_optimization', 'ci_provider', 'ci_ingestion', 'cd_visibility', 'code_analysis', 'code_coverage', 'dora_', 'quality_gates', 'static_analysis']],
+  ['bits_ai', ['assistant_access', 'bits_investigations', 'bits_dev_']],
+  ['security', ['bits_security', 'security_', 'appsec_', 'ai_guard', 'data_scanner', 'audit_logs_']],
+  ['automation', ['workflows_', 'workflow_automation', 'apps_', 'agent_builder', 'actions_interface', 'connections_', 'execution_groups', 'on_prem_runner', 'app_builder', 'mcp_']],
+  ['incidents', ['incident_', 'cases_', 'on_call_', 'status_pages']],
+  ['ux_monitoring', ['rum_', 'synthetics_', 'product_analytics', 'audience_management', 'dem_journey', 'feature_flag']],
+  ['cost_management', ['cloud_cost_management', 'ccm_', 'billing_', 'usage_']],
+  ['integrations', ['integrations', 'aws_configuration', 'azure_configuration', 'gcp_configuration', 'oci_configuration', 'api_keys', 'client_tokens', 'org_app_keys', 'user_app_keys', 'repo_info', 'repo_settings']],
+  ['organization_settings', ['org_management', 'org_group', 'org_connections', 'user_access', 'service_account', 'teams_manage', 'governance_console', 'workload_identity', 'coterm']],
+  ['infrastructure', ['infrastructure_', 'guardrails', 'agent_upgrade', 'agent_flare', 'fleet_policies', 'orchestration_', 'terraform_state', 'process_tags', 'processes_generate', 'containers_generate', 'disaster_recovery', 'serverless_']],
+  ['apm', ['apm_', 'continuous_profiler', 'debugger_', 'live_debugger', 'dbm_', 'data_streams_']],
+  ['monitors', ['monitors_', 'monitor_config', 'slos_', 'watchdog']],
+  ['network', ['network_connections', 'network_health', 'ndm_']],
+  ['logs', ['logs_', 'telemetry_rules', 'events_write', 'event_correlation', 'generate_log_reports', 'manage_log_reports', 'saved_views', 'facets_']],
+  ['metrics', ['metric_tags', 'metrics_metadata', 'host_tags', 'reference_tables', 'ddsql_editor']],
+  ['notebooks', ['notebooks']],
+  ['dashboards', ['dashboards_', 'embeddable_graphs', 'product_dashboards']]
+];
 
 /**
  * Map list of technical permission names to accessible Datadog menu IDs
@@ -203,18 +220,12 @@ function mapPermissionsToMenus(permNames) {
   menus.add('dashboards'); // Dashboards basic access
 
   permNames.forEach(p => {
-    if (p.includes('dashboards')) menus.add('dashboards');
-    if (p.includes('logs')) menus.add('logs');
-    if (p.includes('apm') || p.includes('profiler') || p.includes('debugger')) menus.add('apm');
-    if (p.includes('monitors') || p.includes('watchdog') || p.includes('slos')) menus.add('monitors');
-    if (p.includes('security') || p.includes('appsec') || p.includes('audit')) menus.add('security');
-    if (p.includes('cost') || p.includes('billing') || p.includes('usage')) menus.add('cost_management');
-    if (p.includes('rum') || p.includes('synthetics') || p.includes('audience')) menus.add('ux_monitoring');
-    if (p.includes('network') || p.includes('ndm')) menus.add('network');
-    if (p.includes('incident') || p.includes('on_call') || p.includes('workflows')) menus.add('incidents');
-    if (p.includes('notebooks')) menus.add('notebooks');
-    if (p.includes('integrations') || p.includes('aws') || p.includes('azure') || p.includes('gcp')) menus.add('integrations');
-    if (p.includes('user_access') || p.includes('org_management') || p.includes('service_account') || p.includes('teams')) menus.add('organization_settings');
+    for (const [menuId, tokens] of PERMISSION_MENU_MAP) {
+      if (tokens.some(token => p.includes(token))) {
+        menus.add(menuId);
+        break;
+      }
+    }
   });
 
   return Array.from(menus);
@@ -240,10 +251,9 @@ function applyMenuFilters() {
     return;
   }
 
-  const profile = currentSettings.activeProfile;
-  const allowedList = profile === 'custom' 
-    ? (currentSettings.customMenus || []) 
-    : (ROLE_PROFILES[profile] || ROLE_PROFILES.dev);
+  const allowedList = currentSettings.activeProfile === 'custom'
+    ? (currentSettings.customMenus || [])
+    : (ROLE_PROFILES[currentSettings.activeProfile] || ROLE_PROFILES.all);
 
   const navContainers = document.querySelectorAll('nav, [data-testid="sidebar"], .druids-sidebar, [class*="sidebar"]');
   if (!navContainers || navContainers.length === 0) return;
@@ -413,9 +423,9 @@ function renderPaletteResults(query) {
 
   paletteSelectedIndex = 0; // Reset active selection index
 
-  const allowedList = currentSettings.activeProfile === 'custom' 
-    ? (currentSettings.customMenus || []) 
-    : (ROLE_PROFILES[currentSettings.activeProfile] || ROLE_PROFILES.dev);
+  const allowedList = currentSettings.activeProfile === 'custom'
+    ? (currentSettings.customMenus || [])
+    : (ROLE_PROFILES[currentSettings.activeProfile] || ROLE_PROFILES.all);
 
   const filterText = query.toLowerCase().trim();
 

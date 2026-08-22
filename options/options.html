@@ -29,13 +29,7 @@
           <span>⚙️</span> General Settings
         </a>
         <a href="#profiles" class="nav-item">
-          <span>👤</span> Profiles & Roles
-        </a>
-        <a href="#custom-rights" class="nav-item">
-          <span>🛠️</span> Menu Matrix
-        </a>
-        <a href="#import-export" class="nav-item">
-          <span>💾</span> Import / Export
+          <span>👤</span> Datadog Role
         </a>
       </nav>
     </aside>
@@ -109,50 +103,27 @@
           </div>
         </section>
 
-        <!-- Section: Profiles & Persona Roles -->
+        <!-- Section: Datadog Role Permissions -->
         <section id="profiles" class="card">
           <div class="card-header">
-            <h3>Profiles and Roles</h3>
-            <p>Choose the main role that matches your daily activity in Datadog.</p>
+            <h3>Datadog Role</h3>
+            <p>Load a Datadog role's permissions to build the filtered menu.</p>
           </div>
           <div class="card-body">
-            <div class="profiles-list" id="profiles-detail-list">
-              <!-- Dynamically rendered profile cards -->
+            <div class="role-lookup" style="margin-top:16px;padding-top:16px;border-top:1px solid #E2E8F0;">
+              <div class="form-label" style="margin-bottom:8px;">
+                <strong>Apply a Datadog role's permissions</strong>
+                <p>Type a role name exactly as configured in Organization Settings, then load its permissions to build the filtered menu.</p>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="role-name-input" placeholder="e.g. Datadog Read Only Role"
+                  style="flex:1;padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;">
+                <button id="btn-load-role" class="btn btn-primary">Load permissions</button>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- Section: Custom Rights Matrix -->
-        <section id="custom-rights" class="card">
-          <div class="card-header">
-            <h3>Datadog Menu Matrix</h3>
-            <p>Check the menus you want to make accessible in the Custom profile.</p>
-          </div>
-          <div class="card-body">
-            <div class="menu-matrix-grid" id="menu-matrix-grid">
-              <!-- Dynamically populated matrix -->
-            </div>
-          </div>
-        </section>
-
-        <!-- Section: Import / Export -->
-        <section id="import-export" class="card">
-          <div class="card-header">
-            <h3>Profile Backup & Sharing</h3>
-            <p>Export your configuration for your team or import a shared profile.</p>
-          </div>
-          <div class="card-body form-grid">
-            <div class="io-actions">
-              <button id="btn-export" class="btn btn-secondary">
-                📤 Export configuration (JSON)
-              </button>
-              <label class="btn btn-secondary btn-file">
-                📥 Import configuration (JSON)
-                <input type="file" id="file-import" accept=".json" style="display:none;">
-              </label>
-            </div>
-          </div>
-        </section>
       </div>
     </main>
   </div>

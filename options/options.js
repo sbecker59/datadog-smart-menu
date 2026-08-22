@@ -2,27 +2,48 @@
  * Datadog Smart Menu - Options Page Controller
  */
 
-import { DATADOG_MENUS, ROLE_PROFILES, DEFAULT_SETTINGS } from '../shared/profiles.js';
+import { DATADOG_MENUS, DEFAULT_SETTINGS } from '../shared/profiles.js';
 
 let currentSettings = { ...DEFAULT_SETTINGS };
+let isAdmin = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadSettings();
-  renderProfiles();
-  renderMenuMatrix();
+  applyAdminGate();
   attachEvents();
 });
 
 async function loadSettings() {
   return new Promise((resolve) => {
-    chrome.storage.sync.get('settings', (result) => {
+    chrome.storage.sync.get(['settings', 'detectedUserInfo'], (result) => {
       if (result.settings) {
         currentSettings = { ...DEFAULT_SETTINGS, ...result.settings };
       }
+      isAdmin = !!result.detectedUserInfo && result.detectedUserInfo.isAdmin === true;
       populateFormFields();
       resolve();
     });
   });
+}
+
+/**
+ * Advanced configuration (profiles, menu matrix, import/export) is admin-only.
+ * End-users simply get fewer options, no message needed.
+ */
+function applyAdminGate() {
+  if (isAdmin) return;
+
+  const section = document.getElementById('profiles');
+  if (section) section.classList.add('hidden');
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    if (item.getAttribute('href') === '#profiles') {
+      item.classList.add('hidden');
+    }
+  });
+
+  const actions = document.querySelector('.top-bar .actions');
+  if (actions) actions.classList.add('hidden');
 }
 
 function populateFormFields() {
@@ -54,59 +75,6 @@ function showToast(msg) {
   }
 }
 
-function renderProfiles() {
-  const container = document.getElementById('profiles-detail-list');
-  if (!container) return;
-
-  const profiles = Object.values(ROLE_PROFILES);
-  container.innerHTML = profiles.map(p => `
-    <div class="profile-card-option ${p.id === currentSettings.activeProfile ? 'active' : ''}" data-id="${p.id}">
-      <div class="header-row">
-        <span class="icon">${p.icon}</span>
-        <span class="title">${p.name}</span>
-      </div>
-      <p class="desc">${p.description}</p>
-    </div>
-  `).join('');
-
-  container.querySelectorAll('.profile-card-option').forEach(card => {
-    card.addEventListener('click', () => {
-      const id = card.getAttribute('data-id');
-      currentSettings.activeProfile = id;
-      renderProfiles();
-      saveSettings();
-    });
-  });
-}
-
-function renderMenuMatrix() {
-  const container = document.getElementById('menu-matrix-grid');
-  if (!container) return;
-
-  container.innerHTML = DATADOG_MENUS.map(m => {
-    const isChecked = (currentSettings.customMenus || []).includes(m.id);
-    return `
-      <label class="matrix-item">
-        <input type="checkbox" data-id="${m.id}" ${isChecked ? 'checked' : ''}>
-        <span>${m.icon} ${m.name}</span>
-      </label>
-    `;
-  }).join('');
-
-  container.querySelectorAll('input[type="checkbox"]').forEach(chk => {
-    chk.addEventListener('change', () => {
-      const id = chk.getAttribute('data-id');
-      let custom = currentSettings.customMenus || [];
-      if (chk.checked) {
-        if (!custom.includes(id)) custom.push(id);
-      } else {
-        custom = custom.filter(x => x !== id);
-      }
-      currentSettings.customMenus = custom;
-    });
-  });
-}
-
 function attachEvents() {
   document.getElementById('btn-save').addEventListener('click', saveSettings);
   
@@ -114,42 +82,34 @@ function attachEvents() {
     if (confirm('Are you sure you want to reset to the default configuration?')) {
       currentSettings = { ...DEFAULT_SETTINGS };
       populateFormFields();
-      renderProfiles();
-      renderMenuMatrix();
       saveSettings();
     }
   });
 
-  // Export JSON
-  document.getElementById('btn-export').addEventListener('click', () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentSettings, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "datadog-smart-menu-config.json");
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-  });
+  document.getElementById('btn-load-role').addEventListener('click', () => {
+    const input = document.getElementById('role-name-input');
+    const btn = document.getElementById('btn-load-role');
+    const roleName = input.value.trim();
+    if (!roleName) {
+      showToast('Enter a Datadog role name first.');
+      return;
+    }
 
-  // Import JSON
-  const fileInput = document.getElementById('file-import');
-  fileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const importedSettings = JSON.parse(event.target.result);
-        currentSettings = { ...DEFAULT_SETTINGS, ...importedSettings };
-        populateFormFields();
-        renderProfiles();
-        renderMenuMatrix();
-        saveSettings();
-        showToast('Configuration imported successfully!');
-      } catch (err) {
-        alert('Invalid JSON file.');
+    btn.disabled = true;
+    btn.textContent = 'Loading…';
+    chrome.runtime.sendMessage({ action: 'FETCH_ROLE_MENUS', roleName }, (res) => {
+      btn.disabled = false;
+      btn.textContent = 'Load permissions';
+
+      if (chrome.runtime.lastError || !res || !res.ok) {
+        showToast((res && res.error) || 'Failed to fetch role (open a Datadog tab first).');
+        return;
       }
-    };
-    reader.readAsText(file);
+
+      currentSettings.activeProfile = 'custom';
+      currentSettings.customMenus = res.menus;
+      saveSettings();
+      showToast(`Applied "${res.roleName}": ${res.menus.length} menus, ${res.permissionsCount} permissions.`);
+    });
   });
 }

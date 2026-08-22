@@ -2,7 +2,7 @@
  * Datadog Smart Menu - Background Service Worker (Manifest V3)
  */
 
-import { DEFAULT_SETTINGS, ROLE_PROFILES } from '../shared/profiles.js';
+import { DEFAULT_SETTINGS, DATADOG_MENUS, mapPermissionsToMenus } from '../shared/profiles.js';
 
 // Initialize extension settings on install
 chrome.runtime.onInstalled.addListener(async () => {
@@ -22,10 +22,9 @@ function updateBadge(settings) {
     return;
   }
 
-  const profile = ROLE_PROFILES[settings.activeProfile] || ROLE_PROFILES.dev;
-  const count = profile.id === 'custom' 
-    ? settings.customMenus.length 
-    : profile.allowedMenus.length;
+  const count = settings.activeProfile === 'custom'
+    ? (settings.customMenus || []).length
+    : DATADOG_MENUS.length;
 
   chrome.action.setBadgeText({ text: `${count}` });
   chrome.action.setBadgeBackgroundColor({ color: '#7C3AED' });
@@ -72,4 +71,57 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       chrome.storage.sync.set({ detectedUserInfo: request.detectedUserInfo });
     }
   }
+
+  if (request.action === 'FETCH_ROLE_MENUS') {
+    handleFetchRoleMenus(request.roleName)
+      .then((res) => sendResponse(res))
+      .catch((err) => sendResponse({ ok: false, error: err.message }));
+    return true; // Keep channel open for async response
+  }
 });
+
+/**
+ * Fetch a Datadog role permissions by name and map them to menu IDs.
+ * Uses the origin of an open Datadog tab so the session cookies apply.
+ */
+async function handleFetchRoleMenus(roleName) {
+  const name = (roleName || '').trim();
+  if (!name) throw new Error('Role name is required.');
+
+  const tabs = await chrome.tabs.query({
+    url: ['*://*.datadoghq.com/*', '*://*.datadoghq.eu/*', '*://*.ddog-gov.com/*']
+  });
+  if (!tabs || tabs.length === 0) {
+    throw new Error('Open a Datadog tab first, then try again.');
+  }
+  const origin = new URL(tabs[0].url).origin;
+  const headers = { Accept: 'application/json' };
+
+  const rolesRes = await fetch(`${origin}/api/v2/roles?page[size]=100`, { headers, credentials: 'include' });
+  if (rolesRes.status === 401 || rolesRes.status === 403) {
+    throw new Error('Not allowed to list Datadog roles with this session.');
+  }
+  if (!rolesRes.ok) throw new Error(`Datadog Roles API error (${rolesRes.status}).`);
+
+  const rolesJson = await rolesRes.json();
+  const wanted = name.toLowerCase();
+  const role = (rolesJson.data || []).find(
+    (r) => (r.attributes?.name || '').toLowerCase() === wanted
+  );
+  if (!role) throw new Error(`Role "${name}" not found in this organization.`);
+
+  const permsRes = await fetch(`${origin}/api/v2/roles/${role.id}/permissions`, { headers, credentials: 'include' });
+  if (!permsRes.ok) throw new Error(`Datadog Permissions API error (${permsRes.status}).`);
+
+  const permsJson = await permsRes.json();
+  const permNames = (permsJson.data || [])
+    .map((p) => p.attributes?.name || '')
+    .filter(Boolean);
+
+  return {
+    ok: true,
+    roleName: role.attributes.name,
+    menus: mapPermissionsToMenus(permNames),
+    permissionsCount: permNames.length
+  };
+}

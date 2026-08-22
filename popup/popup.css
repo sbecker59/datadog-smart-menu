@@ -178,45 +178,11 @@ body {
 }
 
 /* Profiles Grid */
-.profiles-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
 
-.profile-card {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  user-select: none;
-}
 
-.profile-card:hover {
-  background: var(--bg-card-hover);
-  border-color: rgba(124, 58, 237, 0.4);
-}
 
-.profile-card.active {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.25) 0%, rgba(99, 44, 166, 0.15) 100%);
-  border-color: var(--accent-purple);
-  box-shadow: 0 0 12px var(--accent-glow);
-}
 
-.profile-card .icon {
-  font-size: 16px;
-}
 
-.profile-card .name {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-main);
-}
 
 /* Options Section */
 .options-section {
@@ -252,18 +218,14 @@ body {
 }
 
 /* Custom Checklist */
+.hidden {
+  display: none !important;
+}
+
 .custom-section.hidden {
   display: none;
 }
 
-.custom-checklist {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  max-height: 140px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
 
 .custom-item {
   display: flex;

@@ -2,18 +2,15 @@
  * Datadog Smart Menu - Extension Popup Controller
  */
 
-import { DATADOG_MENUS, ROLE_PROFILES, DEFAULT_SETTINGS } from '../shared/profiles.js';
+import { DATADOG_MENUS, DEFAULT_SETTINGS } from '../shared/profiles.js';
 
 let currentSettings = { ...DEFAULT_SETTINGS };
+let detectedUserInfo = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadSettings();
-  renderProfiles();
-  renderCustomChecklist();
   attachEventListeners();
 });
-
-let detectedUserInfo = null;
 
 async function loadSettings() {
   return new Promise((resolve) => {
@@ -41,8 +38,10 @@ function updateUI() {
   document.getElementById('toggle-palette').checked = currentSettings.enableCommandPalette;
   document.getElementById('toggle-collapse').checked = currentSettings.collapseHiddenItems;
 
-  const profile = ROLE_PROFILES[currentSettings.activeProfile] || ROLE_PROFILES.dev;
-  document.getElementById('detected-role-text').textContent = `Active profile: ${profile.name.split(' (')[0]}`;
+  const profileLabel = currentSettings.activeProfile === 'custom'
+    ? 'Filtered by permissions'
+    : 'Unfiltered';
+  document.getElementById('detected-role-text').textContent = profileLabel;
 
   // User identity display
   const userEmailEl = document.getElementById('user-email-text');
@@ -56,82 +55,17 @@ function updateUI() {
     if (sourceBadgeEl) sourceBadgeEl.textContent = 'Manual';
   }
 
-  const visibleCount = profile.id === 'custom' 
-    ? currentSettings.customMenus.length 
-    : profile.allowedMenus.length;
-  
+  // Settings entry point is reserved for identified admins
+  const isAdmin = !!detectedUserInfo && detectedUserInfo.isAdmin === true;
+  document.getElementById('btn-open-options').style.display = isAdmin ? '' : 'none';
+
+  const visibleCount = currentSettings.activeProfile === 'custom'
+    ? (currentSettings.customMenus || []).length
+    : DATADOG_MENUS.length;
   const hiddenCount = DATADOG_MENUS.length - visibleCount;
 
   document.getElementById('visible-count-num').textContent = `${visibleCount}`;
   document.getElementById('hidden-count-num').textContent = `${hiddenCount}`;
-
-  // Custom section visibility
-  const customContainer = document.getElementById('custom-menus-container');
-  if (currentSettings.activeProfile === 'custom') {
-    customContainer.classList.remove('hidden');
-  } else {
-    customContainer.classList.add('hidden');
-  }
-
-  // Active state on profile cards
-  document.querySelectorAll('.profile-card').forEach(card => {
-    const id = card.getAttribute('data-id');
-    if (id === currentSettings.activeProfile) {
-      card.classList.add('active');
-    } else {
-      card.classList.remove('active');
-    }
-  });
-}
-
-function renderProfiles() {
-  const container = document.getElementById('profiles-grid');
-  if (!container) return;
-
-  const profiles = Object.values(ROLE_PROFILES);
-  container.innerHTML = profiles.map(p => `
-    <div class="profile-card ${p.id === currentSettings.activeProfile ? 'active' : ''}" data-id="${p.id}" title="${p.description}">
-      <span class="icon">${p.icon}</span>
-      <span class="name">${p.name.split(' (')[0]}</span>
-    </div>
-  `).join('');
-
-  container.querySelectorAll('.profile-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const id = card.getAttribute('data-id');
-      currentSettings.activeProfile = id;
-      saveSettings();
-    });
-  });
-}
-
-function renderCustomChecklist() {
-  const container = document.getElementById('custom-checklist');
-  if (!container) return;
-
-  container.innerHTML = DATADOG_MENUS.map(m => {
-    const isChecked = (currentSettings.customMenus || []).includes(m.id);
-    return `
-      <label class="custom-item">
-        <input type="checkbox" data-id="${m.id}" ${isChecked ? 'checked' : ''}>
-        <span>${m.icon} ${m.name}</span>
-      </label>
-    `;
-  }).join('');
-
-  container.querySelectorAll('input[type="checkbox"]').forEach(chk => {
-    chk.addEventListener('change', () => {
-      const id = chk.getAttribute('data-id');
-      let custom = currentSettings.customMenus || [];
-      if (chk.checked) {
-        if (!custom.includes(id)) custom.push(id);
-      } else {
-        custom = custom.filter(x => x !== id);
-      }
-      currentSettings.customMenus = custom;
-      saveSettings();
-    });
-  });
 }
 
 function attachEventListeners() {
