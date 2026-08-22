@@ -130,7 +130,6 @@ function attachEventListeners() {
   });
 
   document.getElementById('btn-reset').addEventListener('click', () => {
-    if (!confirm('Reset the extension to its default configuration?')) return;
     currentSettings = { ...DEFAULT_SETTINGS };
     saveSettings();
     showFeedback('Configuration reset to defaults.');
