@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/sbecker59/datadog-smart-menu/compare/datadog-smart-menu-v1.1.0...datadog-smart-menu-v1.2.0) (2026-08-22)
+
+
+### Features
+
+* update popup CSS to adapt height based on content visibility ([8076d18](https://github.com/sbecker59/datadog-smart-menu/commit/8076d1808b6f6436e987e05e6adf1b0a661a94df))
+
 ## [1.1.0](https://github.com/sbecker59/datadog-smart-menu/compare/datadog-smart-menu-v1.0.1...datadog-smart-menu-v1.1.0) (2026-08-22)
 
 
