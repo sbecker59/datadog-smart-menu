@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/sbecker59/datadog-smart-menu/compare/datadog-smart-menu-v1.0.0...datadog-smart-menu-v1.0.1) (2026-08-22)
+
+
+### Bug Fixes
+
+* remove unnecessary permissions and clean up host permissions in manifest.json ([76055ac](https://github.com/sbecker59/datadog-smart-menu/commit/76055accd8b2d4a47052fda7be049116bd303a56))
+
 ## [1.0.0](https://github.com/sbecker59/datadog-smart-menu/compare/datadog-smart-menu-v1.0.0...datadog-smart-menu-v1.0.0) (2026-08-21)
 
 
