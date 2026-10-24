@@ -107,6 +107,7 @@ datadog-smart-menu/
 ```bash
 npm run build   # Rebuild dist/ from sources
 npm test        # Check menu/permission mapping against the real navbar links and official permissions
+npm run test:e2e  # Build, then run the real extension in headless Chromium against a navbar fixture (needs `npx playwright install chromium`)
 ```
 
 Preview the filtered navbar on a saved Datadog page (*Save page as…* in Chrome), with a managed role or an explicit permission list:
@@ -117,3 +118,5 @@ npm run preview -- --html datadog.html --perms logs_read_data,dashboards_read
 ```
 
 Reload the extension in `chrome://extensions/` after each build.
+
+Both test suites run in GitHub Actions on every pull request (`.github/workflows/ci.yml`).
