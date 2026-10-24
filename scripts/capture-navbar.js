@@ -94,6 +94,8 @@ function readNavbar() {
     const items = [];
     let section = null;
     nodes.forEach((node) => {
+      // Favorites and recently viewed items are per user: not part of the menu.
+      if (node.closest('[class*="navbar-sub-menu__extra-content"], [class*="favorites"]')) return;
       if (node.matches('[class*="is-section-title"]')) {
         section = clean(node).replace(/\s*Docs$/, '');
         return;
@@ -106,19 +108,36 @@ function readNavbar() {
   });
 }
 
+/**
+ * Runs in the page once the account popover (top bar avatar) is open: read
+ * its links. The profile link label is the user's name, so it is replaced.
+ */
+function readAccountMenu() {
+  const popover = document.querySelector('[class*="top-bar-avatar-popover"]');
+  if (!popover) return null;
+  const items = Array.from(popover.querySelectorAll('a[href]')).map((a) => {
+    const href = a.getAttribute('href');
+    const isProfile = a.matches('[class*="popover-profile"]');
+    return { section: 'Account', label: isProfile ? 'My Profile' : a.textContent.replace(/\s+/g, ' ').trim(), href };
+  });
+  return { menu: 'User menu', isUserMenu: true, items };
+}
+
 /** Keep internal links only and strip personal data. */
 function sanitize(entries) {
   const links = [];
   for (const entry of entries) {
     // The user menu label is the user's e-mail / organization name.
-    const isUserMenu = entry.items.some(i => i.href === '/personal-settings');
+    const isUserMenu = entry.isUserMenu === true || entry.items.some(i => i.href === '/personal-settings');
     const menu = isUserMenu ? 'User menu' : entry.menu;
     let currentSection = null;
     for (const item of entry.items) {
       const href = (item.href || '').replace(/#.*$/, '');
       if (!href.startsWith('/') || href.startsWith('//') || /orgUuid=/i.test(href)) continue;
+      // "My Team" links embed the user's team ID.
+      if (href.startsWith('/teams/')) continue;
       let section = item.section || null;
-      if (isUserMenu) {
+      if (isUserMenu && !entry.isUserMenu) {
         // Section titles there embed the e-mail / org name: use the first link label.
         if (section !== currentSection?.raw) currentSection = { raw: section, label: item.label };
         section = currentSection.label;
@@ -204,16 +223,26 @@ async function captureLive(args) {
     await page.waitForTimeout(3000);
 
     // Flyouts may only render on hover: hover entries that have no section yet.
-    const entries = page.locator('[class*="navbar-menu__list-item"]');
-    const count = await entries.count();
+    const entryLocators = page.locator('[class*="navbar-menu__list-item"]');
+    const count = await entryLocators.count();
     for (let i = 0; i < count; i++) {
-      const entry = entries.nth(i);
+      const entry = entryLocators.nth(i);
       if (await entry.locator('[class*="navbar-sub-menu__section"]').count() === 0) {
         await entry.hover().catch(() => {});
         await page.waitForTimeout(300);
       }
     }
-    return await page.evaluate(readNavbar);
+    const entries = await page.evaluate(readNavbar);
+
+    // The account menu moved to a popover on the top bar avatar.
+    const account = page.locator('a[aria-label="Account"]').first();
+    if (await account.count()) {
+      await account.hover().catch(() => {});
+      await page.waitForSelector('[class*="top-bar-avatar-popover"] a[href]', { timeout: 10000 }).catch(() => {});
+      const accountMenu = await page.evaluate(readAccountMenu);
+      if (accountMenu && !entries.some(e => e.items.some(i => i.href === '/personal-settings'))) entries.push(accountMenu);
+    }
+    return entries;
   } finally {
     await browser.close();
   }
@@ -242,6 +271,10 @@ async function main() {
     throw new Error(`Only ${links.length} navbar links captured (expected at least ${MIN_LINKS}); fixture left unchanged.`);
   }
 
+  if (!links.some(l => l.menu === 'User menu')) {
+    console.warn('Warning: the account menu (Organization Settings, Plan & Usage...) was not captured.');
+  }
+
   if (/@/.test(JSON.stringify(links))) {
     throw new Error('Personal data (an e-mail address) is still present in the capture; fixture left unchanged.');
   }
@@ -259,4 +292,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { totp, sanitize, siteUrl };
+module.exports = { totp, sanitize, siteUrl, readNavbar, readAccountMenu };

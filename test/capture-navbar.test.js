@@ -49,3 +49,20 @@ test('siteUrl accepts Datadog site names and URLs', () => {
   assert.equal(siteUrl('ddog-gov.com'), 'https://app.ddog-gov.com');
   assert.equal(siteUrl('https://app.datadoghq.eu/'), 'https://app.datadoghq.eu');
 });
+
+test('sanitize keeps the account popover menu and drops per-user team links', () => {
+  const links = sanitize([{
+    menu: 'User menu',
+    isUserMenu: true,
+    items: [
+      { section: 'Account', label: 'My Profile', href: '/personal-settings/profile' },
+      { section: 'Account', label: 'My stack', href: '/teams/4fac2366-0e3d-41de-904b-f847c4a9e03a/my-stack' },
+      { section: 'Account', label: 'Plan & Usage', href: '/billing' },
+      { section: 'Account', label: 'Log In To Mobile', href: '/personal-settings/organizations/qrcode?orgUuid=123' }
+    ]
+  }]);
+  assert.deepEqual(links, [
+    { menu: 'User menu', section: 'Account', label: 'My Profile', href: '/personal-settings/profile' },
+    { menu: 'User menu', section: 'Account', label: 'Plan & Usage', href: '/billing' }
+  ]);
+});

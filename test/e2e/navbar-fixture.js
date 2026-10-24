@@ -3,7 +3,8 @@
  *
  * It keeps the navbar class names the content script relies on (top-level
  * entries, flyout sections, links) so the real extension can run against it
- * without a Datadog account.
+ * without a Datadog account. The "User menu" links are rendered like Datadog's
+ * account popover: outside the sidebar, under the top bar avatar.
  */
 const navLinks = require('../fixtures/datadog-nav-links.json');
 
@@ -26,6 +27,9 @@ function buildNavbarHtml(links = navLinks) {
     if (!sections.has(sectionName)) sections.set(sectionName, []);
     sections.get(sectionName).push(link);
   }
+
+  const accountLinks = menus.get('User menu') ? Array.from(menus.get('User menu').values()).flat() : [];
+  menus.delete('User menu');
 
   const entries = Array.from(menus, ([menu, sections]) => {
     const sectionHtml = Array.from(sections, ([section, items]) => `
@@ -51,6 +55,10 @@ function buildNavbarHtml(links = navLinks) {
     <ul>${entries}
     </ul>
   </nav>
+  <div class="${P}top-bar-avatar-popover" data-menu="User menu">
+    ${accountLinks.map(item => `
+    <a class="${P}top-bar-avatar-popover-link ${P}top-bar-avatar-popover-menu-item" href="${escapeHtml(item.href)}">${escapeHtml(item.label)}</a>`).join('')}
+  </div>
   <main>Fixture page</main>
 </body>
 </html>`;

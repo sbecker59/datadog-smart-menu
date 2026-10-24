@@ -67,7 +67,7 @@ async function runScenario(permissions, roleName = 'E2E Role') {
     return await page.evaluate((hiddenSelector) => {
       const isHidden = el => !!el.closest(hiddenSelector);
       const links = {};
-      document.querySelectorAll('nav a[href]').forEach((a) => {
+      document.querySelectorAll('[data-menu] a[href]').forEach((a) => {
         const key = `${a.closest('[data-menu]').dataset.menu} > ${a.textContent.trim()} ${a.getAttribute('href')}`;
         links[key] = !isHidden(a);
       });
@@ -94,7 +94,8 @@ test('Datadog Read Only Role: admin pages hidden, telemetry kept', async () => {
   for (const href of ['/logs', '/dashboard/lists', '/apm/home', '/monitors/manage', '/metric/explorer']) {
     assert.ok(visibleHref(state, href).every(Boolean), `${href} should be visible`);
   }
-  for (const href of ['/organization-settings/api-keys', '/organization-settings/users', '/billing', '/audit-trail']) {
+  // Plan & Usage and Audit Trail live in the account popover, outside the sidebar.
+  for (const href of ['/billing', '/audit-trail', '/sensitive-data-scanner/configuration/telemetry']) {
     assert.ok(visibleHref(state, href).length > 0, `${href} missing from fixture`);
     assert.ok(visibleHref(state, href).every(v => !v), `${href} should be hidden`);
   }

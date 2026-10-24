@@ -8,7 +8,9 @@
 const { DATADOG_MENUS, ALL_MENU_IDS, mapPermissionsToMenus, findMenuForHref } = globalThis.DD_SMART_MENU;
 
 const HIDDEN_CLASSES = ['dd-smart-menu-hidden', 'dd-smart-menu-collapsed'];
-const NAV_ROOT_SELECTOR = 'nav, [class*="navbar_navbar"], [data-testid="sidebar"], .druids-sidebar';
+// Sidebar, plus the account popover opened from the top bar avatar (rendered
+// outside the sidebar).
+const NAV_ROOT_SELECTOR = 'nav, [class*="navbar_navbar"], [class*="top-bar-avatar-popover"], [data-testid="sidebar"], .druids-sidebar';
 // Datadog navbar containers: a top-level entry and a section inside its flyout.
 const TOP_LEVEL_SELECTOR = '[class*="navbar-menu__list-item"]';
 const SECTION_SELECTOR = '[class*="navbar-sub-menu__section"]';

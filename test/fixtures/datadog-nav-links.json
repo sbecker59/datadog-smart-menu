@@ -1,6 +1,24 @@
 [
  {
   "menu": "Bits AI",
+  "section": "Bits Chat",
+  "label": "Bits Chat",
+  "href": "/ask"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Chat",
+  "label": "Reports",
+  "href": "/ask/usage"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Chat",
+  "label": "Settings",
+  "href": "/ask/settings"
+ },
+ {
+  "menu": "Bits AI",
   "section": "Bits Investigation",
   "label": "Bits Investigation",
   "href": "/bits-ai/investigations?from-top-level-nav=true"
@@ -63,7 +81,7 @@
   "menu": "Bits AI",
   "section": "Bits Code",
   "label": "Settings",
-  "href": "/code/settings"
+  "href": "/code/settings/personal"
  },
  {
   "menu": "Bits AI",
@@ -76,6 +94,12 @@
   "section": "Bits Agent Builder",
   "label": "Bits Agent Builder",
   "href": "/actions/agents"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "AI Credits Management",
+  "label": "AI Credits Management",
+  "href": "/bits-ai/ai-credits-management"
  },
  {
   "menu": "Bits AI",
@@ -97,6 +121,12 @@
  },
  {
   "menu": "Dashboards",
+  "section": "Dashboards",
+  "label": "Reports",
+  "href": "/dashboard/reports"
+ },
+ {
+  "menu": "Dashboards",
   "section": "Notebooks",
   "label": "Notebooks",
   "href": "/notebook/list"
@@ -106,6 +136,30 @@
   "section": "Notebooks",
   "label": "Notebooks List",
   "href": "/notebook/list"
+ },
+ {
+  "menu": "Dashboards",
+  "section": "Notebooks",
+  "label": "New Notebook",
+  "href": "/notebook"
+ },
+ {
+  "menu": "Dashboards",
+  "section": "Sheets",
+  "label": "Sheets",
+  "href": "/sheets"
+ },
+ {
+  "menu": "Dashboards",
+  "section": "Sheets",
+  "label": "Spreadsheets List",
+  "href": "/sheets"
+ },
+ {
+  "menu": "Dashboards",
+  "section": "DDSQL Editor",
+  "label": "DDSQL Editor",
+  "href": "/ddsql/editor"
  },
  {
   "menu": "Monitoring",
@@ -124,6 +178,12 @@
   "section": "Monitors",
   "label": "Settings",
   "href": "/monitors/settings"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Monitors",
+  "label": "New Monitor",
+  "href": "/monitors/create"
  },
  {
   "menu": "Monitoring",
@@ -277,27 +337,39 @@
  },
  {
   "menu": "Incident Response",
+  "section": "Incident Management",
+  "label": "Settings",
+  "href": "/incidents/settings"
+ },
+ {
+  "menu": "Incident Response",
   "section": "Status Pages",
   "label": "Status Pages",
   "href": "/status-pages"
  },
  {
-  "menu": "Automation",
-  "section": "Actions",
-  "label": "Actions",
-  "href": "/actions"
+  "menu": "Incident Response",
+  "section": "Work Management",
+  "label": "Work Management",
+  "href": "/work"
  },
  {
   "menu": "Automation",
-  "section": "Actions",
+  "section": "Bits Agent Builder",
   "label": "Bits Agent Builder",
   "href": "/actions/agents"
  },
  {
   "menu": "Automation",
-  "section": "Actions",
+  "section": "Forms",
   "label": "Forms",
   "href": "/forms"
+ },
+ {
+  "menu": "Automation",
+  "section": "Work Management",
+  "label": "Work Management",
+  "href": "/work"
  },
  {
   "menu": "Infrastructure",
@@ -560,8 +632,20 @@
  {
   "menu": "APM",
   "section": "Live Debugger",
-  "label": "Settings",
+  "label": "Configuration",
   "href": "/debugging/settings"
+ },
+ {
+  "menu": "APM",
+  "section": "Data Streams Monitoring",
+  "label": "Data Streams Monitoring",
+  "href": "/data-streams"
+ },
+ {
+  "menu": "APM",
+  "section": "Data Streams Monitoring",
+  "label": "Kafka Console",
+  "href": "/data-streams/kafka"
  },
  {
   "menu": "APM",
@@ -577,12 +661,6 @@
  },
  {
   "menu": "APM",
-  "section": "Data Streams Monitoring",
-  "label": "Data Streams Monitoring",
-  "href": "/data-streams"
- },
- {
-  "menu": "APM",
   "section": "Data Jobs Monitoring",
   "label": "Data Jobs Monitoring",
   "href": "/data-obs/jobs"
@@ -592,6 +670,66 @@
   "section": "Sensitive Data Scanner",
   "label": "Sensitive Data Scanner",
   "href": "/sensitive-data-scanner/coverage?source=apm"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Journey Monitoring",
+  "label": "Journey Monitoring",
+  "href": "/dem/journeys"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Synthetic Monitoring & Testing",
+  "label": "Synthetic Monitoring & Testing",
+  "href": "/synthetics/overview"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Synthetic Monitoring & Testing",
+  "label": "Tests",
+  "href": "/synthetics/tests"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Synthetic Monitoring & Testing",
+  "label": "Settings",
+  "href": "/synthetics/settings"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Synthetic Monitoring & Testing",
+  "label": "Test Suites",
+  "href": "/synthetics/suites"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Synthetic Monitoring & Testing",
+  "label": "New Test Suite",
+  "href": "/synthetics/test-suite/create"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Synthetic Monitoring & Testing",
+  "label": "Bits Testing",
+  "href": "/synthetics/bits-testing"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Synthetic Monitoring & Testing",
+  "label": "Results Explorer",
+  "href": "/synthetics/explorer?track=synthetics"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Synthetic Monitoring & Testing",
+  "label": "Continuous Testing",
+  "href": "/synthetics/explorer?track=synbatch"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Synthetic Monitoring & Testing",
+  "label": "Test Coverage",
+  "href": "/synthetics/test-coverage"
  },
  {
   "menu": "Digital Experience",
@@ -666,40 +804,46 @@
   "href": "/product-analytics"
  },
  {
-  "menu": "Software Delivery",
-  "section": "CI Visibility",
-  "label": "CI Visibility",
-  "href": "/ci/pipelines/health"
+  "menu": "Digital Experience",
+  "section": "Experiments",
+  "label": "Experiments",
+  "href": "/product-analytics/experiments"
  },
  {
   "menu": "Software Delivery",
-  "section": "CI Visibility",
-  "label": "CI Health",
-  "href": "/ci/pipelines/health"
+  "section": "CI/CD Optimization",
+  "label": "CI/CD Optimization",
+  "href": "/ci/ci-cd"
  },
  {
   "menu": "Software Delivery",
-  "section": "CI Visibility",
-  "label": "CI Pipeline List",
-  "href": "/ci/pipelines"
+  "section": "CI/CD Optimization",
+  "label": "Overview",
+  "href": "/ci/ci-cd/overview"
  },
  {
   "menu": "Software Delivery",
-  "section": "CI Visibility",
-  "label": "Add a Pipeline Provider",
-  "href": "/ci/setup/pipeline"
+  "section": "CI/CD Optimization",
+  "label": "Explorer",
+  "href": "/ci/ci-cd/explorer"
  },
  {
   "menu": "Software Delivery",
-  "section": "CI Visibility",
+  "section": "CI/CD Optimization",
+  "label": "Add Repository",
+  "href": "/ci/setup/ci-cd"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "CI/CD Optimization",
   "label": "Settings",
-  "href": "/ci/settings/visibility"
+  "href": "/ci/settings/ci-cd"
  },
  {
   "menu": "Software Delivery",
-  "section": "CI Visibility",
-  "label": "Executions",
-  "href": "/ci/pipeline-executions"
+  "section": "CI/CD Optimization",
+  "label": "Flaky Management",
+  "href": "/ci/ci-cd/flaky-management"
  },
  {
   "menu": "Software Delivery",
@@ -718,6 +862,12 @@
   "section": "Feature Flags",
   "label": "Environments",
   "href": "/feature-flags/settings/environments"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Deployment Gates",
+  "label": "Deployment Gates",
+  "href": "/ci/deployment-gates/getting-started"
  },
  {
   "menu": "Software Delivery",
@@ -1064,13 +1214,25 @@
  {
   "menu": "AI Observability",
   "section": "Agent Observability",
+  "label": "AI Gateway",
+  "href": "/llm/gateway/intro"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "Agent Observability",
+  "label": "Cost",
+  "href": "/llm/cost"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "Agent Observability",
   "label": "Traces",
   "href": "/llm/traces"
  },
  {
   "menu": "AI Observability",
   "section": "Agent Observability",
-  "label": "Evaluations",
+  "label": "Evaluators",
   "href": "/llm/evaluations"
  },
  {
@@ -1084,6 +1246,36 @@
   "section": "GPU Monitoring",
   "label": "GPU Monitoring",
   "href": "/gpu-monitoring"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "GPU Monitoring",
+  "label": "Summary",
+  "href": "/gpu-monitoring?mPage=summary&mView=nvidia"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "GPU Monitoring",
+  "label": "Explorer",
+  "href": "/gpu-monitoring?mPage=fleet&mView=nvidia"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "GPU Monitoring",
+  "label": "Capacity Planning",
+  "href": "/gpu-monitoring?mPage=capacity-planning&mView=nvidia"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "GPU Monitoring",
+  "label": "Training",
+  "href": "/gpu-monitoring?mPage=training&mView=nvidia"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "GPU Monitoring",
+  "label": "Inference",
+  "href": "/gpu-monitoring?mPage=inference-monitoring&mView=nvidia"
  },
  {
   "menu": "AI Observability",
@@ -1128,6 +1320,12 @@
   "href": "/metric/volume?sort=-volume_total"
  },
  {
+  "menu": "Metrics",
+  "section": "Metrics",
+  "label": "Derived Metrics",
+  "href": "/metric/derived-metrics"
+ },
+ {
   "menu": "Logs",
   "section": "Search & Analytics",
   "label": "Search & Analytics",
@@ -1153,6 +1351,12 @@
  },
  {
   "menu": "Logs",
+  "section": "Search & Analytics",
+  "label": "Notebooks",
+  "href": "/notebook/list"
+ },
+ {
+  "menu": "Logs",
   "section": "Log Configuration",
   "label": "Log Configuration",
   "href": "/logs/pipelines"
@@ -1162,6 +1366,18 @@
   "section": "Log Configuration",
   "label": "Pipelines",
   "href": "/logs/pipelines"
+ },
+ {
+  "menu": "Logs",
+  "section": "Log Configuration",
+  "label": "Indexes",
+  "href": "/logs/indexes"
+ },
+ {
+  "menu": "Logs",
+  "section": "Log Configuration",
+  "label": "Flex Logs Controls",
+  "href": "/logs/flex-logs-controls"
  },
  {
   "menu": "Logs",
@@ -1186,6 +1402,12 @@
   "section": "Log Configuration",
   "label": "Data Access",
   "href": "/logs/data-access"
+ },
+ {
+  "menu": "Logs",
+  "section": "Log Configuration",
+  "label": "Migration",
+  "href": "/logs/batch-migration"
  },
  {
   "menu": "Logs",
@@ -1222,6 +1444,12 @@
   "section": "Marketplace",
   "label": "Marketplace",
   "href": "/marketplace"
+ },
+ {
+  "menu": "Integrations",
+  "section": "Reference Tables",
+  "label": "Reference Tables",
+  "href": "/reference-tables"
  },
  {
   "menu": "Integrations",
@@ -1267,92 +1495,38 @@
  },
  {
   "menu": "User menu",
-  "section": "Personal Settings",
-  "label": "Personal Settings",
-  "href": "/personal-settings"
- },
- {
-  "menu": "User menu",
-  "section": "Personal Settings",
+  "section": "Account",
   "label": "My Profile",
   "href": "/personal-settings/profile"
  },
  {
   "menu": "User menu",
-  "section": "Personal Settings",
-  "label": "My Preferences",
-  "href": "/personal-settings/preferences"
- },
- {
-  "menu": "User menu",
-  "section": "Personal Settings",
-  "label": "My Organizations",
-  "href": "/personal-settings/organizations"
- },
- {
-  "menu": "User menu",
-  "section": "Personal Settings",
-  "label": "My Access Tokens",
-  "href": "/personal-settings/access-tokens"
- },
- {
-  "menu": "User menu",
-  "section": "Organization Settings",
+  "section": "Account",
   "label": "Organization Settings",
   "href": "/organization-settings"
  },
  {
   "menu": "User menu",
-  "section": "Organization Settings",
+  "section": "Account",
   "label": "Plan & Usage",
   "href": "/billing"
  },
  {
   "menu": "User menu",
-  "section": "Organization Settings",
-  "label": "Users",
-  "href": "/organization-settings/users"
- },
- {
-  "menu": "User menu",
-  "section": "Organization Settings",
-  "label": "Teams",
-  "href": "/organization-settings/teams"
- },
- {
-  "menu": "User menu",
-  "section": "Organization Settings",
-  "label": "Roles",
-  "href": "/organization-settings/roles"
- },
- {
-  "menu": "User menu",
-  "section": "Organization Settings",
-  "label": "Service Accounts",
-  "href": "/organization-settings/service-accounts"
- },
- {
-  "menu": "User menu",
-  "section": "Organization Settings",
-  "label": "API Keys",
-  "href": "/organization-settings/api-keys"
- },
- {
-  "menu": "User menu",
-  "section": "Organization Settings",
-  "label": "Access Tokens",
-  "href": "/organization-settings/access-tokens"
- },
- {
-  "menu": "User menu",
-  "section": "Organization Settings",
+  "section": "Account",
   "label": "Audit Trail",
   "href": "/audit-trail"
  },
  {
   "menu": "User menu",
-  "section": "Organization Settings",
+  "section": "Account",
   "label": "Sensitive Data Scanner",
   "href": "/sensitive-data-scanner/configuration/telemetry"
+ },
+ {
+  "menu": "User menu",
+  "section": "Account",
+  "label": "Integrations",
+  "href": "/integrations"
  }
 ]
