@@ -1,0 +1,1352 @@
+[
+ {
+  "menu": "Bits AI",
+  "section": "Bits Investigation",
+  "label": "Bits Investigation",
+  "href": "/bits-ai/investigations?from-top-level-nav=true"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Investigation",
+  "label": "New Investigation",
+  "href": "/bits-ai/investigations/new"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Investigation",
+  "label": "Investigations List",
+  "href": "/bits-ai/investigations"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Investigation",
+  "label": "Reports",
+  "href": "/bits-ai/reports"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Investigation",
+  "label": "Settings",
+  "href": "/bits-ai/settings"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Investigation",
+  "label": "Monitors",
+  "href": "/bits-ai/monitors"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Code",
+  "label": "Bits Code",
+  "href": "/code"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Code",
+  "label": "Sessions",
+  "href": "/code"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Code",
+  "label": "Automationspreview",
+  "href": "/code/automations"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Code",
+  "label": "Usage",
+  "href": "/code/usage"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Code",
+  "label": "Settings",
+  "href": "/code/settings"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Security Analyst",
+  "label": "Bits Security Analyst",
+  "href": "/security/bits-ai-security-analyst/intro"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Bits Agent Builder",
+  "label": "Bits Agent Builder",
+  "href": "/actions/agents"
+ },
+ {
+  "menu": "Bits AI",
+  "section": "Usage",
+  "label": "Usage",
+  "href": "/llm/ai-agents-console/datadog-agents"
+ },
+ {
+  "menu": "Dashboards",
+  "section": "Dashboards",
+  "label": "Dashboards",
+  "href": "/dashboard/lists"
+ },
+ {
+  "menu": "Dashboards",
+  "section": "Dashboards",
+  "label": "Dashboard List",
+  "href": "/dashboard/lists"
+ },
+ {
+  "menu": "Dashboards",
+  "section": "Notebooks",
+  "label": "Notebooks",
+  "href": "/notebook/list"
+ },
+ {
+  "menu": "Dashboards",
+  "section": "Notebooks",
+  "label": "Notebooks List",
+  "href": "/notebook/list"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Monitors",
+  "label": "Monitors",
+  "href": "/monitors/manage"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Monitors",
+  "label": "Monitor List",
+  "href": "/monitors/manage"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Monitors",
+  "label": "Settings",
+  "href": "/monitors/settings"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Monitors",
+  "label": "Triggered",
+  "href": "/monitors/triggered"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Monitors",
+  "label": "Downtimes",
+  "href": "/monitors/downtimes"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Monitors",
+  "label": "Quality",
+  "href": "/monitors/quality"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "SLOs",
+  "label": "SLOs",
+  "href": "/slo/manage"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Check Summary",
+  "label": "Check Summary",
+  "href": "/check/summary"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Event Management",
+  "label": "Event Management",
+  "href": "/event/correlation"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Event Management",
+  "label": "Triage Inbox",
+  "href": "/event/correlation"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Event Management",
+  "label": "Settings",
+  "href": "/event/settings"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Event Management",
+  "label": "All Events",
+  "href": "/event/explorer"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "Watchdog",
+  "label": "Watchdog",
+  "href": "/watchdog"
+ },
+ {
+  "menu": "Monitoring",
+  "section": "External Provider Status",
+  "label": "External Provider Status",
+  "href": "/watchdog/external-provider-status"
+ },
+ {
+  "menu": "Developer Portal",
+  "section": "Internal Developer Portal",
+  "label": "Internal Developer Portal",
+  "href": "/idp/home"
+ },
+ {
+  "menu": "Developer Portal",
+  "section": "Internal Developer Portal",
+  "label": "Catalog",
+  "href": "/software?lens=Ownership"
+ },
+ {
+  "menu": "Developer Portal",
+  "section": "Internal Developer Portal",
+  "label": "Settings",
+  "href": "/software/settings/entity-management"
+ },
+ {
+  "menu": "Developer Portal",
+  "section": "Internal Developer Portal",
+  "label": "Scorecards",
+  "href": "/software/scorecards"
+ },
+ {
+  "menu": "Developer Portal",
+  "section": "Internal Developer Portal",
+  "label": "Reports",
+  "href": "/idp/reports"
+ },
+ {
+  "menu": "Developer Portal",
+  "section": "Internal Developer Portal",
+  "label": "Surveys",
+  "href": "/idp/surveys"
+ },
+ {
+  "menu": "Developer Portal",
+  "section": "Internal Developer Portal",
+  "label": "Actions",
+  "href": "/software/self-service-actions"
+ },
+ {
+  "menu": "Incident Response",
+  "section": "On-Call",
+  "label": "On-Call",
+  "href": "/on-call"
+ },
+ {
+  "menu": "Incident Response",
+  "section": "On-Call",
+  "label": "Teams",
+  "href": "/on-call/teams"
+ },
+ {
+  "menu": "Incident Response",
+  "section": "On-Call",
+  "label": "Pages",
+  "href": "/on-call/pages"
+ },
+ {
+  "menu": "Incident Response",
+  "section": "On-Call",
+  "label": "Profile",
+  "href": "/personal-settings/profile?tab=on-call-notifications"
+ },
+ {
+  "menu": "Incident Response",
+  "section": "On-Call",
+  "label": "Settings",
+  "href": "/on-call/settings"
+ },
+ {
+  "menu": "Incident Response",
+  "section": "Incident Management",
+  "label": "Incident Management",
+  "href": "/incidents"
+ },
+ {
+  "menu": "Incident Response",
+  "section": "Incident Management",
+  "label": "Incident List",
+  "href": "/incidents"
+ },
+ {
+  "menu": "Incident Response",
+  "section": "Status Pages",
+  "label": "Status Pages",
+  "href": "/status-pages"
+ },
+ {
+  "menu": "Automation",
+  "section": "Actions",
+  "label": "Actions",
+  "href": "/actions"
+ },
+ {
+  "menu": "Automation",
+  "section": "Actions",
+  "label": "Bits Agent Builder",
+  "href": "/actions/agents"
+ },
+ {
+  "menu": "Automation",
+  "section": "Actions",
+  "label": "Forms",
+  "href": "/forms"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Resources",
+  "label": "Resources",
+  "href": "/software?selectedComponent=infrastructure"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Resources",
+  "label": "Catalog",
+  "href": "/software?selectedComponent=infrastructure"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Resources",
+  "label": "Cloudcraft",
+  "href": "/cloud-maps"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Resources",
+  "label": "Policiespreview",
+  "href": "/infrastructure/catalog/governance"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Resources",
+  "label": "Add Resources",
+  "href": "/infrastructure/catalog/configuration"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Resources",
+  "label": "Changespreview",
+  "href": "/infrastructure/catalog/changes"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Universal Service Monitoring",
+  "label": "Universal Service Monitoring",
+  "href": "/software?lens=Performance&query=telemetry:universal_service_monitoring"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Hosts",
+  "label": "Hosts",
+  "href": "/infrastructure"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Hosts",
+  "label": "Host Map",
+  "href": "/infrastructure/map"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Hosts",
+  "label": "GPU Monitoring",
+  "href": "/gpu-monitoring"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Containers",
+  "label": "Containers",
+  "href": "/containers"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Containers",
+  "label": "Kubernetes Overview",
+  "href": "/kubernetes"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Containers",
+  "label": "Kubernetes Explorer",
+  "href": "/orchestration/explorer"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Containers",
+  "label": "Kubernetes Autoscaling",
+  "href": "/orchestration/scaling/summary"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Containers",
+  "label": "Container Images",
+  "href": "/container-images"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Containers",
+  "label": "ECS Explorer",
+  "href": "/orchestration/explorer/ecsTask"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Processes",
+  "label": "Processes",
+  "href": "/process"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Serverless",
+  "label": "Serverless",
+  "href": "/serverless"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Cloud Network",
+  "label": "Cloud Network",
+  "href": "/network/health"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Cloud Network",
+  "label": "Analytics",
+  "href": "/network"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Cloud Network",
+  "label": "Network Map",
+  "href": "/network/map"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Network Devices",
+  "label": "Network Devices",
+  "href": "/devices"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Network Devices",
+  "label": "Device Geomap",
+  "href": "/devices/maps/geomap"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Network Devices",
+  "label": "Settings",
+  "href": "/devices/settings/profiles"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Network Devices",
+  "label": "Device Topology Map",
+  "href": "/devices/maps/topology"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Network Devices",
+  "label": "NetFlow",
+  "href": "/devices/netflow"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Network Path",
+  "label": "Network Path",
+  "href": "/network-path"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "Storage Management",
+  "label": "Storage Management",
+  "href": "/storage-management"
+ },
+ {
+  "menu": "Infrastructure",
+  "section": "End User Devicespreview",
+  "label": "End User Devicespreview",
+  "href": "/end-user-devices"
+ },
+ {
+  "menu": "APM",
+  "section": "Application Performance Monitoring",
+  "label": "Application Performance Monitoring",
+  "href": "/apm/home"
+ },
+ {
+  "menu": "APM",
+  "section": "Application Performance Monitoring",
+  "label": "Services",
+  "href": "/software"
+ },
+ {
+  "menu": "APM",
+  "section": "Application Performance Monitoring",
+  "label": "Endpoints",
+  "href": "/software?selectedComponent=endpoint"
+ },
+ {
+  "menu": "APM",
+  "section": "Application Performance Monitoring",
+  "label": "Instrument a Service",
+  "href": "/apm/service-setup"
+ },
+ {
+  "menu": "APM",
+  "section": "Application Performance Monitoring",
+  "label": "Settings",
+  "href": "/apm/settings"
+ },
+ {
+  "menu": "APM",
+  "section": "Application Performance Monitoring",
+  "label": "Traces",
+  "href": "/apm/traces"
+ },
+ {
+  "menu": "APM",
+  "section": "Application Performance Monitoring",
+  "label": "Recommendations",
+  "href": "/apm/recommendations"
+ },
+ {
+  "menu": "APM",
+  "section": "Profiles",
+  "label": "Profiles",
+  "href": "/profiling/overview"
+ },
+ {
+  "menu": "APM",
+  "section": "Profiles",
+  "label": "Explorer",
+  "href": "/profiling/explorer?viz=flame_graph"
+ },
+ {
+  "menu": "APM",
+  "section": "Profiles",
+  "label": "Comparison",
+  "href": "/profiling/comparison"
+ },
+ {
+  "menu": "APM",
+  "section": "Profiles",
+  "label": "Insights",
+  "href": "/profiling/insights"
+ },
+ {
+  "menu": "APM",
+  "section": "Live Debuggerpreview",
+  "label": "Live Debuggerpreview",
+  "href": "/debugging"
+ },
+ {
+  "menu": "APM",
+  "section": "Live Debuggerpreview",
+  "label": "Sessions List",
+  "href": "/debugging/sessions"
+ },
+ {
+  "menu": "APM",
+  "section": "Live Debuggerpreview",
+  "label": "Settings",
+  "href": "/debugging/settings"
+ },
+ {
+  "menu": "APM",
+  "section": "Dynamic Instrumentation",
+  "label": "Dynamic Instrumentation",
+  "href": "/dynamic-instrumentation"
+ },
+ {
+  "menu": "APM",
+  "section": "Database Monitoring",
+  "label": "Database Monitoring",
+  "href": "/databases/getting-started"
+ },
+ {
+  "menu": "APM",
+  "section": "Data Streams Monitoring",
+  "label": "Data Streams Monitoring",
+  "href": "/data-streams"
+ },
+ {
+  "menu": "APM",
+  "section": "Data Jobs Monitoring",
+  "label": "Data Jobs Monitoring",
+  "href": "/data-obs/jobs"
+ },
+ {
+  "menu": "APM",
+  "section": "Sensitive Data Scanner",
+  "label": "Sensitive Data Scanner",
+  "href": "/sensitive-data-scanner/coverage?source=apm"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Real User Monitoring",
+  "label": "Real User Monitoring",
+  "href": "/rum/performance-monitoring"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Real User Monitoring",
+  "label": "Summary",
+  "href": "/rum/performance-monitoring"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Real User Monitoring",
+  "label": "Operationspreview",
+  "href": "/rum/operation-catalog"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Real User Monitoring",
+  "label": "Investigate",
+  "href": "/rum/optimization"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Real User Monitoring",
+  "label": "Manage Applications",
+  "href": "/rum/list"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Real User Monitoring",
+  "label": "Generate Metrics",
+  "href": "/rum/generate-metrics"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Real User Monitoring",
+  "label": "Sensitive Data Scanner",
+  "href": "/sensitive-data-scanner?source=rum-navigation"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Real User Monitoring",
+  "label": "Explore",
+  "href": "/rum/sessions"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Session Replay",
+  "label": "Session Replay",
+  "href": "/rum/replay/search"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Session Replay",
+  "label": "Recordings",
+  "href": "/rum/replay/search"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Session Replay",
+  "label": "Playlists",
+  "href": "/rum/replay/playlists"
+ },
+ {
+  "menu": "Digital Experience",
+  "section": "Product Analytics",
+  "label": "Product Analytics",
+  "href": "/product-analytics"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "CI Visibility",
+  "label": "CI Visibility",
+  "href": "/ci/pipelines/health"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "CI Visibility",
+  "label": "CI Health",
+  "href": "/ci/pipelines/health"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "CI Visibility",
+  "label": "CI Pipeline List",
+  "href": "/ci/pipelines"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "CI Visibility",
+  "label": "Add a Pipeline Provider",
+  "href": "/ci/setup/pipeline"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "CI Visibility",
+  "label": "Settings",
+  "href": "/ci/settings/visibility"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "CI Visibility",
+  "label": "Executions",
+  "href": "/ci/pipeline-executions"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Feature Flags",
+  "label": "Feature Flags",
+  "href": "/feature-flags"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Feature Flags",
+  "label": "Feature Flags",
+  "href": "/feature-flags"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Feature Flags",
+  "label": "Environments",
+  "href": "/feature-flags/settings/environments"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Intro to Code Coverage",
+  "label": "Intro to Code Coverage",
+  "href": "/ci/code-coverage/getting-started"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Code Security",
+  "label": "Code Security",
+  "href": "/security/code-security/summary"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Code Security",
+  "label": "Vulnerabilities",
+  "href": "/security/code-security"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Code Security",
+  "label": "Repositories",
+  "href": "/security/code-security/repositories"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Code Security",
+  "label": "Repository Settings",
+  "href": "/security/configuration/code-security/settings"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Code Security",
+  "label": "Setup",
+  "href": "/security/configuration/code-security/setup"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "PR Gates",
+  "label": "PR Gates",
+  "href": "/ci/pr-gates"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Delivery Performance",
+  "label": "Delivery Performance",
+  "href": "/ci/dora"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Delivery Performance",
+  "label": "DORA Metrics",
+  "href": "/ci/dora"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Delivery Performance",
+  "label": "Settings",
+  "href": "/ci/settings/dora"
+ },
+ {
+  "menu": "Software Delivery",
+  "section": "Delivery Performance",
+  "label": "AI Impactpreview",
+  "href": "/ci/dora/ai-impact"
+ },
+ {
+  "menu": "Security",
+  "section": "Security",
+  "label": "Security",
+  "href": "/security/overview"
+ },
+ {
+  "menu": "Security",
+  "section": "Security",
+  "label": "Inbox",
+  "href": "/security/issues"
+ },
+ {
+  "menu": "Security",
+  "section": "Security",
+  "label": "Signals",
+  "href": "/security/signals"
+ },
+ {
+  "menu": "Security",
+  "section": "Security",
+  "label": "Research Feed",
+  "href": "/security/feed"
+ },
+ {
+  "menu": "Security",
+  "section": "Security",
+  "label": "Settings",
+  "href": "/security/configuration"
+ },
+ {
+  "menu": "Security",
+  "section": "Cloud SIEM",
+  "label": "Cloud SIEM",
+  "href": "/security/siem/home"
+ },
+ {
+  "menu": "Security",
+  "section": "Cloud SIEM",
+  "label": "Content Packs",
+  "href": "/security/siem/content-packs"
+ },
+ {
+  "menu": "Security",
+  "section": "Cloud SIEM",
+  "label": "Signals",
+  "href": "/security/siem/signals"
+ },
+ {
+  "menu": "Security",
+  "section": "Cloud SIEM",
+  "label": "Detection Rules",
+  "href": "/security/siem/rules"
+ },
+ {
+  "menu": "Security",
+  "section": "Cloud SIEM",
+  "label": "Settings",
+  "href": "/security/configuration/siem/setup"
+ },
+ {
+  "menu": "Security",
+  "section": "Code Security",
+  "label": "Code Security",
+  "href": "/security/code-security/summary"
+ },
+ {
+  "menu": "Security",
+  "section": "Code Security",
+  "label": "Vulnerabilities",
+  "href": "/security/code-security"
+ },
+ {
+  "menu": "Security",
+  "section": "Code Security",
+  "label": "Repositories",
+  "href": "/security/code-security/repositories"
+ },
+ {
+  "menu": "Security",
+  "section": "Code Security",
+  "label": "Repository Settings",
+  "href": "/security/configuration/code-security/settings"
+ },
+ {
+  "menu": "Security",
+  "section": "Code Security",
+  "label": "Setup",
+  "href": "/security/configuration/code-security/setup"
+ },
+ {
+  "menu": "Security",
+  "section": "Cloud Security",
+  "label": "Cloud Security",
+  "href": "/security/csm"
+ },
+ {
+  "menu": "Security",
+  "section": "Cloud Security",
+  "label": "Misconfigurations",
+  "href": "/security/csm/misconfigurations-and-attack-paths?query=%40finding_type%3A%28misconfiguration%20OR%20identity_risk%20OR%20attack_path%29%20-%40_dd.is_detected_by_shadow_rule%3Atrue%20%40finding_type%3Amisconfiguration%20%40compliance.evaluation%3Afail%20%40status%3Aopen"
+ },
+ {
+  "menu": "Security",
+  "section": "Cloud Security",
+  "label": "Compliance",
+  "href": "/security/compliance/home"
+ },
+ {
+  "menu": "Security",
+  "section": "Cloud Security",
+  "label": "Vulnerabilities",
+  "href": "/security/csm/vm?query=-%40risk.is_image_running%3Afalse%20%40status%3Aopen%20%40risk.has_exploit_available%3Atrue%20%40remediation.is_available%3Atrue%20%40severity%3A%28high%20OR%20critical%29&group=vulnerability"
+ },
+ {
+  "menu": "Security",
+  "section": "Cloud Security",
+  "label": "Settings",
+  "href": "/security/configuration/csm/setup"
+ },
+ {
+  "menu": "Security",
+  "section": "App & API Protection",
+  "label": "App & API Protection",
+  "href": "/security/appsec"
+ },
+ {
+  "menu": "Security",
+  "section": "App & API Protection",
+  "label": "API Inventory",
+  "href": "/security/appsec/inventory/apis"
+ },
+ {
+  "menu": "Security",
+  "section": "App & API Protection",
+  "label": "Signals",
+  "href": "/security/appsec/signals"
+ },
+ {
+  "menu": "Security",
+  "section": "App & API Protection",
+  "label": "Policies",
+  "href": "/security/appsec/policies/in-app-waf"
+ },
+ {
+  "menu": "Security",
+  "section": "App & API Protection",
+  "label": "Settings",
+  "href": "/security/configuration/asm/setup?services=recommended"
+ },
+ {
+  "menu": "Security",
+  "section": "Workload Protection",
+  "label": "Workload Protection",
+  "href": "/security/workload-protection/overview"
+ },
+ {
+  "menu": "Security",
+  "section": "Workload Protection",
+  "label": "Investigate",
+  "href": "/security/workload-protection/agent-events"
+ },
+ {
+  "menu": "Security",
+  "section": "Workload Protection",
+  "label": "Signals",
+  "href": "/security/workload-protection/signals"
+ },
+ {
+  "menu": "Security",
+  "section": "Workload Protection",
+  "label": "Policies",
+  "href": "/security/workload-protection/policies"
+ },
+ {
+  "menu": "Security",
+  "section": "Workload Protection",
+  "label": "Settings",
+  "href": "/security/configuration/workload/setup"
+ },
+ {
+  "menu": "Security",
+  "section": "Sensitive Data Scanner",
+  "label": "Sensitive Data Scanner",
+  "href": "/sensitive-data-scanner?source=security-navigation"
+ },
+ {
+  "menu": "Security",
+  "section": "Sensitive Data Scanner",
+  "label": "Findings",
+  "href": "/sensitive-data-scanner/findings"
+ },
+ {
+  "menu": "Security",
+  "section": "Sensitive Data Scanner",
+  "label": "Settings",
+  "href": "/sensitive-data-scanner/configuration/telemetry"
+ },
+ {
+  "menu": "Security",
+  "section": "AI Guard",
+  "label": "AI Guard",
+  "href": "/security/ai-guard"
+ },
+ {
+  "menu": "Data Observability",
+  "section": "Data Observability",
+  "label": "Data Observability",
+  "href": "/data-obs/catalog"
+ },
+ {
+  "menu": "Data Observability",
+  "section": "Data Observability",
+  "label": "Catalog",
+  "href": "/data-obs/catalog"
+ },
+ {
+  "menu": "Data Observability",
+  "section": "Data Observability",
+  "label": "Settings",
+  "href": "/data-obs/settings"
+ },
+ {
+  "menu": "Data Observability",
+  "section": "Quality Monitoring",
+  "label": "Quality Monitoring",
+  "href": "/data-obs/monitors"
+ },
+ {
+  "menu": "Data Observability",
+  "section": "Quality Monitoring",
+  "label": "Monitors",
+  "href": "/data-obs/monitors"
+ },
+ {
+  "menu": "Data Observability",
+  "section": "Jobs Monitoring",
+  "label": "Jobs Monitoring",
+  "href": "/data-obs/jobs"
+ },
+ {
+  "menu": "Data Observability",
+  "section": "Jobs Monitoring",
+  "label": "Jobs",
+  "href": "/data-obs/jobs"
+ },
+ {
+  "menu": "Data Observability",
+  "section": "Jobs Monitoring",
+  "label": "Queriespreview",
+  "href": "/data-obs/queries"
+ },
+ {
+  "menu": "Data Observability",
+  "section": "Lineage",
+  "label": "Lineage",
+  "href": "/data-obs/lineage"
+ },
+ {
+  "menu": "Data Observability",
+  "section": "CI/CDpreview",
+  "label": "CI/CDpreview",
+  "href": "/data-obs/ci-cd"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "Agent Observability",
+  "label": "Agent Observability",
+  "href": "/llm"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "Agent Observability",
+  "label": "Overview",
+  "href": "/llm/applications"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "Agent Observability",
+  "label": "Traces",
+  "href": "/llm/traces"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "Agent Observability",
+  "label": "Evaluations",
+  "href": "/llm/evaluations"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "Agent Observability",
+  "label": "Experiments",
+  "href": "/llm/experiments"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "GPU Monitoring",
+  "label": "GPU Monitoring",
+  "href": "/gpu-monitoring"
+ },
+ {
+  "menu": "AI Observability",
+  "section": "Agent Consolepreview",
+  "label": "Agent Consolepreview",
+  "href": "/llm/ai-agents-console"
+ },
+ {
+  "menu": "Errors",
+  "section": null,
+  "label": "Errors",
+  "href": "/error-tracking"
+ },
+ {
+  "menu": "Metrics",
+  "section": "Metrics",
+  "label": "Metrics",
+  "href": "/metric/overview"
+ },
+ {
+  "menu": "Metrics",
+  "section": "Metrics",
+  "label": "Explorer",
+  "href": "/metric/explorer"
+ },
+ {
+  "menu": "Metrics",
+  "section": "Metrics",
+  "label": "Settingspreview",
+  "href": "/metric/settings"
+ },
+ {
+  "menu": "Metrics",
+  "section": "Metrics",
+  "label": "Summary",
+  "href": "/metric/summary"
+ },
+ {
+  "menu": "Metrics",
+  "section": "Metrics",
+  "label": "Volume",
+  "href": "/metric/volume?sort=-volume_total"
+ },
+ {
+  "menu": "Logs",
+  "section": "Search & Analytics",
+  "label": "Search & Analytics",
+  "href": "/logs"
+ },
+ {
+  "menu": "Logs",
+  "section": "Search & Analytics",
+  "label": "Explorer",
+  "href": "/logs"
+ },
+ {
+  "menu": "Logs",
+  "section": "Search & Analytics",
+  "label": "Archive Search",
+  "href": "/logs/archive-search"
+ },
+ {
+  "menu": "Logs",
+  "section": "Search & Analytics",
+  "label": "Live Tail",
+  "href": "/logs/livetail"
+ },
+ {
+  "menu": "Logs",
+  "section": "Log Configuration",
+  "label": "Log Configuration",
+  "href": "/logs/pipelines"
+ },
+ {
+  "menu": "Logs",
+  "section": "Log Configuration",
+  "label": "Pipelines",
+  "href": "/logs/pipelines"
+ },
+ {
+  "menu": "Logs",
+  "section": "Log Configuration",
+  "label": "Archiving & Forwarding",
+  "href": "/logs/forwarding"
+ },
+ {
+  "menu": "Logs",
+  "section": "Log Configuration",
+  "label": "Add a Log Source",
+  "href": "/logs/onboarding"
+ },
+ {
+  "menu": "Logs",
+  "section": "Log Configuration",
+  "label": "Generate Metrics",
+  "href": "/logs/metrics"
+ },
+ {
+  "menu": "Logs",
+  "section": "Log Configuration",
+  "label": "Data Access",
+  "href": "/logs/data-access"
+ },
+ {
+  "menu": "Logs",
+  "section": "Observability Pipelines",
+  "label": "Observability Pipelines",
+  "href": "/observability-pipelines"
+ },
+ {
+  "menu": "Logs",
+  "section": "Observability Pipelines",
+  "label": "Volume Control Packs",
+  "href": "/observability-pipelines?tab=packs"
+ },
+ {
+  "menu": "Logs",
+  "section": "Observability Pipelines",
+  "label": "New Pipeline",
+  "href": "/observability-pipelines?tab=pipelines"
+ },
+ {
+  "menu": "Logs",
+  "section": "Sensitive Data Scanner",
+  "label": "Sensitive Data Scanner",
+  "href": "/sensitive-data-scanner?source=logs-navigation"
+ },
+ {
+  "menu": "Integrations",
+  "section": "Integrations",
+  "label": "Integrations",
+  "href": "/integrations"
+ },
+ {
+  "menu": "Integrations",
+  "section": "Marketplace",
+  "label": "Marketplace",
+  "href": "/marketplace"
+ },
+ {
+  "menu": "Integrations",
+  "section": "Source Code Integration",
+  "label": "Source Code Integration",
+  "href": "/source-code"
+ },
+ {
+  "menu": "Integrations",
+  "section": "Fleet Automation",
+  "label": "Fleet Automation",
+  "href": "/fleet"
+ },
+ {
+  "menu": "Integrations",
+  "section": "Fleet Automation",
+  "label": "Fleet View",
+  "href": "/fleet"
+ },
+ {
+  "menu": "Integrations",
+  "section": "Fleet Automation",
+  "label": "Install Agents",
+  "href": "/fleet/install-agent/latest?platform=overview"
+ },
+ {
+  "menu": "Integrations",
+  "section": "Fleet Automation",
+  "label": "Configuration",
+  "href": "/fleet/agent-management"
+ },
+ {
+  "menu": "Integrations",
+  "section": "Fleet Automation",
+  "label": "Upgrades",
+  "href": "/fleet/agent-upgrades"
+ },
+ {
+  "menu": "Integrations",
+  "section": "IDE Plugins",
+  "label": "IDE Plugins",
+  "href": "/ide-integrations/intro"
+ },
+ {
+  "menu": "User menu",
+  "section": "Personal Settings",
+  "label": "Personal Settings",
+  "href": "/personal-settings"
+ },
+ {
+  "menu": "User menu",
+  "section": "Personal Settings",
+  "label": "My Profile",
+  "href": "/personal-settings/profile"
+ },
+ {
+  "menu": "User menu",
+  "section": "Personal Settings",
+  "label": "My Preferences",
+  "href": "/personal-settings/preferences"
+ },
+ {
+  "menu": "User menu",
+  "section": "Personal Settings",
+  "label": "My Organizations",
+  "href": "/personal-settings/organizations"
+ },
+ {
+  "menu": "User menu",
+  "section": "Personal Settings",
+  "label": "My Access Tokens",
+  "href": "/personal-settings/access-tokens"
+ },
+ {
+  "menu": "User menu",
+  "section": "Organization Settings",
+  "label": "Organization Settings",
+  "href": "/organization-settings"
+ },
+ {
+  "menu": "User menu",
+  "section": "Organization Settings",
+  "label": "Plan & Usage",
+  "href": "/billing"
+ },
+ {
+  "menu": "User menu",
+  "section": "Organization Settings",
+  "label": "Users",
+  "href": "/organization-settings/users"
+ },
+ {
+  "menu": "User menu",
+  "section": "Organization Settings",
+  "label": "Teams",
+  "href": "/organization-settings/teams"
+ },
+ {
+  "menu": "User menu",
+  "section": "Organization Settings",
+  "label": "Roles",
+  "href": "/organization-settings/roles"
+ },
+ {
+  "menu": "User menu",
+  "section": "Organization Settings",
+  "label": "Service Accounts",
+  "href": "/organization-settings/service-accounts"
+ },
+ {
+  "menu": "User menu",
+  "section": "Organization Settings",
+  "label": "API Keys",
+  "href": "/organization-settings/api-keys"
+ },
+ {
+  "menu": "User menu",
+  "section": "Organization Settings",
+  "label": "Access Tokens",
+  "href": "/organization-settings/access-tokens"
+ },
+ {
+  "menu": "User menu",
+  "section": "Organization Settings",
+  "label": "Audit Trail",
+  "href": "/audit-trail"
+ },
+ {
+  "menu": "User menu",
+  "section": "Organization Settings",
+  "label": "Sensitive Data Scanner",
+  "href": "/sensitive-data-scanner/configuration/telemetry"
+ }
+]

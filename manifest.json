@@ -38,6 +38,7 @@
         "*://*.ddog-gov.com/*"
       ],
       "js": [
+        "shared/menu-definitions.js",
         "content/content.js"
       ],
       "css": [

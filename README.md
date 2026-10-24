@@ -57,6 +57,17 @@
 - If permission detection fails, nothing is forced: menus stay unfiltered rather than guessing.
 - The command palette only lists menus allowed by the active mode.
 
+### Menu ↔ permission mapping
+
+All definitions live in [`shared/menu-definitions.js`](shared/menu-definitions.js):
+
+- Each navbar link is matched by its **URL** (longest path prefix wins: `/logs/archive-search` → *Log Archives*, `/logs` → *Logs*). Link text is never used.
+- A menu is allowed when the user has **at least one** of its permissions. Names are exact; a trailing `*` is a prefix (`logs_*` matches `logs_read_data`, not `audit_logs_read`).
+- Menus with `permissions: null` (Data Observability, Personal/Organization Settings, Marketplace) have no dedicated RBAC permission and are never hidden.
+- When every link of a navbar section or top-level entry is hidden, the section or entry is hidden too.
+
+Datadog's own navbar already hides a few entries itself (for example *Monitoring* without `monitors_read`, *SLOs* without `slos_read`, *Dashboards* without `dashboards_read`, *Notebooks* without `notebooks_read`, *APM Traces* without `apm_read`). Most other entries are only gated by feature flags, which is what this extension complements.
+
 ---
 
 ## 📂 Project Structure
@@ -71,13 +82,18 @@ datadog-smart-menu/
 │   ├── content.js           # DOM injection in Datadog + permission detection + Palette (Ctrl+M)
 │   └── content.css          # Filtering and modal styles
 ├── shared/
-│   └── profiles.js          # Menu definitions, permission→menu mapping table
+│   ├── menu-definitions.js  # Menus, navbar URLs and permission mapping (single source of truth)
+│   └── profiles.js          # ES module re-export + default settings
 ├── popup/
 │   ├── popup.html           # Toolbar popup (status, toggles, admin configuration)
 │   ├── popup.css            # Popup styles & Datadog theme
 │   └── popup.js             # Popup controller with admin gating & role loading
 ├── scripts/
-│   └── build.js             # Build script (copies sources to dist/)
+│   ├── build.js             # Build script (copies sources to dist/)
+│   └── preview-menu.js      # Playwright preview of the filtered navbar for a role
+├── test/
+│   ├── menu-definitions.test.js
+│   └── fixtures/            # Datadog navbar links + official permissions/managed roles
 └── icons/
     ├── icon16.png
     ├── icon48.png
@@ -90,6 +106,14 @@ datadog-smart-menu/
 
 ```bash
 npm run build   # Rebuild dist/ from sources
+npm test        # Check menu/permission mapping against the real navbar links and official permissions
+```
+
+Preview the filtered navbar on a saved Datadog page (*Save page as…* in Chrome), with a managed role or an explicit permission list:
+
+```bash
+npm run preview -- --html datadog.html --role "Datadog Read Only Role" --verbose
+npm run preview -- --html datadog.html --perms logs_read_data,dashboards_read
 ```
 
 Reload the extension in `chrome://extensions/` after each build.

@@ -1,0 +1,2599 @@
+{
+ "source": "https://docs.datadoghq.com/account_management/rbac/permissions/",
+ "retrieved": "2026-10-24",
+ "permissions": [
+  {
+   "group": "API and Application Keys",
+   "name": "user_app_keys",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "API and Application Keys",
+   "name": "org_app_keys_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "API and Application Keys",
+   "name": "org_app_keys_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "API and Application Keys",
+   "name": "api_keys_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "API and Application Keys",
+   "name": "api_keys_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "API and Application Keys",
+   "name": "client_tokens_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "API and Application Keys",
+   "name": "client_tokens_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "API and Application Keys",
+   "name": "api_keys_delete",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_retention_filter_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_retention_filter_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_service_ingest_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_service_ingest_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_apdex_manage_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_tag_management_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_primary_operation_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "APM",
+   "name": "debugger_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "APM",
+   "name": "debugger_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_generate_metrics",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_pipelines_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_pipelines_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_service_catalog_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_service_catalog_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_remote_configuration_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_remote_configuration_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "APM",
+   "name": "continuous_profiler_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "APM",
+   "name": "debugger_capture_variables",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_api_catalog_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_api_catalog_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "APM",
+   "name": "continuous_profiler_pgo_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "APM",
+   "name": "debugger_write_pre_prod",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_service_renaming_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_workload_selection_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_workload_selection_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_recommendations_notification_rules_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "APM",
+   "name": "apm_recommendations_notification_rules_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "user_access_invite",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "user_access_manage",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "service_account_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "org_management",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "org_connections_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "org_connections_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "user_self_profile_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "governance_console_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "user_self_profile_write",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "governance_console_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "org_group_read",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "org_group_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "telemetry_rules_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "telemetry_rules_create",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "telemetry_rules_activate",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "workload_identity_federation_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "workload_identity_federation_read",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "telemetry_quota_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Access Management",
+   "name": "telemetry_quota_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "workflows_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "workflows_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "workflows_run",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "connections_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "connections_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "connections_resolve",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "apps_run",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "apps_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "on_prem_runner_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "on_prem_runner_use",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "on_prem_runner_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "apps_datastore_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "apps_datastore_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "apps_datastore_manage",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "connection_groups_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "connection_groups_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "actions_interface_run",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "apps_form_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "apps_form_manage",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "agent_builder_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "agent_builder_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "agent_builder_run",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "execution_groups_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "execution_groups_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "agent_builder_external_mcp_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "App Builder & Workflow Automation",
+   "name": "agent_builder_external_mcp_resolve",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Application Security",
+   "name": "ai_guard_evaluate",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Application Security",
+   "name": "ai_guard_view",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Application Security",
+   "name": "ai_guard_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Billing and Usage",
+   "name": "billing_read",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Billing and Usage",
+   "name": "billing_edit",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Billing and Usage",
+   "name": "usage_read",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Billing and Usage",
+   "name": "usage_edit",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Billing and Usage",
+   "name": "usage_notifications_read",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Billing and Usage",
+   "name": "usage_notifications_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Bits AI",
+   "name": "bits_investigations_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Bits AI",
+   "name": "bits_investigations_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Bits AI",
+   "name": "assistant_access",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Bits AI",
+   "name": "bits_dev_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Bits AI",
+   "name": "bits_settings_org_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Bits AI",
+   "name": "bits_settings_personal_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Cost Management",
+   "name": "cloud_cost_management_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Cost Management",
+   "name": "cloud_cost_management_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Cost Management",
+   "name": "generate_ccm_report_schedules",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Cost Management",
+   "name": "manage_ccm_report_schedules",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Cloud Cost Management",
+   "name": "ccm_budget_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Cost Management",
+   "name": "ccm_forecast_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Cost Management",
+   "name": "ccm_report_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Network Monitoring",
+   "name": "network_connections_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Network Monitoring",
+   "name": "network_health_insights_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_rules_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_rules_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_signals_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_signals_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_filters_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_filters_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "appsec_event_rule_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "appsec_event_rule_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_notification_profiles_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_notification_profiles_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_cws_agent_rules_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_cws_agent_rules_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "appsec_vm_library_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "appsec_protect_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "appsec_protect_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "appsec_activation_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "appsec_activation_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_findings_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_findings_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "appsec_vm_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_suppressions_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_suppressions_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "appsec_vm_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_pipelines_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_pipelines_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_cws_agent_rules_actions",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_comments_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_comments_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_datasets_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "security_monitoring_datasets_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "bits_security_analyst_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "bits_security_analyst_config_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "siem_entities_read",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "siem_entities_admin",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Cloud Security Platform",
+   "name": "siem_entities_notification",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "CoTerm",
+   "name": "coterm_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "CoTerm",
+   "name": "coterm_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Compliance",
+   "name": "audit_logs_read",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Compliance",
+   "name": "audit_logs_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Compliance",
+   "name": "data_scanner_read",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Compliance",
+   "name": "data_scanner_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Compliance",
+   "name": "data_scanner_unmask",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Containers",
+   "name": "containers_generate_image_metrics",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cross-Product Features",
+   "name": "timeseries_query",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cross-Product Features",
+   "name": "saved_views_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cross-Product Features",
+   "name": "facets_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cross-Product Features",
+   "name": "hosts_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Cross-Product Features",
+   "name": "generate_log_reports",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Cross-Product Features",
+   "name": "manage_log_reports",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "DDSQL Editor",
+   "name": "ddsql_editor_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Dashboards",
+   "name": "dashboards_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Dashboards",
+   "name": "dashboards_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Dashboards",
+   "name": "dashboards_public_share",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Dashboards",
+   "name": "generate_dashboard_reports",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Dashboards",
+   "name": "dashboards_invite_share",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Dashboards",
+   "name": "dashboards_embed_share",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Dashboards",
+   "name": "embeddable_graphs_share",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Dashboards",
+   "name": "product_dashboards_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Data Observability",
+   "name": "data_observability_catalog_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Data Streams Monitoring",
+   "name": "data_streams_monitoring_capture_messages",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Data Streams Monitoring",
+   "name": "data_streams_kafka_produce_message",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Data Streams Monitoring",
+   "name": "data_streams_kafka_create_topic",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Data Streams Monitoring",
+   "name": "data_streams_kafka_delete_topic",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Database Monitoring",
+   "name": "dbm_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Database Monitoring",
+   "name": "dbm_parameterized_queries_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Digital Experience Monitoring",
+   "name": "dem_journey_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Digital Experience Monitoring",
+   "name": "dem_journey_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Disaster Recovery",
+   "name": "disaster_recovery_status_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Disaster Recovery",
+   "name": "disaster_recovery_status_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Error Tracking",
+   "name": "error_tracking_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Error Tracking",
+   "name": "error_tracking_settings_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Error Tracking",
+   "name": "error_tracking_exclusion_filters_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Error Tracking",
+   "name": "error_tracking_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Events",
+   "name": "events_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Events",
+   "name": "event_correlation_config_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Events",
+   "name": "event_correlation_config_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Events",
+   "name": "event_config_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Events",
+   "name": "events_write_pipelines",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Events",
+   "name": "events_write_processors",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Feature Flags",
+   "name": "feature_flag_config_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Feature Flags",
+   "name": "feature_flag_config_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Feature Flags",
+   "name": "feature_flag_environment_config_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Feature Flags",
+   "name": "feature_flag_environment_config_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Feature Flags",
+   "name": "feature_flag_approvals_override",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Fleet Automation",
+   "name": "agent_flare_collection",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Fleet Automation",
+   "name": "agent_upgrade_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Fleet Automation",
+   "name": "fleet_policies_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Infrastructure",
+   "name": "cloudcraft_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Infrastructure",
+   "name": "infrastructure_resource_policies_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Infrastructure",
+   "name": "infrastructure_resource_policies_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Infrastructure",
+   "name": "guardrails_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Infrastructure",
+   "name": "guardrails_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Infrastructure as Code",
+   "name": "terraform_state_file_configurations_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Infrastructure as Code",
+   "name": "terraform_state_file_configurations_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "aws_configurations_manage",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "azure_configurations_manage",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "gcp_configurations_manage",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "manage_integrations",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "integrations_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "oci_configurations_manage",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "aws_configuration_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "azure_configuration_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "gcp_configuration_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "oci_configuration_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "aws_configuration_edit",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "azure_configuration_edit",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "gcp_configuration_edit",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "oci_configuration_edit",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "repo_info_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Integrations",
+   "name": "repo_settings_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "LLM Observability",
+   "name": "llm_observability_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "LLM Observability",
+   "name": "llm_observability_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "LLM Observability",
+   "name": "agent_console_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "LLM Observability",
+   "name": "agent_console_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Live Debugger",
+   "name": "live_debugger_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Live Debugger",
+   "name": "live_debugger_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Live Debugger",
+   "name": "live_debugger_redaction_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_modify_indexes",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_write_exclusion_filters",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_write_pipelines",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_write_processors",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_write_archives",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_generate_metrics",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_read_data",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_read_archives",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_write_historical_view",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_write_facets",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_delete_data",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_write_forwarding_rules",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "flex_logs_config_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_read_workspaces",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_write_workspaces",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_read_config",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Log Management",
+   "name": "logs_write_archive_search",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "MCP",
+   "name": "mcp_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "MCP",
+   "name": "mcp_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Metrics",
+   "name": "metric_tags_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Metrics",
+   "name": "metrics_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Metrics",
+   "name": "host_tags_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Metrics",
+   "name": "metrics_metadata_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Monitors",
+   "name": "monitors_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Monitors",
+   "name": "monitors_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Monitors",
+   "name": "monitors_downtime",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Monitors",
+   "name": "monitor_config_policy_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Monitors",
+   "name": "monitors_draft_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Network Device Monitoring",
+   "name": "ndm_netflow_port_mappings_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Network Device Monitoring",
+   "name": "ndm_device_profiles_view",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Network Device Monitoring",
+   "name": "ndm_device_profiles_edit",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Network Device Monitoring",
+   "name": "ndm_devices_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Network Device Monitoring",
+   "name": "ndm_device_tags_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Network Device Monitoring",
+   "name": "ndm_geomap_locations_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Network Device Monitoring",
+   "name": "ndm_device_config_read",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Network Device Monitoring",
+   "name": "ndm_device_config_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Network Path",
+   "name": "network_path_config_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Network Path",
+   "name": "network_path_config_settings_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Network Path",
+   "name": "network_path_config_settings_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Notebooks",
+   "name": "notebooks_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Notebooks",
+   "name": "notebooks_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Observability Pipelines",
+   "name": "observability_pipelines_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Observability Pipelines",
+   "name": "observability_pipelines_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Observability Pipelines",
+   "name": "observability_pipelines_delete",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Observability Pipelines",
+   "name": "observability_pipelines_deploy",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Observability Pipelines",
+   "name": "observability_pipelines_capture_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Observability Pipelines",
+   "name": "observability_pipelines_capture_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "On-Call",
+   "name": "on_call_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "On-Call",
+   "name": "on_call_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "On-Call",
+   "name": "on_call_page",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "On-Call",
+   "name": "on_call_respond",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "On-Call",
+   "name": "on_call_admin",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Orchestration",
+   "name": "orchestration_custom_resource_definitions_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Orchestration",
+   "name": "orchestration_workload_scaling_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Orchestration",
+   "name": "orchestration_autoscaling_manage",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Processes",
+   "name": "processes_generate_metrics",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Processes",
+   "name": "process_tags_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Processes",
+   "name": "process_tags_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "audience_management_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "audience_management_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "product_analytics_apps_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "product_analytics_saved_widgets_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "product_analytics_saved_widgets_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "product_analytics_settings_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "product_analytics_settings_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "product_analytics_experiments_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "product_analytics_experiments_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "product_analytics_metrics_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "product_analytics_metrics_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "product_analytics_certified_metrics_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Product Analytics",
+   "name": "product_analytics_warehouse_model_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Real User Monitoring",
+   "name": "rum_apps_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Real User Monitoring",
+   "name": "rum_apps_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Real User Monitoring",
+   "name": "rum_session_replay_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Real User Monitoring",
+   "name": "rum_generate_metrics",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Real User Monitoring",
+   "name": "rum_delete_data",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Real User Monitoring",
+   "name": "rum_playlist_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Real User Monitoring",
+   "name": "rum_extend_retention",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Real User Monitoring",
+   "name": "rum_retention_filters_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Real User Monitoring",
+   "name": "rum_retention_filters_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Real User Monitoring",
+   "name": "rum_settings_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Reference Tables",
+   "name": "reference_tables_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Reference Tables",
+   "name": "reference_tables_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Remote Configuration",
+   "name": "remote_configuration_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Security Testing",
+   "name": "security_testing_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Security Testing",
+   "name": "security_testing_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Serverless",
+   "name": "serverless_aws_instrumentation_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Serverless",
+   "name": "serverless_aws_instrumentation_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Service Level Objectives",
+   "name": "slos_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Service Level Objectives",
+   "name": "slos_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Service Level Objectives",
+   "name": "slos_corrections",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Sheets",
+   "name": "sheets_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Sheets",
+   "name": "sheets_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "ci_visibility_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "ci_visibility_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "ci_provider_settings_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "ci_visibility_settings_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "ci_ingestion_control_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "ci_visibility_pipelines_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "quality_gate_rules_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "quality_gate_rules_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "static_analysis_settings_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "static_analysis_settings_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "cd_visibility_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "dora_settings_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "code_analysis_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "quality_gates_evaluations_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "test_optimization_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "test_optimization_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "test_optimization_settings_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "dora_metrics_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "code_coverage_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "dora_metrics_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "deployment_gates_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "deployment_gates_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Software Delivery",
+   "name": "deployment_gates_evaluate",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Status Pages",
+   "name": "status_pages_settings_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Status Pages",
+   "name": "status_pages_settings_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Status Pages",
+   "name": "status_pages_incident_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Status Pages",
+   "name": "status_pages_public_page_publish",
+   "defaultRole": "None"
+  },
+  {
+   "group": "Status Pages",
+   "name": "status_pages_internal_page_publish",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Synthetic Monitoring",
+   "name": "synthetics_private_location_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Synthetic Monitoring",
+   "name": "synthetics_private_location_write",
+   "defaultRole": "Datadog Admin Role"
+  },
+  {
+   "group": "Synthetic Monitoring",
+   "name": "synthetics_global_variable_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Synthetic Monitoring",
+   "name": "synthetics_global_variable_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Synthetic Monitoring",
+   "name": "synthetics_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Synthetic Monitoring",
+   "name": "synthetics_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Synthetic Monitoring",
+   "name": "synthetics_default_settings_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Synthetic Monitoring",
+   "name": "synthetics_default_settings_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Teams",
+   "name": "teams_manage",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Watchdog",
+   "name": "watchdog_alerts_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Watchdog",
+   "name": "external_provider_status_notifications_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Watchdog",
+   "name": "external_provider_status_notifications_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Work and Incident Management",
+   "name": "incident_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Work and Incident Management",
+   "name": "incident_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Work and Incident Management",
+   "name": "incident_settings_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Work and Incident Management",
+   "name": "incident_settings_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Work and Incident Management",
+   "name": "incidents_private_global_access",
+   "defaultRole": "None"
+  },
+  {
+   "group": "Work and Incident Management",
+   "name": "cases_read",
+   "defaultRole": "Datadog Read Only Role"
+  },
+  {
+   "group": "Work and Incident Management",
+   "name": "cases_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Work and Incident Management",
+   "name": "incident_notification_settings_read",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Work and Incident Management",
+   "name": "incident_notification_settings_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Work and Incident Management",
+   "name": "cases_shared_settings_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Work and Incident Management",
+   "name": "incident_postmortems_write",
+   "defaultRole": "Datadog Standard Role"
+  },
+  {
+   "group": "Work and Incident Management",
+   "name": "incident_documents_write",
+   "defaultRole": "Datadog Standard Role"
+  }
+ ],
+ "roles": {
+  "Datadog Read Only Role": [
+   "client_tokens_read",
+   "apm_read",
+   "apm_retention_filter_read",
+   "apm_service_ingest_read",
+   "debugger_read",
+   "apm_pipelines_read",
+   "apm_service_catalog_read",
+   "continuous_profiler_read",
+   "apm_api_catalog_read",
+   "continuous_profiler_pgo_read",
+   "apm_workload_selection_read",
+   "apm_recommendations_notification_rules_read",
+   "org_connections_read",
+   "user_self_profile_read",
+   "user_self_profile_write",
+   "telemetry_rules_read",
+   "telemetry_quota_read",
+   "workflows_read",
+   "connections_read",
+   "on_prem_runner_read",
+   "apps_datastore_read",
+   "connection_groups_read",
+   "apps_form_read",
+   "agent_builder_read",
+   "execution_groups_read",
+   "ai_guard_view",
+   "bits_investigations_read",
+   "assistant_access",
+   "cloud_cost_management_read",
+   "network_connections_read",
+   "network_health_insights_read",
+   "security_monitoring_rules_read",
+   "security_monitoring_signals_read",
+   "security_monitoring_filters_read",
+   "appsec_event_rule_read",
+   "security_monitoring_notification_profiles_read",
+   "security_monitoring_cws_agent_rules_read",
+   "appsec_vm_library_read",
+   "appsec_protect_read",
+   "appsec_activation_read",
+   "security_monitoring_suppressions_read",
+   "appsec_vm_read",
+   "security_pipelines_read",
+   "security_comments_read",
+   "security_monitoring_datasets_read",
+   "coterm_read",
+   "timeseries_query",
+   "hosts_read",
+   "ddsql_editor_read",
+   "dashboards_read",
+   "dbm_read",
+   "dbm_parameterized_queries_read",
+   "dem_journey_read",
+   "disaster_recovery_status_read",
+   "error_tracking_read",
+   "events_read",
+   "feature_flag_config_read",
+   "feature_flag_environment_config_read",
+   "cloudcraft_read",
+   "infrastructure_resource_policies_read",
+   "guardrails_read",
+   "terraform_state_file_configurations_read",
+   "repo_info_read",
+   "llm_observability_read",
+   "agent_console_read",
+   "live_debugger_read",
+   "logs_read_data",
+   "logs_read_archives",
+   "logs_read_workspaces",
+   "logs_read_config",
+   "mcp_read",
+   "metrics_read",
+   "monitors_read",
+   "ndm_devices_read",
+   "network_path_config_read",
+   "network_path_config_settings_read",
+   "notebooks_read",
+   "observability_pipelines_read",
+   "observability_pipelines_capture_read",
+   "on_call_read",
+   "process_tags_read",
+   "audience_management_read",
+   "product_analytics_saved_widgets_read",
+   "product_analytics_settings_read",
+   "product_analytics_experiments_read",
+   "product_analytics_metrics_read",
+   "rum_apps_read",
+   "rum_session_replay_read",
+   "rum_retention_filters_read",
+   "reference_tables_read",
+   "remote_configuration_read",
+   "security_testing_read",
+   "serverless_aws_instrumentation_read",
+   "slos_read",
+   "sheets_read",
+   "ci_visibility_read",
+   "quality_gate_rules_read",
+   "static_analysis_settings_read",
+   "cd_visibility_read",
+   "code_analysis_read",
+   "quality_gates_evaluations_read",
+   "test_optimization_read",
+   "dora_metrics_read",
+   "code_coverage_read",
+   "deployment_gates_read",
+   "status_pages_settings_read",
+   "synthetics_read",
+   "external_provider_status_notifications_read",
+   "incident_read",
+   "cases_read"
+  ],
+  "Datadog Standard Role": [
+   "client_tokens_read",
+   "apm_read",
+   "apm_retention_filter_read",
+   "apm_service_ingest_read",
+   "debugger_read",
+   "apm_pipelines_read",
+   "apm_service_catalog_read",
+   "continuous_profiler_read",
+   "apm_api_catalog_read",
+   "continuous_profiler_pgo_read",
+   "apm_workload_selection_read",
+   "apm_recommendations_notification_rules_read",
+   "org_connections_read",
+   "user_self_profile_read",
+   "user_self_profile_write",
+   "telemetry_rules_read",
+   "telemetry_quota_read",
+   "workflows_read",
+   "connections_read",
+   "on_prem_runner_read",
+   "apps_datastore_read",
+   "connection_groups_read",
+   "apps_form_read",
+   "agent_builder_read",
+   "execution_groups_read",
+   "ai_guard_view",
+   "bits_investigations_read",
+   "assistant_access",
+   "cloud_cost_management_read",
+   "network_connections_read",
+   "network_health_insights_read",
+   "security_monitoring_rules_read",
+   "security_monitoring_signals_read",
+   "security_monitoring_filters_read",
+   "appsec_event_rule_read",
+   "security_monitoring_notification_profiles_read",
+   "security_monitoring_cws_agent_rules_read",
+   "appsec_vm_library_read",
+   "appsec_protect_read",
+   "appsec_activation_read",
+   "security_monitoring_suppressions_read",
+   "appsec_vm_read",
+   "security_pipelines_read",
+   "security_comments_read",
+   "security_monitoring_datasets_read",
+   "coterm_read",
+   "timeseries_query",
+   "hosts_read",
+   "ddsql_editor_read",
+   "dashboards_read",
+   "dbm_read",
+   "dbm_parameterized_queries_read",
+   "dem_journey_read",
+   "disaster_recovery_status_read",
+   "error_tracking_read",
+   "events_read",
+   "feature_flag_config_read",
+   "feature_flag_environment_config_read",
+   "cloudcraft_read",
+   "infrastructure_resource_policies_read",
+   "guardrails_read",
+   "terraform_state_file_configurations_read",
+   "repo_info_read",
+   "llm_observability_read",
+   "agent_console_read",
+   "live_debugger_read",
+   "logs_read_data",
+   "logs_read_archives",
+   "logs_read_workspaces",
+   "logs_read_config",
+   "mcp_read",
+   "metrics_read",
+   "monitors_read",
+   "ndm_devices_read",
+   "network_path_config_read",
+   "network_path_config_settings_read",
+   "notebooks_read",
+   "observability_pipelines_read",
+   "observability_pipelines_capture_read",
+   "on_call_read",
+   "process_tags_read",
+   "audience_management_read",
+   "product_analytics_saved_widgets_read",
+   "product_analytics_settings_read",
+   "product_analytics_experiments_read",
+   "product_analytics_metrics_read",
+   "rum_apps_read",
+   "rum_session_replay_read",
+   "rum_retention_filters_read",
+   "reference_tables_read",
+   "remote_configuration_read",
+   "security_testing_read",
+   "serverless_aws_instrumentation_read",
+   "slos_read",
+   "sheets_read",
+   "ci_visibility_read",
+   "quality_gate_rules_read",
+   "static_analysis_settings_read",
+   "cd_visibility_read",
+   "code_analysis_read",
+   "quality_gates_evaluations_read",
+   "test_optimization_read",
+   "dora_metrics_read",
+   "code_coverage_read",
+   "deployment_gates_read",
+   "status_pages_settings_read",
+   "synthetics_read",
+   "external_provider_status_notifications_read",
+   "incident_read",
+   "cases_read",
+   "user_app_keys",
+   "org_app_keys_read",
+   "api_keys_read",
+   "client_tokens_write",
+   "apm_primary_operation_write",
+   "apm_generate_metrics",
+   "apm_service_catalog_write",
+   "apm_remote_configuration_read",
+   "apm_api_catalog_write",
+   "debugger_write_pre_prod",
+   "apm_recommendations_notification_rules_write",
+   "user_access_invite",
+   "governance_console_read",
+   "telemetry_rules_create",
+   "telemetry_quota_write",
+   "workflows_write",
+   "workflows_run",
+   "connections_write",
+   "connections_resolve",
+   "apps_run",
+   "apps_write",
+   "on_prem_runner_use",
+   "apps_datastore_write",
+   "apps_datastore_manage",
+   "connection_groups_write",
+   "actions_interface_run",
+   "apps_form_manage",
+   "agent_builder_write",
+   "agent_builder_run",
+   "agent_builder_external_mcp_write",
+   "agent_builder_external_mcp_resolve",
+   "ai_guard_evaluate",
+   "bits_investigations_write",
+   "bits_dev_write",
+   "bits_settings_personal_write",
+   "cloud_cost_management_write",
+   "generate_ccm_report_schedules",
+   "ccm_budget_write",
+   "ccm_forecast_write",
+   "ccm_report_write",
+   "security_monitoring_rules_write",
+   "security_monitoring_signals_write",
+   "appsec_event_rule_write",
+   "security_monitoring_notification_profiles_write",
+   "security_monitoring_cws_agent_rules_write",
+   "appsec_protect_write",
+   "appsec_activation_write",
+   "security_monitoring_findings_read",
+   "security_monitoring_findings_write",
+   "appsec_vm_write",
+   "security_monitoring_suppressions_write",
+   "security_comments_write",
+   "security_monitoring_datasets_write",
+   "coterm_write",
+   "containers_generate_image_metrics",
+   "saved_views_write",
+   "facets_write",
+   "generate_log_reports",
+   "dashboards_write",
+   "dashboards_public_share",
+   "generate_dashboard_reports",
+   "dashboards_invite_share",
+   "dashboards_embed_share",
+   "embeddable_graphs_share",
+   "data_observability_catalog_write",
+   "dem_journey_write",
+   "error_tracking_write",
+   "event_correlation_config_read",
+   "event_correlation_config_write",
+   "event_config_write",
+   "events_write_pipelines",
+   "events_write_processors",
+   "feature_flag_config_write",
+   "feature_flag_environment_config_write",
+   "agent_flare_collection",
+   "infrastructure_resource_policies_write",
+   "terraform_state_file_configurations_write",
+   "aws_configurations_manage",
+   "azure_configurations_manage",
+   "gcp_configurations_manage",
+   "manage_integrations",
+   "integrations_read",
+   "oci_configurations_manage",
+   "aws_configuration_read",
+   "azure_configuration_read",
+   "gcp_configuration_read",
+   "oci_configuration_read",
+   "aws_configuration_edit",
+   "azure_configuration_edit",
+   "gcp_configuration_edit",
+   "oci_configuration_edit",
+   "repo_settings_write",
+   "llm_observability_write",
+   "agent_console_write",
+   "live_debugger_write",
+   "logs_modify_indexes",
+   "logs_write_exclusion_filters",
+   "logs_write_pipelines",
+   "logs_write_processors",
+   "logs_generate_metrics",
+   "logs_write_historical_view",
+   "logs_write_facets",
+   "logs_write_workspaces",
+   "logs_write_archive_search",
+   "mcp_write",
+   "metric_tags_write",
+   "host_tags_write",
+   "metrics_metadata_write",
+   "monitors_write",
+   "monitors_downtime",
+   "monitors_draft_write",
+   "ndm_netflow_port_mappings_write",
+   "ndm_device_profiles_view",
+   "ndm_device_tags_write",
+   "notebooks_write",
+   "observability_pipelines_write",
+   "observability_pipelines_capture_write",
+   "on_call_write",
+   "on_call_page",
+   "on_call_respond",
+   "orchestration_custom_resource_definitions_write",
+   "processes_generate_metrics",
+   "process_tags_write",
+   "audience_management_write",
+   "product_analytics_apps_write",
+   "product_analytics_saved_widgets_write",
+   "product_analytics_experiments_write",
+   "product_analytics_metrics_write",
+   "rum_apps_write",
+   "rum_generate_metrics",
+   "rum_playlist_write",
+   "rum_retention_filters_write",
+   "reference_tables_write",
+   "slos_write",
+   "slos_corrections",
+   "sheets_write",
+   "ci_visibility_write",
+   "ci_visibility_settings_write",
+   "ci_visibility_pipelines_write",
+   "dora_settings_write",
+   "test_optimization_write",
+   "test_optimization_settings_write",
+   "dora_metrics_write",
+   "deployment_gates_write",
+   "deployment_gates_evaluate",
+   "synthetics_private_location_read",
+   "synthetics_global_variable_read",
+   "synthetics_global_variable_write",
+   "synthetics_write",
+   "synthetics_default_settings_read",
+   "synthetics_default_settings_write",
+   "teams_manage",
+   "watchdog_alerts_write",
+   "external_provider_status_notifications_write",
+   "incident_write",
+   "incident_settings_read",
+   "incident_settings_write",
+   "cases_write",
+   "incident_notification_settings_read",
+   "incident_notification_settings_write",
+   "cases_shared_settings_write",
+   "incident_postmortems_write",
+   "incident_documents_write"
+  ],
+  "Datadog Admin Role": [
+   "user_app_keys",
+   "org_app_keys_read",
+   "org_app_keys_write",
+   "api_keys_read",
+   "api_keys_write",
+   "client_tokens_read",
+   "client_tokens_write",
+   "api_keys_delete",
+   "apm_read",
+   "apm_retention_filter_read",
+   "apm_retention_filter_write",
+   "apm_service_ingest_read",
+   "apm_service_ingest_write",
+   "apm_apdex_manage_write",
+   "apm_tag_management_write",
+   "apm_primary_operation_write",
+   "debugger_write",
+   "debugger_read",
+   "apm_generate_metrics",
+   "apm_pipelines_write",
+   "apm_pipelines_read",
+   "apm_service_catalog_write",
+   "apm_service_catalog_read",
+   "apm_remote_configuration_write",
+   "apm_remote_configuration_read",
+   "continuous_profiler_read",
+   "debugger_capture_variables",
+   "apm_api_catalog_write",
+   "apm_api_catalog_read",
+   "continuous_profiler_pgo_read",
+   "debugger_write_pre_prod",
+   "apm_service_renaming_write",
+   "apm_workload_selection_read",
+   "apm_workload_selection_write",
+   "apm_recommendations_notification_rules_read",
+   "apm_recommendations_notification_rules_write",
+   "user_access_invite",
+   "user_access_manage",
+   "service_account_write",
+   "org_management",
+   "org_connections_write",
+   "org_connections_read",
+   "user_self_profile_read",
+   "governance_console_read",
+   "user_self_profile_write",
+   "governance_console_write",
+   "org_group_read",
+   "org_group_write",
+   "telemetry_rules_read",
+   "telemetry_rules_create",
+   "telemetry_rules_activate",
+   "workload_identity_federation_write",
+   "workload_identity_federation_read",
+   "telemetry_quota_read",
+   "telemetry_quota_write",
+   "workflows_read",
+   "workflows_write",
+   "workflows_run",
+   "connections_read",
+   "connections_write",
+   "connections_resolve",
+   "apps_run",
+   "apps_write",
+   "on_prem_runner_read",
+   "on_prem_runner_use",
+   "on_prem_runner_write",
+   "apps_datastore_read",
+   "apps_datastore_write",
+   "apps_datastore_manage",
+   "connection_groups_write",
+   "connection_groups_read",
+   "actions_interface_run",
+   "apps_form_read",
+   "apps_form_manage",
+   "agent_builder_read",
+   "agent_builder_write",
+   "agent_builder_run",
+   "execution_groups_write",
+   "execution_groups_read",
+   "agent_builder_external_mcp_write",
+   "agent_builder_external_mcp_resolve",
+   "ai_guard_evaluate",
+   "ai_guard_view",
+   "ai_guard_write",
+   "billing_read",
+   "billing_edit",
+   "usage_read",
+   "usage_edit",
+   "usage_notifications_read",
+   "usage_notifications_write",
+   "bits_investigations_read",
+   "bits_investigations_write",
+   "assistant_access",
+   "bits_dev_write",
+   "bits_settings_org_write",
+   "bits_settings_personal_write",
+   "cloud_cost_management_read",
+   "cloud_cost_management_write",
+   "generate_ccm_report_schedules",
+   "manage_ccm_report_schedules",
+   "ccm_budget_write",
+   "ccm_forecast_write",
+   "ccm_report_write",
+   "network_connections_read",
+   "network_health_insights_read",
+   "security_monitoring_rules_read",
+   "security_monitoring_rules_write",
+   "security_monitoring_signals_read",
+   "security_monitoring_signals_write",
+   "security_monitoring_filters_read",
+   "security_monitoring_filters_write",
+   "appsec_event_rule_read",
+   "appsec_event_rule_write",
+   "security_monitoring_notification_profiles_read",
+   "security_monitoring_notification_profiles_write",
+   "security_monitoring_cws_agent_rules_read",
+   "security_monitoring_cws_agent_rules_write",
+   "appsec_vm_library_read",
+   "appsec_protect_read",
+   "appsec_protect_write",
+   "appsec_activation_read",
+   "appsec_activation_write",
+   "security_monitoring_findings_read",
+   "security_monitoring_findings_write",
+   "appsec_vm_write",
+   "security_monitoring_suppressions_read",
+   "security_monitoring_suppressions_write",
+   "appsec_vm_read",
+   "security_pipelines_read",
+   "security_pipelines_write",
+   "security_monitoring_cws_agent_rules_actions",
+   "security_comments_write",
+   "security_comments_read",
+   "security_monitoring_datasets_read",
+   "security_monitoring_datasets_write",
+   "bits_security_analyst_write",
+   "bits_security_analyst_config_write",
+   "siem_entities_read",
+   "siem_entities_admin",
+   "siem_entities_notification",
+   "coterm_write",
+   "coterm_read",
+   "audit_logs_read",
+   "audit_logs_write",
+   "data_scanner_read",
+   "data_scanner_write",
+   "data_scanner_unmask",
+   "containers_generate_image_metrics",
+   "timeseries_query",
+   "saved_views_write",
+   "facets_write",
+   "hosts_read",
+   "generate_log_reports",
+   "manage_log_reports",
+   "ddsql_editor_read",
+   "dashboards_read",
+   "dashboards_write",
+   "dashboards_public_share",
+   "generate_dashboard_reports",
+   "dashboards_invite_share",
+   "dashboards_embed_share",
+   "embeddable_graphs_share",
+   "product_dashboards_write",
+   "data_observability_catalog_write",
+   "data_streams_monitoring_capture_messages",
+   "data_streams_kafka_produce_message",
+   "data_streams_kafka_create_topic",
+   "data_streams_kafka_delete_topic",
+   "dbm_read",
+   "dbm_parameterized_queries_read",
+   "dem_journey_write",
+   "dem_journey_read",
+   "disaster_recovery_status_read",
+   "disaster_recovery_status_write",
+   "error_tracking_write",
+   "error_tracking_settings_write",
+   "error_tracking_exclusion_filters_write",
+   "error_tracking_read",
+   "events_read",
+   "event_correlation_config_read",
+   "event_correlation_config_write",
+   "event_config_write",
+   "events_write_pipelines",
+   "events_write_processors",
+   "feature_flag_config_write",
+   "feature_flag_config_read",
+   "feature_flag_environment_config_write",
+   "feature_flag_environment_config_read",
+   "feature_flag_approvals_override",
+   "agent_flare_collection",
+   "agent_upgrade_write",
+   "fleet_policies_write",
+   "cloudcraft_read",
+   "infrastructure_resource_policies_read",
+   "infrastructure_resource_policies_write",
+   "guardrails_read",
+   "guardrails_write",
+   "terraform_state_file_configurations_write",
+   "terraform_state_file_configurations_read",
+   "aws_configurations_manage",
+   "azure_configurations_manage",
+   "gcp_configurations_manage",
+   "manage_integrations",
+   "integrations_read",
+   "oci_configurations_manage",
+   "aws_configuration_read",
+   "azure_configuration_read",
+   "gcp_configuration_read",
+   "oci_configuration_read",
+   "aws_configuration_edit",
+   "azure_configuration_edit",
+   "gcp_configuration_edit",
+   "oci_configuration_edit",
+   "repo_info_read",
+   "repo_settings_write",
+   "llm_observability_read",
+   "llm_observability_write",
+   "agent_console_read",
+   "agent_console_write",
+   "live_debugger_read",
+   "live_debugger_write",
+   "live_debugger_redaction_write",
+   "logs_modify_indexes",
+   "logs_write_exclusion_filters",
+   "logs_write_pipelines",
+   "logs_write_processors",
+   "logs_write_archives",
+   "logs_generate_metrics",
+   "logs_read_data",
+   "logs_read_archives",
+   "logs_write_historical_view",
+   "logs_write_facets",
+   "logs_delete_data",
+   "logs_write_forwarding_rules",
+   "flex_logs_config_write",
+   "logs_read_workspaces",
+   "logs_write_workspaces",
+   "logs_read_config",
+   "logs_write_archive_search",
+   "mcp_write",
+   "mcp_read",
+   "metric_tags_write",
+   "metrics_read",
+   "host_tags_write",
+   "metrics_metadata_write",
+   "monitors_read",
+   "monitors_write",
+   "monitors_downtime",
+   "monitor_config_policy_write",
+   "monitors_draft_write",
+   "ndm_netflow_port_mappings_write",
+   "ndm_device_profiles_view",
+   "ndm_device_profiles_edit",
+   "ndm_devices_read",
+   "ndm_device_tags_write",
+   "ndm_geomap_locations_write",
+   "ndm_device_config_read",
+   "ndm_device_config_write",
+   "network_path_config_read",
+   "network_path_config_settings_read",
+   "network_path_config_settings_write",
+   "notebooks_read",
+   "notebooks_write",
+   "observability_pipelines_read",
+   "observability_pipelines_write",
+   "observability_pipelines_delete",
+   "observability_pipelines_deploy",
+   "observability_pipelines_capture_read",
+   "observability_pipelines_capture_write",
+   "on_call_read",
+   "on_call_write",
+   "on_call_page",
+   "on_call_respond",
+   "on_call_admin",
+   "orchestration_custom_resource_definitions_write",
+   "orchestration_workload_scaling_write",
+   "orchestration_autoscaling_manage",
+   "processes_generate_metrics",
+   "process_tags_read",
+   "process_tags_write",
+   "audience_management_read",
+   "audience_management_write",
+   "product_analytics_apps_write",
+   "product_analytics_saved_widgets_read",
+   "product_analytics_saved_widgets_write",
+   "product_analytics_settings_read",
+   "product_analytics_settings_write",
+   "product_analytics_experiments_read",
+   "product_analytics_experiments_write",
+   "product_analytics_metrics_read",
+   "product_analytics_metrics_write",
+   "product_analytics_certified_metrics_write",
+   "product_analytics_warehouse_model_write",
+   "rum_apps_write",
+   "rum_apps_read",
+   "rum_session_replay_read",
+   "rum_generate_metrics",
+   "rum_delete_data",
+   "rum_playlist_write",
+   "rum_extend_retention",
+   "rum_retention_filters_read",
+   "rum_retention_filters_write",
+   "rum_settings_write",
+   "reference_tables_write",
+   "reference_tables_read",
+   "remote_configuration_read",
+   "security_testing_read",
+   "security_testing_write",
+   "serverless_aws_instrumentation_read",
+   "serverless_aws_instrumentation_write",
+   "slos_read",
+   "slos_write",
+   "slos_corrections",
+   "sheets_read",
+   "sheets_write",
+   "ci_visibility_read",
+   "ci_visibility_write",
+   "ci_provider_settings_write",
+   "ci_visibility_settings_write",
+   "ci_ingestion_control_write",
+   "ci_visibility_pipelines_write",
+   "quality_gate_rules_read",
+   "quality_gate_rules_write",
+   "static_analysis_settings_read",
+   "static_analysis_settings_write",
+   "cd_visibility_read",
+   "dora_settings_write",
+   "code_analysis_read",
+   "quality_gates_evaluations_read",
+   "test_optimization_read",
+   "test_optimization_write",
+   "test_optimization_settings_write",
+   "dora_metrics_read",
+   "code_coverage_read",
+   "dora_metrics_write",
+   "deployment_gates_read",
+   "deployment_gates_write",
+   "deployment_gates_evaluate",
+   "status_pages_settings_read",
+   "status_pages_settings_write",
+   "status_pages_incident_write",
+   "status_pages_public_page_publish",
+   "status_pages_internal_page_publish",
+   "synthetics_private_location_read",
+   "synthetics_private_location_write",
+   "synthetics_global_variable_read",
+   "synthetics_global_variable_write",
+   "synthetics_read",
+   "synthetics_write",
+   "synthetics_default_settings_read",
+   "synthetics_default_settings_write",
+   "teams_manage",
+   "watchdog_alerts_write",
+   "external_provider_status_notifications_read",
+   "external_provider_status_notifications_write",
+   "incident_read",
+   "incident_write",
+   "incident_settings_read",
+   "incident_settings_write",
+   "incidents_private_global_access",
+   "cases_read",
+   "cases_write",
+   "incident_notification_settings_read",
+   "incident_notification_settings_write",
+   "cases_shared_settings_write",
+   "incident_postmortems_write",
+   "incident_documents_write"
+  ]
+ }
+}
