@@ -1,0 +1,95 @@
+name: Datadog navbar sync
+
+# Logs in to a Datadog test account, captures the navbar as rendered and opens
+# a pull request when test/fixtures/datadog-nav-links.json changes.
+#
+# Secrets (set one of the two authentication methods):
+#   DD_STORAGE_STATE_B64   saved session (recommended), see README
+#   DD_TEST_USERNAME / DD_TEST_PASSWORD [/ DD_TEST_TOTP_SECRET]   login form
+# Variable:
+#   DD_SITE                e.g. https://app.datadoghq.eu (default)
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: navbar-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture the Datadog navbar
+        env:
+          DD_SITE: ${{ vars.DD_SITE }}
+          DD_STORAGE_STATE_B64: ${{ secrets.DD_STORAGE_STATE_B64 }}
+          DD_TEST_USERNAME: ${{ secrets.DD_TEST_USERNAME }}
+          DD_TEST_PASSWORD: ${{ secrets.DD_TEST_PASSWORD }}
+          DD_TEST_TOTP_SECRET: ${{ secrets.DD_TEST_TOTP_SECRET }}
+        run: node scripts/capture-navbar.js
+
+      - name: Show fixture changes
+        run: git diff --stat -- test/fixtures/datadog-nav-links.json
+
+      # Pull requests opened with GITHUB_TOKEN do not trigger the CI workflow,
+      # so the tests run here and their result goes into the PR description.
+      - name: Unit tests
+        id: unit
+        continue-on-error: true
+        run: npm test
+
+      - name: Extension end-to-end tests
+        id: e2e
+        continue-on-error: true
+        run: npm run test:e2e
+
+      - name: Open or update the pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/datadog-navbar-sync
+          delete-branch: true
+          add-paths: test/fixtures/datadog-nav-links.json
+          commit-message: 'test: sync Datadog navbar fixture'
+          title: 'test: sync Datadog navbar fixture'
+          body: |
+            Navbar captured from the Datadog test account by the `Datadog navbar sync` workflow.
+
+            | Check | Result |
+            |-------|--------|
+            | Unit tests (`npm test`) | ${{ steps.unit.outcome }} |
+            | Extension e2e tests (`npm run test:e2e`) | ${{ steps.e2e.outcome }} |
+
+            A unit test failure usually means Datadog added a navbar link that no menu covers yet:
+            add its path to `shared/menu-definitions.js` on this branch.
+
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Fail when tests failed
+        if: steps.unit.outcome == 'failure' || steps.e2e.outcome == 'failure'
+        run: |
+          echo "::error::Tests fail with the new Datadog navbar. See the sync pull request."
+          exit 1

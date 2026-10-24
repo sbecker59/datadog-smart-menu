@@ -143,3 +143,6 @@ vite.config.ts.timestamp-*
 .vite/
 # Saved Datadog pages (contain account details)
 datadog.html
+
+# Saved Datadog sessions (scripts/capture-navbar.js --save-state)
+.auth/

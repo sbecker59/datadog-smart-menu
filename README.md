@@ -120,3 +120,27 @@ npm run preview -- --html datadog.html --perms logs_read_data,dashboards_read
 Reload the extension in `chrome://extensions/` after each build.
 
 Both test suites run in GitHub Actions on every pull request (`.github/workflows/ci.yml`).
+
+### Navbar sync from a Datadog test account
+
+The tests use `test/fixtures/datadog-nav-links.json`, a copy of the Datadog navbar. The **Datadog navbar sync** workflow (`.github/workflows/navbar-sync.yml`, Mondays and on demand) logs in to a test account with Playwright, captures the navbar as rendered and opens a pull request when it changed. Unknown links make `npm test` fail on that pull request.
+
+Use a dedicated test account with the **Datadog Admin Role**: Datadog hides some entries itself when permissions are missing, and the capture only sees what the account sees (including the org's feature flags). No personal data is written: the user menu is renamed and the capture is refused if an e-mail address remains.
+
+Authentication, by preference:
+
+1. **Saved session** (works with SSO, 2FA and reCAPTCHA). Log in once by hand, then store the session as the `DD_STORAGE_STATE_B64` secret. Refresh it when the workflow reports that the session expired.
+
+   ```bash
+   npm run capture:navbar -- --login --save-state .auth/datadog.json
+   base64 -w0 .auth/datadog.json
+   ```
+
+2. **Login form**: secrets `DD_TEST_USERNAME`, `DD_TEST_PASSWORD` and optionally `DD_TEST_TOTP_SECRET` (base32 authenticator secret). Datadog may answer with a reCAPTCHA from CI runners, in which case use a saved session.
+
+Set the `DD_SITE` repository variable when the account is not on `https://app.datadoghq.eu`. Locally:
+
+```bash
+npm run capture:navbar -- --state .auth/datadog.json    # live capture with a saved session
+npm run capture:navbar -- --from-html datadog.html      # from a page saved with "Save page as..."
+```

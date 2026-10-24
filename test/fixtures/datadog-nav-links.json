@@ -50,7 +50,7 @@
  {
   "menu": "Bits AI",
   "section": "Bits Code",
-  "label": "Automationspreview",
+  "label": "Automations",
   "href": "/code/automations"
  },
  {
@@ -320,7 +320,7 @@
  {
   "menu": "Infrastructure",
   "section": "Resources",
-  "label": "Policiespreview",
+  "label": "Policies",
   "href": "/infrastructure/catalog/governance"
  },
  {
@@ -332,7 +332,7 @@
  {
   "menu": "Infrastructure",
   "section": "Resources",
-  "label": "Changespreview",
+  "label": "Changes",
   "href": "/infrastructure/catalog/changes"
  },
  {
@@ -469,9 +469,15 @@
  },
  {
   "menu": "Infrastructure",
-  "section": "End User Devicespreview",
-  "label": "End User Devicespreview",
+  "section": "End User Devices",
+  "label": "End User Devices",
   "href": "/end-user-devices"
+ },
+ {
+  "menu": "Cloud Cost",
+  "section": null,
+  "label": "Cloud Cost",
+  "href": "/cost/onboarding"
  },
  {
   "menu": "APM",
@@ -541,19 +547,19 @@
  },
  {
   "menu": "APM",
-  "section": "Live Debuggerpreview",
-  "label": "Live Debuggerpreview",
+  "section": "Live Debugger",
+  "label": "Live Debugger",
   "href": "/debugging"
  },
  {
   "menu": "APM",
-  "section": "Live Debuggerpreview",
+  "section": "Live Debugger",
   "label": "Sessions List",
   "href": "/debugging/sessions"
  },
  {
   "menu": "APM",
-  "section": "Live Debuggerpreview",
+  "section": "Live Debugger",
   "label": "Settings",
   "href": "/debugging/settings"
  },
@@ -602,7 +608,7 @@
  {
   "menu": "Digital Experience",
   "section": "Real User Monitoring",
-  "label": "Operationspreview",
+  "label": "Operations",
   "href": "/rum/operation-catalog"
  },
  {
@@ -776,7 +782,7 @@
  {
   "menu": "Software Delivery",
   "section": "Delivery Performance",
-  "label": "AI Impactpreview",
+  "label": "AI Impact",
   "href": "/ci/dora/ai-impact"
  },
  {
@@ -1028,7 +1034,7 @@
  {
   "menu": "Data Observability",
   "section": "Jobs Monitoring",
-  "label": "Queriespreview",
+  "label": "Queries",
   "href": "/data-obs/queries"
  },
  {
@@ -1039,8 +1045,8 @@
  },
  {
   "menu": "Data Observability",
-  "section": "CI/CDpreview",
-  "label": "CI/CDpreview",
+  "section": "CI/CD",
+  "label": "CI/CD",
   "href": "/data-obs/ci-cd"
  },
  {
@@ -1081,8 +1087,8 @@
  },
  {
   "menu": "AI Observability",
-  "section": "Agent Consolepreview",
-  "label": "Agent Consolepreview",
+  "section": "Agent Console",
+  "label": "Agent Console",
   "href": "/llm/ai-agents-console"
  },
  {
@@ -1106,7 +1112,7 @@
  {
   "menu": "Metrics",
   "section": "Metrics",
-  "label": "Settingspreview",
+  "label": "Settings",
   "href": "/metric/settings"
  },
  {
