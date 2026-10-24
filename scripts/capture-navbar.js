@@ -13,7 +13,8 @@
  *   DD_TEST_USERNAME=... DD_TEST_PASSWORD=... node scripts/capture-navbar.js
  *   Optional: DD_TEST_TOTP_SECRET (base32) if the account uses an authenticator app.
  *
- * DD_SITE selects the Datadog site (default https://app.datadoghq.eu).
+ * DD_SITE selects the Datadog site, as a site name (datadoghq.eu, us3.datadoghq.com)
+ * or an app URL (https://app.datadoghq.eu). Default: datadoghq.eu.
  *
  * Offline (from a page saved with "Save page as..."):
  *   node scripts/capture-navbar.js --from-html datadog.html
@@ -40,6 +41,19 @@ function parseArgs(argv) {
     args[argv[i].slice(2)] = next === undefined || next.startsWith('--') ? true : argv[++i];
   }
   return args;
+}
+
+/**
+ * Datadog app URL from DD_SITE. Accepts the standard Datadog site names
+ * ("datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com") or a full URL.
+ */
+function siteUrl(site) {
+  const value = (site || 'datadoghq.eu').trim().replace(/\/+$/, '');
+  if (/^https?:\/\//i.test(value)) return value;
+  const host = value.toLowerCase();
+  // Root domains are served from "app."; regional sites (us3., ap1., ...) as is.
+  const isRoot = ['datadoghq.com', 'datadoghq.eu', 'ddog-gov.com'].includes(host);
+  return `https://${isRoot ? 'app.' + host : host}`;
 }
 
 /** RFC 6238 TOTP code (SHA-1, 30 s, 6 digits) from a base32 secret. */
@@ -155,7 +169,7 @@ function loadStorageState(args) {
 
 /** Manual login in a visible browser, then save the session for later runs. */
 async function saveSession(args) {
-  const site = (process.env.DD_SITE || 'https://app.datadoghq.eu').replace(/\/$/, '');
+  const site = siteUrl(process.env.DD_SITE);
   const out = typeof args['save-state'] === 'string' ? args['save-state'] : '.auth/datadog.json';
   const browser = await chromium.launch({ headless: false });
   try {
@@ -175,7 +189,7 @@ async function saveSession(args) {
 }
 
 async function captureLive(args) {
-  const site = (process.env.DD_SITE || 'https://app.datadoghq.eu').replace(/\/$/, '');
+  const site = siteUrl(process.env.DD_SITE);
   const browser = await chromium.launch({ headless: !args.headed });
   try {
     const storageState = loadStorageState(args);
@@ -245,4 +259,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { totp, sanitize };
+module.exports = { totp, sanitize, siteUrl };

@@ -7,7 +7,7 @@ name: Datadog navbar sync
 #   DD_STORAGE_STATE_B64   saved session (recommended), see README
 #   DD_TEST_USERNAME / DD_TEST_PASSWORD [/ DD_TEST_TOTP_SECRET]   login form
 # Variable:
-#   DD_SITE                e.g. https://app.datadoghq.eu (default)
+#   DD_SITE                Datadog site, e.g. datadoghq.com (default: datadoghq.eu)
 
 on:
   schedule:

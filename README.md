@@ -138,7 +138,7 @@ Authentication, by preference:
 
 2. **Login form**: secrets `DD_TEST_USERNAME`, `DD_TEST_PASSWORD` and optionally `DD_TEST_TOTP_SECRET` (base32 authenticator secret). Datadog may answer with a reCAPTCHA from CI runners, in which case use a saved session.
 
-Set the `DD_SITE` repository variable when the account is not on `https://app.datadoghq.eu`. Locally:
+Set the `DD_SITE` repository variable when the account is not on the EU site. It takes the usual Datadog site name (`datadoghq.com`, `us3.datadoghq.com`, …) or an app URL. Locally:
 
 ```bash
 npm run capture:navbar -- --state .auth/datadog.json    # live capture with a saved session

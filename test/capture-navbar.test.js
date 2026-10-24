@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { totp, sanitize } = require('../scripts/capture-navbar.js');
+const { totp, sanitize, siteUrl } = require('../scripts/capture-navbar.js');
 
 test('totp matches the RFC 6238 SHA-1 test vectors (6 digits)', () => {
   // Secret "12345678901234567890" in base32.
@@ -38,4 +38,14 @@ test('sanitize removes personal data from the user menu', () => {
     { menu: 'User menu', section: 'Organization Settings', label: 'Organization Settings', href: '/organization-settings' },
     { menu: 'User menu', section: 'Organization Settings', label: 'Users', href: '/organization-settings/users' }
   ]);
+});
+
+test('siteUrl accepts Datadog site names and URLs', () => {
+  assert.equal(siteUrl(undefined), 'https://app.datadoghq.eu');
+  assert.equal(siteUrl('datadoghq.eu'), 'https://app.datadoghq.eu');
+  assert.equal(siteUrl('datadoghq.com'), 'https://app.datadoghq.com');
+  assert.equal(siteUrl('us3.datadoghq.com'), 'https://us3.datadoghq.com');
+  assert.equal(siteUrl('ap1.datadoghq.com'), 'https://ap1.datadoghq.com');
+  assert.equal(siteUrl('ddog-gov.com'), 'https://app.ddog-gov.com');
+  assert.equal(siteUrl('https://app.datadoghq.eu/'), 'https://app.datadoghq.eu');
 });
