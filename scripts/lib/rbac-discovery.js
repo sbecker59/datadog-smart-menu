@@ -145,10 +145,32 @@ async function eliminate({ entries, routes, candidates, applyPermissions, probeA
     if (S.length > 0) {
       await applyPermissions(S);
       const results = await probeGroup(group);
-      for (const r of group) {
-        set(r, results.get(r).accessible
-          ? { status: 'requires', requires: S, sufficient: [S], reason: undefined }
-          : { status: 'requires', requires: C, sufficient: [C], reason: `opens with all candidates but not with [${S.join(', ')}] alone: not minimized` });
+      const opened = group.filter(r => results.get(r).accessible);
+      for (const r of group.filter(r => !results.get(r).accessible)) {
+        set(r, { status: 'requires', requires: C, sufficient: [C], reason: `opens with all candidates but not with [${S.join(', ')}] alone: not minimized` });
+      }
+      if (opened.length === 0) continue;
+
+      // Counter-check: remove each permission of S again, alone. One flaky
+      // probe during the elimination must not make a permission "necessary".
+      const confirmed = new Map(opened.map(r => [r, new Set(S)]));
+      for (const perm of S) {
+        log(`    check ${perm} is needed`);
+        await applyPermissions(S.filter(p => p !== perm));
+        const check = await probeGroup(opened);
+        opened.filter(r => check.get(r).accessible).forEach(r => confirmed.get(r).delete(perm));
+      }
+      for (const r of opened) {
+        const finalSet = [...confirmed.get(r)].sort();
+        if (finalSet.length === S.length) {
+          set(r, { status: 'requires', requires: S, sufficient: [S], reason: undefined });
+          continue;
+        }
+        await applyPermissions(finalSet);
+        const ok = (await probeGroup([r])).get(r).accessible;
+        set(r, ok
+          ? { status: 'requires', requires: finalSet, sufficient: [finalSet], reason: undefined }
+          : { status: 'requires', requires: S, sufficient: [S], reason: `counter-check removed [${S.filter(p => !finalSet.includes(p)).join(', ')}] but the page does not open without them` });
       }
       continue;
     }

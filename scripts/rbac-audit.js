@@ -21,7 +21,9 @@
  *   npm run audit:rbac                                   # dry run: read-only checks and plan
  *   npm run audit:rbac -- --apply --allowed-org <public_id> [--verify-mapping]
  *   npm run audit:rbac -- --restore                      # restore the test user after a crash
- * Options: --only <path prefix>, --concurrency <n> (default 3), --out <file>.
+ * Options: --only <path prefix>, --concurrency <n> (default 3), --out <file>,
+ *          --settle <seconds> (default 30): wait after each role change, as
+ *          Datadog applies it to API calls tens of seconds after current_user.
  */
 const fs = require('fs');
 const path = require('path');
@@ -278,6 +280,16 @@ async function main() {
       // Without "Minimal Access Roles", Datadog keeps some restricted
       // permissions in every role: they form a baseline every user holds.
       const baseline = new Set();
+      // Datadog applies role changes to API authorization later than it shows
+      // them in current_user: without this wait, probes see the previous role.
+      const settleMs = Number(args.settle ?? 30) * 1000;
+      let firstChange = true;
+      const settle = async () => {
+        const ms = firstChange ? Math.max(settleMs, 60000) : settleMs;
+        if (firstChange) console.log(`  waiting ${ms / 1000} s after each role change for Datadog to apply it (--settle)`);
+        firstChange = false;
+        await new Promise(r => setTimeout(r, ms));
+      };
       // Permissions current_user never lists (restricted ones): learned once.
       const hiddenInSession = new Set();
       async function applyPermissions(names) {
@@ -303,7 +315,7 @@ async function main() {
         const visible = list => [...new Set(list)].filter(p => !baseline.has(p) && !hiddenInSession.has(p)).sort().join(',');
         const expected = visible(current);
         if (!exposesPermissions) {
-          await new Promise(r => setTimeout(r, 15000));
+          await settle();
           return { rejected };
         }
         let seen = null;
@@ -325,6 +337,7 @@ async function main() {
             console.warn(`  session permissions differ from the role after 20 s (missing: ${missingInSession.slice(0, 5).join(', ') || '-'}; extra: ${extraInSession.slice(0, 5).join(', ')}); continuing`);
           }
         }
+        await settle();
         return { rejected };
       }
 

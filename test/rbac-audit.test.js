@@ -245,3 +245,26 @@ test('known background calls are always ignored and 404 pages are set apart', as
   assert.equal(byRoute['/logs/indexes'].status, 'open', 'only background calls were denied');
   assert.equal(byRoute['/logs/flex-logs-controls'].status, 'not-found');
 });
+
+test('counter-check drops a permission that looked necessary because of one flaky probe', async () => {
+  let held = new Set();
+  let flaked = false;
+  const needs = ['logs_read_data'];
+  const entries = await discoverRequirements({
+    routes: ['/logs/pipelines'],
+    candidatesFor: () => ['logs_read_data', 'logs_write_facets', 'logs_write_pipelines'],
+    applyPermissions: async (names) => { held = new Set(names); return { rejected: [] }; },
+    probe: async () => {
+      const ok = needs.every(p => held.has(p));
+      // One false denial the first time logs_write_facets is missing.
+      if (ok && !held.has('logs_write_facets') && held.has('logs_write_pipelines') && !flaked) {
+        flaked = true;
+        return { accessible: false, missing: [] };
+      }
+      return { accessible: ok, missing: [] };
+    }
+  });
+  assert.ok(flaked, 'the flaky probe happened');
+  assert.deepEqual(entries[0].requires, ['logs_read_data']);
+  assert.deepEqual(entries[0].sufficient, [['logs_read_data']]);
+});
