@@ -353,7 +353,10 @@ async function main() {
         return [...new Set([...own, ...universe.filter(n => groups.has(docGroup.get(n)))])].filter(n => !baseline.has(n));
       }
       const learned = new Set(); // APIs found denied on most pages, shared by both phases
-      let entries = await discoverRequirements({ routes, applyPermissions, probe: browser.probe, noise: browser.noise, learned, candidatesFor, concurrency, log });
+      // Last resort for pages still denied with their menu's permissions: every
+      // permission of the org (found by halving, so about log2(n) changes each).
+      const widen = () => universe.filter(n => !baseline.has(n));
+      let entries = await discoverRequirements({ routes, applyPermissions, probe: browser.probe, noise: browser.noise, learned, candidatesFor, widen, concurrency, log });
 
       if (args['verify-mapping']) {
         const universe = allPermissions.map(p => p.attributes.name);

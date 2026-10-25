@@ -268,3 +268,47 @@ test('counter-check drops a permission that looked necessary because of one flak
   assert.deepEqual(entries[0].requires, ['logs_read_data']);
   assert.deepEqual(entries[0].sufficient, [['logs_read_data']]);
 });
+
+/** Silent fake Datadog that counts role changes. */
+function countingDatadog(rules) {
+  let held = new Set();
+  const calls = { apply: 0 };
+  return {
+    calls,
+    applyPermissions: async (names) => { calls.apply++; held = new Set(names); return { rejected: [] }; },
+    probe: async (route) => ({ accessible: rules[route](held), missing: [] })
+  };
+}
+const logsCandidates = ['flex_logs_config_write', 'logs_delete_data', 'logs_generate_metrics', 'logs_live_tail', 'logs_modify_indexes',
+  'logs_read_archives', 'logs_read_config', 'logs_read_data', 'logs_read_index_data', 'logs_read_workspaces', 'logs_write_archive_search',
+  'logs_write_archives', 'logs_write_exclusion_filters', 'logs_write_facets', 'logs_write_forwarding_rules', 'logs_write_historical_view',
+  'logs_write_pipelines', 'logs_write_processors', 'logs_write_workspaces'];
+
+test('halving finds a necessary permission with far fewer role changes than candidates', async () => {
+  const dd = countingDatadog({ '/logs/indexes': held => held.has('logs_read_data') });
+  const [entry] = await discoverRequirements({ routes: ['/logs/indexes'], candidatesFor: () => logsCandidates, ...dd });
+  assert.deepEqual(entry.sufficient, [['logs_read_data']]);
+  assert.ok(dd.calls.apply < 15, `expected fewer role changes than the ${logsCandidates.length} candidates, got ${dd.calls.apply}`);
+});
+
+test('a necessary permission plus "one of these" alternatives is found', async () => {
+  // Pipelines: logs_read_data AND (logs_read_config OR logs_write_pipelines).
+  const dd = countingDatadog({
+    '/logs/pipelines': held => held.has('logs_read_data') && (held.has('logs_read_config') || held.has('logs_write_pipelines'))
+  });
+  const [entry] = await discoverRequirements({ routes: ['/logs/pipelines'], candidatesFor: () => logsCandidates, ...dd });
+  assert.equal(entry.status, 'requires');
+  assert.deepEqual(entry.sufficient, [['logs_read_config', 'logs_read_data'], ['logs_read_data', 'logs_write_pipelines']]);
+  assert.equal(entry.reason, undefined);
+});
+
+test('pages needing a permission outside their menu are solved by widening', async () => {
+  // Explorer: logs_read_data AND apm_read, apm_read not among the Logs candidates.
+  const universe = [...logsCandidates, 'apm_read', 'dbm_read', 'monitors_read', 'dashboards_read', 'api_keys_read'];
+  const dd = countingDatadog({ '/logs': held => held.has('logs_read_data') && held.has('apm_read') });
+  const [entry] = await discoverRequirements({
+    routes: ['/logs'], candidatesFor: () => logsCandidates, widen: () => universe, ...dd
+  });
+  assert.equal(entry.status, 'requires');
+  assert.deepEqual(entry.sufficient, [['apm_read', 'logs_read_data']]);
+});

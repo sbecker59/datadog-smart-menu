@@ -95,46 +95,76 @@ async function probeAll(routes, probe, concurrency, { noise = () => new Set(), l
  */
 /**
  * Datadog's 403 bodies rarely name the missing permission. For pages still
- * denied, search by elimination among candidate permissions (the menu's
- * permissions and their documentation group):
- *   1. grant every candidate: still denied -> a permission the table misses;
- *   2. remove candidates one at a time: those whose removal denies the page
- *      are necessary;
- *   3. check the necessary set alone; when it is empty, look for single
- *      candidates that open the page ("any one of" alternatives).
+ * denied, search among candidate permissions (the menu's permissions and
+ * their documentation group; if that is not enough, every permission of the
+ * org via `widen`):
+ *   1. grant every candidate: still denied -> try the wider set, else report
+ *      a permission outside the candidates;
+ *   2. find the necessary permissions by halving: remove half of the
+ *      candidates; if the page still opens none of them is needed, otherwise
+ *      split that half again. About log2(n) role changes per necessary
+ *      permission instead of n;
+ *   3. confirm the necessary set alone (and counter-check each permission);
+ *      when it is not enough, look for single extra permissions that complete
+ *      it ("one of these" alternatives), again by halving.
+ * Role changes are slow (Datadog applies them tens of seconds later), so the
+ * number of applyPermissions calls is what matters.
  */
-async function eliminate({ entries, routes, candidates, applyPermissions, probeAll: probeGroup, log }) {
-  const C = [...new Set(candidates)].sort();
+async function eliminate({ entries, routes, candidates, widen, applyPermissions, probeAll: probeGroup, log }) {
   const set = (route, fields) => Object.assign(entries.get(route), fields);
-  if (C.length === 0) {
+  let C = [...new Set(candidates)].sort();
+  if (C.length === 0 && !widen) {
     routes.forEach(r => set(r, { status: 'unknown', reason: 'denied, and no candidate permission to try' }));
     return;
   }
-  log(`  Elimination over ${C.length} candidate permission(s) for ${routes.length} page(s)`);
 
-  // 1. Everything granted.
-  await applyPermissions(C);
-  const all = await probeGroup(routes);
-  const reachable = routes.filter(r => all.get(r).accessible);
-  for (const r of routes.filter(r => !all.get(r).accessible)) {
-    set(r, { status: 'unknown', requires: C, reason: `denied even with all ${C.length} candidate permission(s): the page needs a permission outside them`, evidence: all.get(r).evidence });
+  // 1. Everything granted (then the wider set for pages still denied).
+  let reachable = [];
+  if (C.length) {
+    log(`  Elimination over ${C.length} candidate permission(s) for ${routes.length} page(s)`);
+    await applyPermissions(C);
+    const all = await probeGroup(routes);
+    reachable = routes.filter(r => all.get(r).accessible);
+    const denied = routes.filter(r => !all.get(r).accessible);
+    if (denied.length && widen) {
+      const wider = [...new Set([...C, ...widen(denied[0])])].sort();
+      log(`  ${denied.length} page(s) still denied: widening to ${wider.length} permission(s)`);
+      await eliminate({ entries, routes: denied, candidates: wider, applyPermissions, probeAll: probeGroup, log });
+    } else {
+      for (const r of denied) {
+        set(r, { status: 'unknown', requires: C, reason: `denied even with all ${C.length} candidate permission(s): the page needs a permission outside them`, evidence: all.get(r).evidence });
+      }
+    }
+  } else {
+    return eliminate({ entries, routes, candidates: widen(routes[0]), applyPermissions, probeAll: probeGroup, log });
   }
   if (reachable.length === 0) return;
 
-  // 2. Necessary permissions: removing them denies the page.
+  // 2. Necessary permissions, by halving.
   const necessary = new Map(reachable.map(r => [r, new Set()]));
-  if (C.length === 1) {
-    reachable.forEach(r => necessary.get(r).add(C[0]));
-  } else {
-    for (const [i, perm] of C.entries()) {
-      log(`    without ${perm} (${i + 1}/${C.length})`);
-      await applyPermissions(C.filter(p => p !== perm));
-      const results = await probeGroup(reachable);
-      reachable.filter(r => !results.get(r).accessible).forEach(r => necessary.get(r).add(perm));
+  async function findNecessary(subset, pages) {
+    if (subset.length === 0 || pages.length === 0) return;
+    log(`    without ${subset.length === 1 ? subset[0] : `${subset.length} permissions (${subset[0]}...)`}`);
+    await applyPermissions(C.filter(p => !subset.includes(p)));
+    const results = await probeGroup(pages);
+    const broken = pages.filter(r => !results.get(r).accessible);
+    if (broken.length === 0) return;
+    if (subset.length === 1) {
+      broken.forEach(r => necessary.get(r).add(subset[0]));
+      return;
     }
+    const half = Math.ceil(subset.length / 2);
+    await findNecessary(subset.slice(0, half), broken);
+    await findNecessary(subset.slice(half), broken);
+  }
+  if (C.length === 1) reachable.forEach(r => necessary.get(r).add(C[0]));
+  else {
+    const half = Math.ceil(C.length / 2);
+    await findNecessary(C.slice(0, half), reachable);
+    await findNecessary(C.slice(half), reachable);
   }
 
-  // 3. Confirm each necessary set alone, or find alternatives.
+  // 3. Confirm each necessary set alone, or complete it with alternatives.
   const groups = new Map();
   for (const r of reachable) {
     const S = [...necessary.get(r)].sort();
@@ -142,17 +172,18 @@ async function eliminate({ entries, routes, candidates, applyPermissions, probeA
     groups.get(key(S)).routes.push(r);
   }
   for (const { S, routes: group } of groups.values()) {
+    let opened = [];
+    let incomplete = group;
     if (S.length > 0) {
       await applyPermissions(S);
       const results = await probeGroup(group);
-      const opened = group.filter(r => results.get(r).accessible);
-      for (const r of group.filter(r => !results.get(r).accessible)) {
-        set(r, { status: 'requires', requires: C, sufficient: [C], reason: `opens with all candidates but not with [${S.join(', ')}] alone: not minimized` });
-      }
-      if (opened.length === 0) continue;
+      opened = group.filter(r => results.get(r).accessible);
+      incomplete = group.filter(r => !results.get(r).accessible);
+    }
 
+    if (opened.length) {
       // Counter-check: remove each permission of S again, alone. One flaky
-      // probe during the elimination must not make a permission "necessary".
+      // probe during the search must not make a permission "necessary".
       const confirmed = new Map(opened.map(r => [r, new Set(S)]));
       for (const perm of S) {
         log(`    check ${perm} is needed`);
@@ -172,25 +203,39 @@ async function eliminate({ entries, routes, candidates, applyPermissions, probeA
           ? { status: 'requires', requires: finalSet, sufficient: [finalSet], reason: undefined }
           : { status: 'requires', requires: S, sufficient: [S], reason: `counter-check removed [${S.filter(p => !finalSet.includes(p)).join(', ')}] but the page does not open without them` });
       }
-      continue;
     }
-    // No single necessary permission: the page accepts one of several.
-    const alternatives = new Map(group.map(r => [r, []]));
-    for (const perm of C) {
-      await applyPermissions([perm]);
-      const results = await probeGroup(group);
-      group.filter(r => results.get(r).accessible).forEach(r => alternatives.get(r).push([perm]));
+    if (incomplete.length === 0) continue;
+
+    // S is not enough on its own: the page also needs one permission among
+    // several. Find every single permission that completes S, by halving.
+    const others = C.filter(p => !S.includes(p));
+    const alternatives = new Map(incomplete.map(r => [r, []]));
+    async function findAlternatives(subset, pages) {
+      if (subset.length === 0 || pages.length === 0) return;
+      log(`    with [${S.join(', ') || 'baseline'}] + ${subset.length === 1 ? subset[0] : `${subset.length} permissions (${subset[0]}...)`}`);
+      await applyPermissions([...S, ...subset]);
+      const results = await probeGroup(pages);
+      const ok = pages.filter(r => results.get(r).accessible);
+      if (ok.length === 0) return;
+      if (subset.length === 1) {
+        ok.forEach(r => alternatives.get(r).push([...S, subset[0]].sort()));
+        return;
+      }
+      const half = Math.ceil(subset.length / 2);
+      await findAlternatives(subset.slice(0, half), ok);
+      await findAlternatives(subset.slice(half), ok);
     }
-    for (const r of group) {
+    await findAlternatives(others, incomplete);
+    for (const r of incomplete) {
       const alts = alternatives.get(r);
       set(r, alts.length
         ? { status: 'requires', requires: alts[0], sufficient: alts, reason: undefined }
-        : { status: 'requires', requires: C, sufficient: [C], reason: 'opens with all candidates; no single one is enough: not minimized' });
+        : { status: 'requires', requires: C, sufficient: [C], reason: `opens with all candidates; [${S.join(', ') || 'no permission'}] plus any single other one is not enough: not minimized` });
     }
   }
 }
 
-async function discoverRequirements({ routes, applyPermissions, probe, noise, learned = new Set(), candidatesFor, maxRounds = 6, concurrency = 3, log = () => {} }) {
+async function discoverRequirements({ routes, applyPermissions, probe, noise, learned = new Set(), candidatesFor, widen, maxRounds = 6, concurrency = 3, log = () => {} }) {
   const probeOptions = { noise, learned, log };
   const entries = new Map(routes.map(route => [route, { route, status: 'pending', requires: [], sufficient: [], insufficient: [], evidence: null }]));
 
@@ -276,7 +321,7 @@ async function discoverRequirements({ routes, applyPermissions, probe, noise, le
     if (groups.size) log(`Elimination: ${groups.size} group(s) of pages denied without a named permission`);
     for (const { C, routes: group } of groups.values()) {
       await eliminate({
-        entries, routes: group, candidates: C, applyPermissions, log,
+        entries, routes: group, candidates: C, widen, applyPermissions, log,
         probeAll: list => probeAll(list, probe, concurrency, probeOptions)
       });
     }
