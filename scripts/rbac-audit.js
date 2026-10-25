@@ -238,10 +238,22 @@ async function main() {
       for (const roleId of previousRoleIds) await api.removeUser(roleId, userId);
 
       let current = new Set((await api.rolePermissions(role.id)).map(p => p.attributes.name));
+      // Without "Minimal Access Roles", Datadog keeps some restricted
+      // permissions in every role: they form a baseline every user holds.
+      const baseline = new Set();
       async function applyPermissions(names) {
         const target = new Set(names);
         const rejected = names.filter(n => !permIdByName.has(n));
-        for (const name of current) if (!target.has(name)) await api.revoke(role.id, permIdByName.get(name));
+        for (const name of current) {
+          if (target.has(name) || baseline.has(name)) continue;
+          try {
+            await api.revoke(role.id, permIdByName.get(name));
+          } catch (e) {
+            if (!/cannot be removed/i.test(e.message)) throw e;
+            baseline.add(name);
+            console.log(`  ${name} cannot be removed in this org: kept as baseline`);
+          }
+        }
         for (const name of target) {
           if (current.has(name) || !permIdByName.has(name)) continue;
           try { await api.grant(role.id, permIdByName.get(name)); } catch (e) { rejected.push(name); }
@@ -280,7 +292,15 @@ async function main() {
       const out = path.resolve(args.out || DEFAULT_OUT);
       fs.mkdirSync(path.dirname(out), { recursive: true });
       const result = entries.map(e => ({ ...e, menu: findMenuForHref(e.route)?.id || null }));
-      fs.writeFileSync(out, JSON.stringify({ site: siteUrl(site), measuredAt: new Date().toISOString().slice(0, 10), verifiedMapping: !!args['verify-mapping'], routes: result }, null, 1) + '\n');
+      fs.writeFileSync(out, JSON.stringify({
+        site: siteUrl(site),
+        measuredAt: new Date().toISOString().slice(0, 10),
+        verifiedMapping: !!args['verify-mapping'],
+        // Held by every role in this org; "open" pages may rely on them.
+        baselinePermissions: [...baseline].sort(),
+        routes: result
+      }, null, 1) + '\n');
+      if (baseline.size) console.log(`Baseline permissions (always held): ${[...baseline].sort().join(', ')}`);
       const counts = result.reduce((acc, e) => ({ ...acc, [e.status]: (acc[e.status] || 0) + 1 }), {});
       console.log(`\nWrote ${path.relative(process.cwd(), out)}: ${JSON.stringify(counts)}`);
     } finally {

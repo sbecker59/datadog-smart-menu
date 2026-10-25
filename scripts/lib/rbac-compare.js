@@ -7,6 +7,9 @@
  * held. Mismatch types:
  *   - shown-but-denied: the extension shows a link that would answer 403;
  *   - hidden-but-accessible: the extension hides a page the user can open.
+ *
+ * `baseline` lists permissions every role holds in the audited org (restricted
+ * permissions Datadog does not let you remove): they are added to every role.
  */
 
 /** Small seeded PRNG (mulberry32) so failures are reproducible. */
@@ -33,7 +36,7 @@ function expandPatterns(patterns, universe, permissionMatches) {
   return universe.filter(name => patterns.some(pattern => permissionMatches(pattern, name)));
 }
 
-function compareMapping({ matrix, menus, universe, iterations = 2000, seed = 42, maxRolePermissions = 30 }) {
+function compareMapping({ matrix, menus, universe, baseline = [], iterations = 2000, seed = 42, maxRolePermissions = 30 }) {
   const { mapPermissionsToMenus, findMenuForHref, permissionMatches } = menus;
   const entries = matrix.filter(e => e.status === 'open' || e.status === 'requires')
     .map(e => ({ ...e, menu: findMenuForHref(e.route) }))
@@ -50,14 +53,17 @@ function compareMapping({ matrix, menus, universe, iterations = 2000, seed = 42,
       if (role.length < current.example.length) current.example = [...role].sort();
     }
   };
-  const check = (role, source) => {
+  const check = (rawRole, source) => {
+    const role = [...new Set([...rawRole, ...baseline])];
     const held = new Set(role);
     const shown = new Set(mapPermissionsToMenus(role));
     for (const entry of entries) {
       const isShown = shown.has(entry.menu.id);
       const ok = isAccessible(entry, held);
-      if (isShown && !ok) record(entry, 'shown-but-denied', role, source);
-      if (!isShown && ok) record(entry, 'hidden-but-accessible', role, source);
+      // Examples list the permissions on top of the baseline.
+      const example = rawRole.filter(p => !baseline.includes(p));
+      if (isShown && !ok) record(entry, 'shown-but-denied', example, source);
+      if (!isShown && ok) record(entry, 'hidden-but-accessible', example, source);
     }
   };
 

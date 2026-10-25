@@ -134,3 +134,18 @@ test('API base URL follows the Datadog site', () => {
   assert.equal(apiBase('us3.datadoghq.com'), 'https://api.us3.datadoghq.com');
   assert.equal(apiBase(undefined), 'https://api.datadoghq.eu');
 });
+
+test('baseline permissions are held by every compared role', () => {
+  // The org keeps logs_read_index_data in every role: /logs only needs logs_read_data on top.
+  const matrix = [
+    { route: '/logs', status: 'requires', requires: ['logs_read_data'], sufficient: [['logs_read_data']] },
+    { route: '/apm/traces', status: 'open', requires: [], sufficient: [] }
+  ];
+  const result = compareMapping({ matrix, menus, universe, baseline: ['logs_read_index_data'], iterations: 300 });
+  const types = result.mismatches.map(m => `${m.route} ${m.type} [${m.example.join(',')}]`);
+  // The baseline alone shows Logs (logs_* matches) although /logs needs logs_read_data.
+  assert.ok(types.includes('/logs shown-but-denied []'), types.join('\n'));
+  // /apm/traces opens with the baseline only, but the extension hides APM without apm_read.
+  assert.ok(types.includes('/apm/traces hidden-but-accessible []'), types.join('\n'));
+  assert.ok(result.mismatches.every(m => !m.example.includes('logs_read_index_data')), 'examples exclude the baseline');
+});

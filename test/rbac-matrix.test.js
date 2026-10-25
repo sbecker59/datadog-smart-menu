@@ -18,9 +18,10 @@ const hasMatrix = fs.existsSync(MATRIX);
 test('menus match the audited route permissions for random custom roles', {
   skip: hasMatrix ? false : 'no audit/route-permissions.json yet: run npm run audit:rbac on a test organization'
 }, () => {
-  const { routes: matrix } = JSON.parse(fs.readFileSync(MATRIX, 'utf8'));
+  const { routes: matrix, baselinePermissions = [] } = JSON.parse(fs.readFileSync(MATRIX, 'utf8'));
   const result = compareMapping({
     matrix,
+    baseline: baselinePermissions,
     menus: globalThis.DD_SMART_MENU,
     universe: permissions.map(p => p.name),
     iterations: 5000,
