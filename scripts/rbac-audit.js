@@ -27,7 +27,7 @@ const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 const { siteUrl } = require('./capture-navbar');
-const { discoverRequirements, verifyCandidates, isChromeApi } = require('./lib/rbac-discovery');
+const { discoverRequirements, verifyCandidates } = require('./lib/rbac-discovery');
 
 require('../shared/menu-definitions.js');
 const { DATADOG_MENUS, findMenuForHref, permissionMatches } = globalThis.DD_SMART_MENU;
@@ -185,18 +185,12 @@ async function createBrowser({ site, statePath, setupContext, displayNames = new
     }
   }
 
-  // Background API calls denied on a page every user can open: page chrome.
-  // Cumulative: such calls do not always fire within the wait, so an API seen
-  // once on the reference page stays ignored for the whole run.
+  // Background calls are recognised by the fixed list in rbac-discovery.js
+  // (CHROME_APIS). Learning them from a "neutral" page proved unsafe: the
+  // profile page also calls product APIs such as the logs facets.
   const noise = new Set();
-  async function calibrate(referenceRoute = '/personal-settings/profile') {
-    const result = await probe(referenceRoute);
-    const added = result.denied.map(d => d.api).filter(api => !noise.has(api) && !isChromeApi(api));
-    added.forEach(api => noise.add(api));
-    return [...new Set(added)];
-  }
 
-  return { currentUser, probe, calibrate, noise: () => noise, debug, close: () => browser.close() };
+  return { currentUser, probe, noise: () => noise, debug, close: () => browser.close() };
 }
 
 function maskEmail(email) {
@@ -310,7 +304,6 @@ async function main() {
         const expected = visible(current);
         if (!exposesPermissions) {
           await new Promise(r => setTimeout(r, 15000));
-          await browser.calibrate();
           return { rejected };
         }
         let seen = null;
@@ -332,8 +325,6 @@ async function main() {
             console.warn(`  session permissions differ from the role after 20 s (missing: ${missingInSession.slice(0, 5).join(', ') || '-'}; extra: ${extraInSession.slice(0, 5).join(', ')}); continuing`);
           }
         }
-        const added = await browser.calibrate();
-        if (added.length) console.log(`  new background API(s) denied on every page, ignored from now on: ${added.join(', ')}`);
         return { rejected };
       }
 

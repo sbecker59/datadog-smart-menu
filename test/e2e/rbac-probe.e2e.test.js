@@ -68,20 +68,17 @@ test('probe detects 403s, missing permissions and expired sessions', async () =>
     assert.equal(me.id, 'test-user');
     assert.deepEqual(me.permissions, ['dashboards_read']);
 
-    // The reference page reveals background calls denied everywhere; the org
-    // call is already known as background, so only the new one is reported.
-    assert.deepEqual(await browser.calibrate(), ['/api/ui/custom-banner']);
-    assert.deepEqual(await browser.calibrate(), [], 'already learned');
     const noise = browser.noise();
 
     const logs = classify(await browser.probe('/logs'), noise);
     assert.equal(logs.accessible, false);
     assert.deepEqual(logs.missing, ['logs_read_data']);
-    assert.deepEqual(logs.evidence.deniedApis, ['/api/v1/logs-queries']);
-    assert.deepEqual(logs.evidence.ignoredApis.sort(), ['/api/ui/custom-banner', '/api/v1/org/test-org']);
+    assert.deepEqual(logs.evidence.deniedApis.sort(), ['/api/ui/custom-banner', '/api/v1/logs-queries']);
+    assert.deepEqual(logs.evidence.ignoredApis, ['/api/v1/org/test-org'], 'the known background call is ignored');
+    assert.ok(logs.evidence.deniedApis.includes('/api/ui/custom-banner'), 'an unknown call is not assumed to be background');
 
-    const monitors = classify(await browser.probe('/monitors/manage'), noise);
-    assert.equal(monitors.accessible, true, 'the background 403 and the banner outside <main> are ignored');
+    const monitors = classify(await browser.probe('/monitors/manage'), new Set(['/api/ui/custom-banner']));
+    assert.equal(monitors.accessible, true, 'the background 403s and the banner outside <main> are ignored');
 
     const billing = classify(await browser.probe('/billing'), noise);
     assert.equal(billing.accessible, false, 'a "no permission" page counts as denied');
