@@ -18,7 +18,7 @@
 // Above this share of a batch, an API denied everywhere is page chrome, not
 // the page's own data.
 const NOISE_RATIO = 0.6;
-const MIN_BATCH_FOR_NOISE = 10;
+const MIN_BATCH_FOR_NOISE = 30;
 
 /** Turn a raw probe result into { accessible, missing }, ignoring noise APIs. */
 function classify(result, noise) {
@@ -77,7 +77,82 @@ async function probeAll(routes, probe, concurrency, { noise = () => new Set(), l
  * Phase 1: start from an empty role, then grant what each page reports as
  * missing until it opens. Routes needing the same set share one role update.
  */
-async function discoverRequirements({ routes, applyPermissions, probe, noise, learned = new Set(), maxRounds = 6, concurrency = 3, log = () => {} }) {
+/**
+ * Datadog's 403 bodies rarely name the missing permission. For pages still
+ * denied, search by elimination among candidate permissions (the menu's
+ * permissions and their documentation group):
+ *   1. grant every candidate: still denied -> a permission the table misses;
+ *   2. remove candidates one at a time: those whose removal denies the page
+ *      are necessary;
+ *   3. check the necessary set alone; when it is empty, look for single
+ *      candidates that open the page ("any one of" alternatives).
+ */
+async function eliminate({ entries, routes, candidates, applyPermissions, probeAll: probeGroup, log }) {
+  const C = [...new Set(candidates)].sort();
+  const set = (route, fields) => Object.assign(entries.get(route), fields);
+  if (C.length === 0) {
+    routes.forEach(r => set(r, { status: 'unknown', reason: 'denied, and no candidate permission to try' }));
+    return;
+  }
+  log(`  Elimination over ${C.length} candidate permission(s) for ${routes.length} page(s)`);
+
+  // 1. Everything granted.
+  await applyPermissions(C);
+  const all = await probeGroup(routes);
+  const reachable = routes.filter(r => all.get(r).accessible);
+  for (const r of routes.filter(r => !all.get(r).accessible)) {
+    set(r, { status: 'unknown', requires: C, reason: `denied even with all ${C.length} candidate permission(s): the page needs a permission outside them`, evidence: all.get(r).evidence });
+  }
+  if (reachable.length === 0) return;
+
+  // 2. Necessary permissions: removing them denies the page.
+  const necessary = new Map(reachable.map(r => [r, new Set()]));
+  if (C.length === 1) {
+    reachable.forEach(r => necessary.get(r).add(C[0]));
+  } else {
+    for (const [i, perm] of C.entries()) {
+      log(`    without ${perm} (${i + 1}/${C.length})`);
+      await applyPermissions(C.filter(p => p !== perm));
+      const results = await probeGroup(reachable);
+      reachable.filter(r => !results.get(r).accessible).forEach(r => necessary.get(r).add(perm));
+    }
+  }
+
+  // 3. Confirm each necessary set alone, or find alternatives.
+  const groups = new Map();
+  for (const r of reachable) {
+    const S = [...necessary.get(r)].sort();
+    if (!groups.has(key(S))) groups.set(key(S), { S, routes: [] });
+    groups.get(key(S)).routes.push(r);
+  }
+  for (const { S, routes: group } of groups.values()) {
+    if (S.length > 0) {
+      await applyPermissions(S);
+      const results = await probeGroup(group);
+      for (const r of group) {
+        set(r, results.get(r).accessible
+          ? { status: 'requires', requires: S, sufficient: [S], reason: undefined }
+          : { status: 'requires', requires: C, sufficient: [C], reason: `opens with all candidates but not with [${S.join(', ')}] alone: not minimized` });
+      }
+      continue;
+    }
+    // No single necessary permission: the page accepts one of several.
+    const alternatives = new Map(group.map(r => [r, []]));
+    for (const perm of C) {
+      await applyPermissions([perm]);
+      const results = await probeGroup(group);
+      group.filter(r => results.get(r).accessible).forEach(r => alternatives.get(r).push([perm]));
+    }
+    for (const r of group) {
+      const alts = alternatives.get(r);
+      set(r, alts.length
+        ? { status: 'requires', requires: alts[0], sufficient: alts, reason: undefined }
+        : { status: 'requires', requires: C, sufficient: [C], reason: 'opens with all candidates; no single one is enough: not minimized' });
+    }
+  }
+}
+
+async function discoverRequirements({ routes, applyPermissions, probe, noise, learned = new Set(), candidatesFor, maxRounds = 6, concurrency = 3, log = () => {} }) {
   const probeOptions = { noise, learned, log };
   const entries = new Map(routes.map(route => [route, { route, status: 'pending', requires: [], sufficient: [], insufficient: [], evidence: null }]));
 
@@ -92,6 +167,7 @@ async function discoverRequirements({ routes, applyPermissions, probe, noise, le
     const added = (result.missing || []).filter(p => !perms.includes(p));
     if (added.length === 0) {
       entry.status = 'unknown';
+      entry.needsSearch = true;
       entry.reason = perms.length === 0
         ? 'denied without naming a missing permission'
         : `still denied with [${perms.join(', ')}] and no new missing permission`;
@@ -144,6 +220,25 @@ async function discoverRequirements({ routes, applyPermissions, probe, noise, le
       Object.assign(entries.get(route), { status: 'unknown', requires: perms, reason: `not resolved after ${maxRounds} rounds` });
     }
   }
+
+  // Pages denied without a named permission: search by elimination.
+  if (candidatesFor) {
+    const groups = new Map();
+    for (const entry of entries.values()) {
+      if (!entry.needsSearch) continue;
+      const C = union(entry.requires, candidatesFor(entry.route) || []);
+      if (!groups.has(key(C))) groups.set(key(C), { C, routes: [] });
+      groups.get(key(C)).routes.push(entry.route);
+    }
+    if (groups.size) log(`Elimination: ${groups.size} group(s) of pages denied without a named permission`);
+    for (const { C, routes: group } of groups.values()) {
+      await eliminate({
+        entries, routes: group, candidates: C, applyPermissions, log,
+        probeAll: list => probeAll(list, probe, concurrency, probeOptions)
+      });
+    }
+  }
+  for (const entry of entries.values()) delete entry.needsSearch;
   return [...entries.values()];
 }
 

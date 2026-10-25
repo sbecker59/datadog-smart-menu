@@ -68,6 +68,25 @@ function extractMissingPermissions(text) {
   return [...names];
 }
 
+/**
+ * Permission names quoted by display name in a "no permission" sentence, e.g.
+ * "Request access to permission Logs Read Data to view this page."
+ */
+function permissionsFromSentence(sentence, displayNames) {
+  let text = ` ${String(sentence || '').toLowerCase().replace(/[.,:;!?()]/g, ' ')} `;
+  const found = [];
+  // Longest names first, removed once matched, so "Logs Read Data" does not
+  // also count as "Logs Read".
+  for (const [display, name] of [...displayNames].sort((a, b) => b[0].length - a[0].length)) {
+    const needle = ` ${display.toLowerCase()} `;
+    if (text.includes(needle)) {
+      found.push(name);
+      text = text.split(needle).join('  ');
+    }
+  }
+  return found;
+}
+
 function createApi({ site, apiKey, appKey, fetchImpl = fetch }) {
   const base = apiBase(site);
   async function call(method, urlPath, body) {
@@ -101,7 +120,7 @@ function loadRoutes(only) {
 }
 
 /** Browser side: open pages as the test user and read their access. */
-async function createBrowser({ site, statePath, setupContext }) {
+async function createBrowser({ site, statePath, setupContext, displayNames = new Map() }) {
   if (!fs.existsSync(statePath)) throw new Error(`Test user session not found: ${statePath}. Save it with: npm run capture:navbar -- --login --save-state ${statePath}`);
   const browser = await chromium.launch();
   const context = await browser.newContext({ storageState: statePath, viewport: { width: 1400, height: 900 } });
@@ -152,10 +171,12 @@ async function createBrowser({ site, statePath, setupContext }) {
       });
       const match = text.match(/(do not|don't) have (the )?(required )?(permission|access)[^\n]{0,120}|missing (required )?permissions?[^\n]{0,120}|request access[^\n]{0,80}/i);
       if (match) debug.push({ route, pageText: match[0].slice(0, 200) });
+      // Start of the page content, to tell an empty page from a real one.
+      debug.push({ route, contentStart: text.replace(/\s+/g, ' ').trim().slice(0, 300), deniedApis: denied.length });
       return {
         denied,
         pageDenied: !!match,
-        pageMissing: match ? extractMissingPermissions(text) : []
+        pageMissing: match ? [...new Set([...extractMissingPermissions(text), ...permissionsFromSentence(match[0], displayNames)])] : []
       };
     } finally {
       await page.close();
@@ -214,8 +235,9 @@ async function main() {
   const previousRoleIds = (user.data?.relationships?.roles?.data || []).map(r => r.id);
   const allPermissions = await api.permissions();
   const permIdByName = new Map(allPermissions.map(p => [p.attributes.name, p.id]));
+  const displayNames = new Map(allPermissions.filter(p => p.attributes.display_name).map(p => [p.attributes.display_name, p.attributes.name]));
 
-  const browser = await createBrowser({ site, statePath });
+  const browser = await createBrowser({ site, statePath, displayNames });
   try {
     const me = await browser.currentUser();
     if (me.status !== 200) throw new Error(`The test user session does not work (current_user -> ${me.status}). Save it again.`);
@@ -276,7 +298,9 @@ async function main() {
         }
         current = new Set((await api.rolePermissions(role.id)).map(p => p.attributes.name));
         // Wait until the test user's session sees exactly these permissions.
-        const expected = [...current].sort().join(',');
+        // current_user does not list the baseline (restricted) permissions.
+        const visible = list => [...new Set(list)].filter(p => !baseline.has(p)).sort().join(',');
+        const expected = visible(current);
         if (!exposesPermissions) {
           await new Promise(r => setTimeout(r, 15000));
           await browser.calibrate();
@@ -286,12 +310,12 @@ async function main() {
         let synced = false;
         for (let i = 0; i < 30 && !synced; i++) {
           seen = await browser.currentUser();
-          synced = [...new Set(seen.permissions)].sort().join(',') === expected;
+          synced = visible(seen.permissions) === expected;
           if (!synced) await new Promise(r => setTimeout(r, 2000));
         }
         if (!synced) {
           const have = new Set(seen?.permissions || []);
-          const missingInSession = [...current].filter(p => !have.has(p));
+          const missingInSession = [...current].filter(p => !have.has(p) && !baseline.has(p));
           const extraInSession = [...have].filter(p => !current.has(p));
           console.warn(`  session permissions differ from the role after 60 s (missing: ${missingInSession.slice(0, 5).join(', ') || '-'}; extra: ${extraInSession.slice(0, 5).join(', ') || '-'}); continuing`);
         }
@@ -302,8 +326,17 @@ async function main() {
 
       const log = msg => console.log(msg);
       const concurrency = Number(args.concurrency || 3);
+      const universe = allPermissions.map(p => p.attributes.name);
+      const docGroup = new Map(require(path.join(rootDir, 'test/fixtures/datadog-permissions.json')).permissions.map(p => [p.name, p.group]));
+      function candidatesFor(route) {
+        const menu = findMenuForHref(route);
+        if (!menu || !menu.permissions) return [];
+        const own = universe.filter(n => menu.permissions.some(pattern => permissionMatches(pattern, n)));
+        const groups = new Set(own.map(n => docGroup.get(n)).filter(Boolean));
+        return [...new Set([...own, ...universe.filter(n => groups.has(docGroup.get(n)))])].filter(n => !baseline.has(n));
+      }
       const learned = new Set(); // APIs found denied on most pages, shared by both phases
-      let entries = await discoverRequirements({ routes, applyPermissions, probe: browser.probe, noise: browser.noise, learned, concurrency, log });
+      let entries = await discoverRequirements({ routes, applyPermissions, probe: browser.probe, noise: browser.noise, learned, candidatesFor, concurrency, log });
 
       if (args['verify-mapping']) {
         const universe = allPermissions.map(p => p.attributes.name);
@@ -351,4 +384,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { apiBase, extractMissingPermissions, createApi, loadRoutes, createBrowser };
+module.exports = { apiBase, extractMissingPermissions, permissionsFromSentence, createApi, loadRoutes, createBrowser };

@@ -7,7 +7,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { discoverRequirements, verifyCandidates } = require('../scripts/lib/rbac-discovery');
 const { compareMapping, prng } = require('../scripts/lib/rbac-compare');
-const { apiBase, extractMissingPermissions } = require('../scripts/rbac-audit');
+const { apiBase, extractMissingPermissions, permissionsFromSentence } = require('../scripts/rbac-audit');
 
 /**
  * Fake Datadog: each route has a list of alternative permission sets; a page
@@ -154,7 +154,7 @@ test('APIs denied on most pages are ignored, page-specific denials are kept', as
   // Raw probe results like the real browser: every page gets a 403 on the
   // org API (page chrome); /logs also gets a 403 naming logs_read_data.
   let held = new Set();
-  const routes = Array.from({ length: 12 }, (_, i) => `/page-${i}`).concat('/logs');
+  const routes = Array.from({ length: 34 }, (_, i) => `/page-${i}`).concat('/logs');
   const result = await discoverRequirements({
     routes,
     applyPermissions: async (names) => { held = new Set(names); return { rejected: [] }; },
@@ -180,4 +180,48 @@ test('caller-provided noise APIs are ignored even in small batches', async () =>
     probe: async () => ({ denied: [{ api: '/api/v2/incidents/search-incidents', missing: ['incident_read'] }], pageDenied: false })
   });
   assert.equal(result[0].status, 'open');
+});
+
+/** Fake Datadog that never names the missing permission (like real 403s). */
+function silentDatadog(rules) {
+  let held = new Set();
+  return {
+    applyPermissions: async (names) => { held = new Set(names); return { rejected: [] }; },
+    probe: async (route) => ({ accessible: rules[route].some(set => set.every(p => held.has(p))), missing: [] })
+  };
+}
+
+test('elimination finds the permissions of pages that never name them', async () => {
+  const dd = silentDatadog({
+    '/logs/pipelines': [['logs_read_config', 'logs_read_data']],
+    '/apm/traces': [['apm_read'], ['apm_service_catalog_read']],
+    '/logs/onboarding': [['api_keys_read']]
+  });
+  const candidates = {
+    '/logs/pipelines': ['logs_read_config', 'logs_read_data', 'logs_write_pipelines', 'logs_read_archives'],
+    '/apm/traces': ['apm_read', 'apm_service_catalog_read', 'dbm_read'],
+    '/logs/onboarding': ['logs_read_config', 'logs_read_data', 'logs_write_pipelines', 'logs_read_archives']
+  };
+  const entries = await discoverRequirements({ routes: Object.keys(candidates), candidatesFor: r => candidates[r], ...dd });
+  const byRoute = Object.fromEntries(entries.map(e => [e.route, e]));
+
+  assert.equal(byRoute['/logs/pipelines'].status, 'requires');
+  assert.deepEqual(byRoute['/logs/pipelines'].requires, ['logs_read_config', 'logs_read_data']);
+  assert.deepEqual(byRoute['/apm/traces'].sufficient, [['apm_read'], ['apm_service_catalog_read']], 'alternatives are found');
+  assert.equal(byRoute['/logs/onboarding'].status, 'unknown');
+  assert.match(byRoute['/logs/onboarding'].reason, /outside them/);
+  assert.ok(entries.every(e => !('needsSearch' in e)));
+});
+
+test('pages without candidates stay unknown', async () => {
+  const dd = silentDatadog({ '/mystery': [['secret_perm']] });
+  const [entry] = await discoverRequirements({ routes: ['/mystery'], candidatesFor: () => [], ...dd });
+  assert.equal(entry.status, 'unknown');
+  assert.match(entry.reason, /no candidate/);
+});
+
+test('permission display names in "request access" texts map to permission names', () => {
+  const names = new Map([['Logs Read Data', 'logs_read_data'], ['Logs Read', 'logs_read_legacy'], ['APM Read', 'apm_read']]);
+  assert.deepEqual(permissionsFromSentence('Request access to permission Logs Read Data to view this page.', names), ['logs_read_data']);
+  assert.deepEqual(permissionsFromSentence('Request access to view this page.', names), []);
 });
