@@ -27,7 +27,7 @@ const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 const { siteUrl } = require('./capture-navbar');
-const { discoverRequirements, verifyCandidates } = require('./lib/rbac-discovery');
+const { discoverRequirements, verifyCandidates, isChromeApi } = require('./lib/rbac-discovery');
 
 require('../shared/menu-definitions.js');
 const { DATADOG_MENUS, findMenuForHref, permissionMatches } = globalThis.DD_SMART_MENU;
@@ -169,12 +169,14 @@ async function createBrowser({ site, statePath, setupContext, displayNames = new
         const main = document.querySelector('#single-page-app_layout_page__main-content, [class*="layout_page__main"], main');
         return (main || document.body)?.innerText || '';
       });
-      const match = text.match(/(do not|don't) have (the )?(required )?(permission|access)[^\n]{0,120}|missing (required )?permissions?[^\n]{0,120}|request access[^\n]{0,80}/i);
+      const match = text.match(/(do not|don't) have (the )?(required )?(permission|access)[^\n]{0,120}|missing (required )?permissions?[^\n]{0,120}|request access[^\n]{0,80}|an error occurred while loading the page/i);
+      const notFound = /404:? page not found/i.test(text);
       if (match) debug.push({ route, pageText: match[0].slice(0, 200) });
       // Start of the page content, to tell an empty page from a real one.
       debug.push({ route, contentStart: text.replace(/\s+/g, ' ').trim().slice(0, 300), deniedApis: denied.length });
       return {
         denied,
+        notFound,
         pageDenied: !!match,
         pageMissing: match ? [...new Set([...extractMissingPermissions(text), ...permissionsFromSentence(match[0], displayNames)])] : []
       };
@@ -184,11 +186,14 @@ async function createBrowser({ site, statePath, setupContext, displayNames = new
   }
 
   // Background API calls denied on a page every user can open: page chrome.
-  let noise = new Set();
+  // Cumulative: such calls do not always fire within the wait, so an API seen
+  // once on the reference page stays ignored for the whole run.
+  const noise = new Set();
   async function calibrate(referenceRoute = '/personal-settings/profile') {
     const result = await probe(referenceRoute);
-    noise = new Set(result.denied.map(d => d.api));
-    return [...noise];
+    const added = result.denied.map(d => d.api).filter(api => !noise.has(api) && !isChromeApi(api));
+    added.forEach(api => noise.add(api));
+    return [...new Set(added)];
   }
 
   return { currentUser, probe, calibrate, noise: () => noise, debug, close: () => browser.close() };
@@ -279,6 +284,8 @@ async function main() {
       // Without "Minimal Access Roles", Datadog keeps some restricted
       // permissions in every role: they form a baseline every user holds.
       const baseline = new Set();
+      // Permissions current_user never lists (restricted ones): learned once.
+      const hiddenInSession = new Set();
       async function applyPermissions(names) {
         const target = new Set(names);
         const rejected = names.filter(n => !permIdByName.has(n));
@@ -299,7 +306,7 @@ async function main() {
         current = new Set((await api.rolePermissions(role.id)).map(p => p.attributes.name));
         // Wait until the test user's session sees exactly these permissions.
         // current_user does not list the baseline (restricted) permissions.
-        const visible = list => [...new Set(list)].filter(p => !baseline.has(p)).sort().join(',');
+        const visible = list => [...new Set(list)].filter(p => !baseline.has(p) && !hiddenInSession.has(p)).sort().join(',');
         const expected = visible(current);
         if (!exposesPermissions) {
           await new Promise(r => setTimeout(r, 15000));
@@ -308,19 +315,25 @@ async function main() {
         }
         let seen = null;
         let synced = false;
-        for (let i = 0; i < 30 && !synced; i++) {
+        for (let i = 0; i < 10 && !synced; i++) {
           seen = await browser.currentUser();
           synced = visible(seen.permissions) === expected;
           if (!synced) await new Promise(r => setTimeout(r, 2000));
         }
         if (!synced) {
           const have = new Set(seen?.permissions || []);
-          const missingInSession = [...current].filter(p => !have.has(p) && !baseline.has(p));
+          const missingInSession = [...current].filter(p => !have.has(p) && !baseline.has(p) && !hiddenInSession.has(p));
           const extraInSession = [...have].filter(p => !current.has(p));
-          console.warn(`  session permissions differ from the role after 60 s (missing: ${missingInSession.slice(0, 5).join(', ') || '-'}; extra: ${extraInSession.slice(0, 5).join(', ') || '-'}); continuing`);
+          if (extraInSession.length === 0) {
+            // The role holds them but current_user does not list them: do not wait for them again.
+            missingInSession.forEach(p => hiddenInSession.add(p));
+            console.log(`  not listed by current_user, ignored when waiting from now on: ${missingInSession.join(', ')}`);
+          } else {
+            console.warn(`  session permissions differ from the role after 20 s (missing: ${missingInSession.slice(0, 5).join(', ') || '-'}; extra: ${extraInSession.slice(0, 5).join(', ')}); continuing`);
+          }
         }
-        const ignored = await browser.calibrate();
-        if (ignored.length) console.log(`  background APIs denied on every page (ignored): ${ignored.join(', ')}`);
+        const added = await browser.calibrate();
+        if (added.length) console.log(`  new background API(s) denied on every page, ignored from now on: ${added.join(', ')}`);
         return { rejected };
       }
 

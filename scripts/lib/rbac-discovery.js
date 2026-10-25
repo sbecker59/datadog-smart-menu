@@ -15,6 +15,20 @@
  *       org info or the incidents banner), refreshed by the caller.
  */
 
+// Background calls made by every Datadog page (org info, incidents banner,
+// Cmd+K, notifications, on-call, audit config): never the page's own data.
+const CHROME_APIS = [
+  /^\/api\/v1\/org\/[^/]+$/,
+  /^\/api\/v2\/incidents\/search-incidents$/,
+  /^\/api\/ui\/cmd-k\//,
+  /^\/api\/v1\/audit\/config$/,
+  /^\/api\/unstable\/on-call\/notification-rules\//,
+  /^\/api\/ui\/on-call\/org-settings\/seats\//,
+  /^\/api\/v2\/notifications\/notify\//,
+  /^\/api\/ui\/billing\/seats\//
+];
+const isChromeApi = api => CHROME_APIS.some(re => re.test(api));
+
 // Above this share of a batch, an API denied everywhere is page chrome, not
 // the page's own data.
 const NOISE_RATIO = 0.6;
@@ -23,7 +37,9 @@ const MIN_BATCH_FOR_NOISE = 30;
 /** Turn a raw probe result into { accessible, missing }, ignoring noise APIs. */
 function classify(result, noise) {
   if (!result.denied) return result;
-  const denied = result.denied.filter(d => !noise.has(d.api));
+  if (result.notFound) return { accessible: false, notFound: true, missing: [], evidence: { notFound: true } };
+  const ignore = api => noise.has(api) || isChromeApi(api);
+  const denied = result.denied.filter(d => !ignore(d.api));
   const missing = [...new Set([...denied.flatMap(d => d.missing || []), ...(result.pageDenied ? result.pageMissing || [] : [])])];
   return {
     accessible: denied.length === 0 && !result.pageDenied,
@@ -31,7 +47,7 @@ function classify(result, noise) {
     evidence: {
       ...(result.evidence || {}),
       deniedApis: [...new Set(denied.map(d => d.api))].slice(0, 10),
-      ignoredApis: [...new Set(result.denied.filter(d => noise.has(d.api)).map(d => d.api))].slice(0, 10),
+      ignoredApis: [...new Set(result.denied.filter(d => ignore(d.api)).map(d => d.api))].slice(0, 10),
       pageDenied: !!result.pageDenied
     }
   };
@@ -158,6 +174,11 @@ async function discoverRequirements({ routes, applyPermissions, probe, noise, le
 
   const settle = (entry, result, perms) => {
     entry.evidence = result.evidence || null;
+    if (result.notFound) {
+      entry.status = 'not-found';
+      entry.reason = 'page not available in this organization (404)';
+      return null;
+    }
     if (result.accessible) {
       entry.status = perms.length === 0 ? 'open' : 'requires';
       entry.requires = [...perms].sort();
@@ -269,4 +290,4 @@ async function verifyCandidates({ entries, candidates, applyPermissions, probe, 
   return entries;
 }
 
-module.exports = { discoverRequirements, verifyCandidates, classify, isSubset, union };
+module.exports = { discoverRequirements, verifyCandidates, classify, isChromeApi, isSubset, union };

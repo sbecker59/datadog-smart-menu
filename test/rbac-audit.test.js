@@ -225,3 +225,23 @@ test('permission display names in "request access" texts map to permission names
   assert.deepEqual(permissionsFromSentence('Request access to permission Logs Read Data to view this page.', names), ['logs_read_data']);
   assert.deepEqual(permissionsFromSentence('Request access to view this page.', names), []);
 });
+
+test('known background calls are always ignored and 404 pages are set apart', async () => {
+  const entries = await discoverRequirements({
+    routes: ['/logs/indexes', '/logs/flex-logs-controls'],
+    applyPermissions: async () => ({ rejected: [] }),
+    probe: async (route) => route === '/logs/flex-logs-controls'
+      ? { denied: [], notFound: true, pageDenied: false }
+      : {
+          denied: [
+            { api: '/api/v1/org/p7do4xr0actwkywo', missing: [] },
+            { api: '/api/ui/cmd-k/navigation-mappings', missing: [] },
+            { api: '/api/v2/notifications/notify/0ce11d73-da2b-40ad-bbdc-eb5a05ae772e', missing: [] }
+          ],
+          pageDenied: false
+        }
+  });
+  const byRoute = Object.fromEntries(entries.map(e => [e.route, e]));
+  assert.equal(byRoute['/logs/indexes'].status, 'open', 'only background calls were denied');
+  assert.equal(byRoute['/logs/flex-logs-controls'].status, 'not-found');
+});
