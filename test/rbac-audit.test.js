@@ -149,3 +149,35 @@ test('baseline permissions are held by every compared role', () => {
   assert.ok(types.includes('/apm/traces hidden-but-accessible []'), types.join('\n'));
   assert.ok(result.mismatches.every(m => !m.example.includes('logs_read_index_data')), 'examples exclude the baseline');
 });
+
+test('APIs denied on most pages are ignored, page-specific denials are kept', async () => {
+  // Raw probe results like the real browser: every page gets a 403 on the
+  // org API (page chrome); /logs also gets a 403 naming logs_read_data.
+  let held = new Set();
+  const routes = Array.from({ length: 12 }, (_, i) => `/page-${i}`).concat('/logs');
+  const result = await discoverRequirements({
+    routes,
+    applyPermissions: async (names) => { held = new Set(names); return { rejected: [] }; },
+    probe: async (route) => ({
+      denied: [
+        { api: '/api/v1/org/abc', missing: [] },
+        ...(route === '/logs' && !held.has('logs_read_data') ? [{ api: '/api/v2/logs/events', missing: ['logs_read_data'] }] : [])
+      ],
+      pageDenied: false
+    })
+  });
+  const byRoute = Object.fromEntries(result.map(e => [e.route, e]));
+  assert.equal(byRoute['/page-0'].status, 'open');
+  assert.deepEqual(byRoute['/logs'].requires, ['logs_read_data']);
+  assert.equal(byRoute['/logs'].status, 'requires');
+});
+
+test('caller-provided noise APIs are ignored even in small batches', async () => {
+  const result = await discoverRequirements({
+    routes: ['/a'],
+    applyPermissions: async () => ({ rejected: [] }),
+    noise: () => new Set(['/api/v2/incidents/search-incidents']),
+    probe: async () => ({ denied: [{ api: '/api/v2/incidents/search-incidents', missing: ['incident_read'] }], pageDenied: false })
+  });
+  assert.equal(result[0].status, 'open');
+});

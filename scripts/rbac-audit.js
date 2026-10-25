@@ -108,24 +108,27 @@ async function createBrowser({ site, statePath, setupContext }) {
   if (setupContext) await setupContext(context); // tests: serve a fake Datadog
   const origin = siteUrl(site);
 
+  // One page kept open on the API origin to read current_user quickly.
+  let userPage = null;
   async function currentUser() {
-    const page = await context.newPage();
-    try {
-      await page.goto(`${origin}/account/settings`, { waitUntil: 'domcontentloaded' }).catch(() => {});
-      return await page.evaluate(async () => {
-        const res = await fetch('/api/v2/current_user', { credentials: 'include', headers: { Accept: 'application/json' } });
-        if (!res.ok) return { status: res.status };
-        const json = await res.json();
-        return {
-          status: res.status,
-          id: json.data?.id,
-          permissions: (json.included || []).filter(i => i.type === 'permissions').map(i => i.attributes?.name).filter(Boolean)
-        };
-      });
-    } finally {
-      await page.close();
+    if (!userPage || userPage.isClosed()) {
+      userPage = await context.newPage();
+      await userPage.goto(`${origin}/api/v2/current_user`, { waitUntil: 'domcontentloaded' }).catch(() => {});
     }
+    return userPage.evaluate(async () => {
+      const res = await fetch('/api/v2/current_user', { credentials: 'include', headers: { Accept: 'application/json' } });
+      if (!res.ok) return { status: res.status, permissions: [] };
+      const json = await res.json();
+      return {
+        status: res.status,
+        id: json.data?.id,
+        permissions: (json.included || []).filter(i => i.type === 'permissions').map(i => i.attributes?.name).filter(Boolean)
+      };
+    });
   }
+
+  // Raw 403 responses of the run, for audit/last-run-debug.json.
+  const debug = [];
 
   async function probe(route) {
     const page = await context.newPage();
@@ -135,26 +138,39 @@ async function createBrowser({ site, statePath, setupContext }) {
       if (response.status() !== 403 || url.origin !== origin || !url.pathname.startsWith('/api/')) return;
       const body = await response.text().catch(() => '');
       denied.push({ api: url.pathname, missing: extractMissingPermissions(body) });
+      debug.push({ route, api: url.pathname, body: body.slice(0, 300) });
     });
     try {
       await page.goto(origin + route, { waitUntil: 'domcontentloaded', timeout: 45000 });
       if (new URL(page.url()).pathname.startsWith('/account/login')) throw new Error('The test user session has expired.');
       await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
       await page.waitForTimeout(1500);
-      const text = await page.evaluate(() => document.body?.innerText || '');
-      const pageDenied = /(do not|don't) have (the )?(required )?(permission|access)|missing (required )?permissions?|request access/i.test(text);
-      const missing = [...new Set([...denied.flatMap(d => d.missing), ...(pageDenied ? extractMissingPermissions(text) : [])])];
+      // Only the page content: banners and menus elsewhere are not the page.
+      const text = await page.evaluate(() => {
+        const main = document.querySelector('#single-page-app_layout_page__main-content, [class*="layout_page__main"], main');
+        return (main || document.body)?.innerText || '';
+      });
+      const match = text.match(/(do not|don't) have (the )?(required )?(permission|access)[^\n]{0,120}|missing (required )?permissions?[^\n]{0,120}|request access[^\n]{0,80}/i);
+      if (match) debug.push({ route, pageText: match[0].slice(0, 200) });
       return {
-        accessible: denied.length === 0 && !pageDenied,
-        missing,
-        evidence: { deniedApis: [...new Set(denied.map(d => d.api))].slice(0, 10), pageDenied }
+        denied,
+        pageDenied: !!match,
+        pageMissing: match ? extractMissingPermissions(text) : []
       };
     } finally {
       await page.close();
     }
   }
 
-  return { currentUser, probe, close: () => browser.close() };
+  // Background API calls denied on a page every user can open: page chrome.
+  let noise = new Set();
+  async function calibrate(referenceRoute = '/personal-settings/profile') {
+    const result = await probe(referenceRoute);
+    noise = new Set(result.denied.map(d => d.api));
+    return [...noise];
+  }
+
+  return { currentUser, probe, calibrate, noise: () => noise, debug, close: () => browser.close() };
 }
 
 function maskEmail(email) {
@@ -263,19 +279,31 @@ async function main() {
         const expected = [...current].sort().join(',');
         if (!exposesPermissions) {
           await new Promise(r => setTimeout(r, 15000));
+          await browser.calibrate();
           return { rejected };
         }
-        for (let i = 0; i < 45; i++) {
-          const seen = await browser.currentUser();
-          if ([...new Set(seen.permissions)].sort().join(',') === expected) break;
-          await new Promise(r => setTimeout(r, 2000));
+        let seen = null;
+        let synced = false;
+        for (let i = 0; i < 30 && !synced; i++) {
+          seen = await browser.currentUser();
+          synced = [...new Set(seen.permissions)].sort().join(',') === expected;
+          if (!synced) await new Promise(r => setTimeout(r, 2000));
         }
+        if (!synced) {
+          const have = new Set(seen?.permissions || []);
+          const missingInSession = [...current].filter(p => !have.has(p));
+          const extraInSession = [...have].filter(p => !current.has(p));
+          console.warn(`  session permissions differ from the role after 60 s (missing: ${missingInSession.slice(0, 5).join(', ') || '-'}; extra: ${extraInSession.slice(0, 5).join(', ') || '-'}); continuing`);
+        }
+        const ignored = await browser.calibrate();
+        if (ignored.length) console.log(`  background APIs denied on every page (ignored): ${ignored.join(', ')}`);
         return { rejected };
       }
 
       const log = msg => console.log(msg);
       const concurrency = Number(args.concurrency || 3);
-      let entries = await discoverRequirements({ routes, applyPermissions, probe: browser.probe, concurrency, log });
+      const learned = new Set(); // APIs found denied on most pages, shared by both phases
+      let entries = await discoverRequirements({ routes, applyPermissions, probe: browser.probe, noise: browser.noise, learned, concurrency, log });
 
       if (args['verify-mapping']) {
         const universe = allPermissions.map(p => p.attributes.name);
@@ -286,7 +314,7 @@ async function main() {
             candidates.set(perm, [...new Set([...(candidates.get(perm) || []), ...menuRoutes])]);
           }
         }
-        entries = await verifyCandidates({ entries, candidates, applyPermissions, probe: browser.probe, concurrency, log });
+        entries = await verifyCandidates({ entries, candidates, applyPermissions, probe: browser.probe, noise: browser.noise, learned, concurrency, log });
       }
 
       const out = path.resolve(args.out || DEFAULT_OUT);
@@ -301,6 +329,10 @@ async function main() {
         routes: result
       }, null, 1) + '\n');
       if (baseline.size) console.log(`Baseline permissions (always held): ${[...baseline].sort().join(', ')}`);
+      // Raw 403 bodies and "no permission" texts, to understand unknown pages (not committed).
+      const debugFile = path.join(path.dirname(out), 'last-run-debug.json');
+      fs.writeFileSync(debugFile, JSON.stringify(browser.debug, null, 1) + '\n');
+      console.log(`Diagnostics: ${path.relative(process.cwd(), debugFile)}`);
       const counts = result.reduce((acc, e) => ({ ...acc, [e.status]: (acc[e.status] || 0) + 1 }), {});
       console.log(`\nWrote ${path.relative(process.cwd(), out)}: ${JSON.stringify(counts)}`);
     } finally {

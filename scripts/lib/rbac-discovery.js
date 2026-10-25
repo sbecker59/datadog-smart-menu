@@ -6,33 +6,79 @@
  *
  *   applyPermissions(names) -> Promise<{ rejected: string[] }>
  *       Make the test role hold exactly `names` (and wait until it applies).
- *   probe(route) -> Promise<{ accessible: boolean, missing: string[], evidence?: object }>
- *       Open the page as the test user. `missing` lists permission names
- *       Datadog reported as missing (403 "Missing required permission").
+ *   probe(route) -> Promise<{ denied: [{ api, missing }], pageDenied, pageMissing, evidence }>
+ *       Open the page as the test user and report every API call answered
+ *       403 (with the permission names Datadog said were missing) and whether
+ *       the page itself shows a "no permission" message.
+ *       (A simplified { accessible, missing } result is accepted too.)
+ *   noise() -> Set<string>   API paths to ignore (denied on every page, e.g.
+ *       org info or the incidents banner), refreshed by the caller.
  */
+
+// Above this share of a batch, an API denied everywhere is page chrome, not
+// the page's own data.
+const NOISE_RATIO = 0.6;
+const MIN_BATCH_FOR_NOISE = 10;
+
+/** Turn a raw probe result into { accessible, missing }, ignoring noise APIs. */
+function classify(result, noise) {
+  if (!result.denied) return result;
+  const denied = result.denied.filter(d => !noise.has(d.api));
+  const missing = [...new Set([...denied.flatMap(d => d.missing || []), ...(result.pageDenied ? result.pageMissing || [] : [])])];
+  return {
+    accessible: denied.length === 0 && !result.pageDenied,
+    missing,
+    evidence: {
+      ...(result.evidence || {}),
+      deniedApis: [...new Set(denied.map(d => d.api))].slice(0, 10),
+      ignoredApis: [...new Set(result.denied.filter(d => noise.has(d.api)).map(d => d.api))].slice(0, 10),
+      pageDenied: !!result.pageDenied
+    }
+  };
+}
 
 const key = perms => [...perms].sort().join(',');
 const union = (a, b) => [...new Set([...a, ...b])].sort();
 const isSubset = (a, b) => a.every(x => b.includes(x));
 
-async function probeAll(routes, probe, concurrency) {
-  const results = new Map();
+async function probeAll(routes, probe, concurrency, { noise = () => new Set(), learned = new Set(), log = () => {} } = {}) {
+  const raw = new Map();
   let next = 0;
+  let done = 0;
+  const started = Date.now();
   async function worker() {
     while (next < routes.length) {
       const route = routes[next++];
-      results.set(route, await probe(route));
+      raw.set(route, await probe(route));
+      done++;
+      if (done % 20 === 0 || done === routes.length) {
+        log(`    probed ${done}/${routes.length} page(s) (${Math.round((Date.now() - started) / 1000)} s)`);
+      }
     }
   }
   await Promise.all(Array.from({ length: Math.max(1, Math.min(concurrency, routes.length)) }, worker));
-  return results;
+
+  // Noise: APIs from the caller, plus APIs denied on most pages of this batch.
+  const ignored = new Set([...noise(), ...learned]);
+  if (routes.length >= MIN_BATCH_FOR_NOISE) {
+    const counts = new Map();
+    for (const result of raw.values()) {
+      for (const api of new Set((result.denied || []).map(d => d.api))) counts.set(api, (counts.get(api) || 0) + 1);
+    }
+    const frequent = [...counts].filter(([api, n]) => n / routes.length > NOISE_RATIO && !ignored.has(api)).map(([api]) => api);
+    if (frequent.length) log(`    ignoring API(s) denied on most pages: ${frequent.join(', ')}`);
+    // Remember them for later, smaller batches of the same run.
+    frequent.forEach(api => { ignored.add(api); learned.add(api); });
+  }
+  return new Map([...raw].map(([route, result]) => [route, classify(result, ignored)]));
 }
 
 /**
  * Phase 1: start from an empty role, then grant what each page reports as
  * missing until it opens. Routes needing the same set share one role update.
  */
-async function discoverRequirements({ routes, applyPermissions, probe, maxRounds = 6, concurrency = 3, log = () => {} }) {
+async function discoverRequirements({ routes, applyPermissions, probe, noise, learned = new Set(), maxRounds = 6, concurrency = 3, log = () => {} }) {
+  const probeOptions = { noise, learned, log };
   const entries = new Map(routes.map(route => [route, { route, status: 'pending', requires: [], sufficient: [], insufficient: [], evidence: null }]));
 
   const settle = (entry, result, perms) => {
@@ -59,7 +105,7 @@ async function discoverRequirements({ routes, applyPermissions, probe, maxRounds
   log('Round 0: empty role');
   let rejected = (await applyPermissions([])).rejected || [];
   let pending = new Map(); // key -> { perms, routes }
-  const round0 = await probeAll(routes, probe, concurrency);
+  const round0 = await probeAll(routes, probe, concurrency, probeOptions);
   for (const route of routes) {
     const next = settle(entries.get(route), round0.get(route), []);
     if (next) {
@@ -80,7 +126,7 @@ async function discoverRequirements({ routes, applyPermissions, probe, maxRounds
         }
         continue;
       }
-      const results = await probeAll(groupRoutes, probe, concurrency);
+      const results = await probeAll(groupRoutes, probe, concurrency, probeOptions);
       for (const route of groupRoutes) {
         const next = settle(entries.get(route), results.get(route), perms);
         if (next) {
@@ -108,7 +154,7 @@ async function discoverRequirements({ routes, applyPermissions, probe, maxRounds
  *
  *   candidates: Map<permission, string[] routes>
  */
-async function verifyCandidates({ entries, candidates, applyPermissions, probe, concurrency = 3, log = () => {} }) {
+async function verifyCandidates({ entries, candidates, applyPermissions, probe, noise, learned = new Set(), concurrency = 3, log = () => {} }) {
   const byRoute = new Map(entries.map(e => [e.route, e]));
   let done = 0;
   for (const [perm, routes] of candidates) {
@@ -118,7 +164,7 @@ async function verifyCandidates({ entries, candidates, applyPermissions, probe, 
     log(`Verify ${done}/${candidates.size}: [${perm}] on ${targets.length} route(s)`);
     const { rejected } = await applyPermissions([perm]);
     if (rejected && rejected.length) continue;
-    const results = await probeAll(targets, probe, concurrency);
+    const results = await probeAll(targets, probe, concurrency, { noise, learned, log });
     for (const route of targets) {
       const entry = byRoute.get(route);
       const list = results.get(route).accessible ? entry.sufficient : entry.insufficient;
@@ -128,4 +174,4 @@ async function verifyCandidates({ entries, candidates, applyPermissions, probe, 
   return entries;
 }
 
-module.exports = { discoverRequirements, verifyCandidates, isSubset, union };
+module.exports = { discoverRequirements, verifyCandidates, classify, isSubset, union };

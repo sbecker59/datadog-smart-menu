@@ -149,3 +149,4 @@ datadog.html
 
 # RBAC audit restore point (scripts/rbac-audit.js)
 audit/.restore.json
+audit/last-run-debug.json
