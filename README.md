@@ -166,4 +166,6 @@ npm test                                                               # now als
 
 The script refuses to change anything without `--apply` and an `--allowed-org` equal to the organization's public ID, when the saved session belongs to another user, or when the test user is an admin. **Never run it on a production organization.** A page counts as denied when one of its API calls answers 403 or it shows a "no permission" message; pages denied without naming a permission are reported as `unknown`.
 
+Accepted exception: a page that opens without any permission of its product (an empty or onboarding page, `open` in the matrix) stays hidden from users who lack the product's permission, since it is of no use to them. The comparison lists these pages instead of failing on them; a page that a permission outside the table would open is still reported.
+
 Without Datadog's *Minimal Access Roles* feature, some restricted permissions cannot be removed from any role. The audit keeps them as a baseline (`baselinePermissions` in the matrix), and the comparison adds them to every random role, as every user of that organization holds them.

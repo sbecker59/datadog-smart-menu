@@ -363,3 +363,19 @@ test('a page that opens with almost any extra permission is capped and reported'
   assert.match(entry.reason, /almost any extra permission/);
   assert.ok(applies < 40, `the search must stop early, got ${applies} role changes`);
 });
+
+test('empty pages hidden on purpose are accepted, other hidden pages are not', () => {
+  const matrix = [
+    { route: '/marketplace', status: 'open', requires: [], sufficient: [] },
+    { route: '/apm/traces', status: 'open', requires: [], sufficient: [] },
+    { route: '/logs', status: 'requires', requires: ['apm_service_catalog_read'], sufficient: [['apm_service_catalog_read']] }
+  ];
+  const strict = compareMapping({ matrix, menus, universe, iterations: 200 });
+  assert.ok(strict.mismatches.some(m => m.route === '/apm/traces'));
+
+  const policy = compareMapping({ matrix, menus, universe, iterations: 200, hideEmptyPages: true });
+  assert.deepEqual(policy.accepted, [{ route: '/apm/traces', menuId: 'apm' }]);
+  assert.ok(policy.mismatches.some(m => m.route === '/logs' && m.type === 'hidden-but-accessible'),
+    'a page opened by a permission outside the table is still reported');
+  assert.ok(!policy.mismatches.some(m => m.route === '/apm/traces'), 'the empty page is not a mismatch');
+});

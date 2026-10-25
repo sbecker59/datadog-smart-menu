@@ -8,6 +8,12 @@
  *   - shown-but-denied: the extension shows a link that would answer 403;
  *   - hidden-but-accessible: the extension hides a page the user can open.
  *
+ * `hideEmptyPages`: pages that open with no product permission (status
+ * "open": empty or onboarding pages) may stay hidden from users without the
+ * product's permission. Such cases are returned in `accepted`, not as
+ * mismatches. Pages that a permission outside the table would open are
+ * still mismatches.
+ *
  * `baseline` lists permissions every role holds in the audited org (restricted
  * permissions Datadog does not let you remove): they are added to every role.
  */
@@ -36,7 +42,7 @@ function expandPatterns(patterns, universe, permissionMatches) {
   return universe.filter(name => patterns.some(pattern => permissionMatches(pattern, name)));
 }
 
-function compareMapping({ matrix, menus, universe, baseline = [], iterations = 2000, seed = 42, maxRolePermissions = 30 }) {
+function compareMapping({ matrix, menus, universe, baseline = [], hideEmptyPages = false, iterations = 2000, seed = 42, maxRolePermissions = 30 }) {
   const { mapPermissionsToMenus, findMenuForHref, permissionMatches } = menus;
   const patternsOf = menus.permissionPatterns || (menu => (menu.permissions || []).flat());
   const entries = matrix.filter(e => e.status === 'open' || e.status === 'requires')
@@ -44,6 +50,7 @@ function compareMapping({ matrix, menus, universe, baseline = [], iterations = 2
     .filter(e => e.menu);
 
   const mismatches = new Map(); // route|type -> mismatch
+  const accepted = new Map(); // route -> menu id, see hideEmptyPages
   const record = (entry, type, role, source) => {
     const id = `${entry.route}|${type}`;
     const current = mismatches.get(id);
@@ -64,7 +71,10 @@ function compareMapping({ matrix, menus, universe, baseline = [], iterations = 2
       // Examples list the permissions on top of the baseline.
       const example = rawRole.filter(p => !baseline.includes(p));
       if (isShown && !ok) record(entry, 'shown-but-denied', example, source);
-      if (!isShown && ok) record(entry, 'hidden-but-accessible', example, source);
+      if (!isShown && ok) {
+        if (hideEmptyPages && entry.status === 'open') accepted.set(entry.route, entry.menu.id);
+        else record(entry, 'hidden-but-accessible', example, source);
+      }
     }
   };
 
@@ -95,7 +105,8 @@ function compareMapping({ matrix, menus, universe, baseline = [], iterations = 2
   return {
     routes: entries.length,
     roles: iterations,
-    mismatches: [...mismatches.values()].sort((a, b) => a.menuId.localeCompare(b.menuId) || a.route.localeCompare(b.route))
+    mismatches: [...mismatches.values()].sort((a, b) => a.menuId.localeCompare(b.menuId) || a.route.localeCompare(b.route)),
+    accepted: [...accepted].map(([route, menuId]) => ({ route, menuId })).sort((a, b) => a.route.localeCompare(b.route))
   };
 }
 
