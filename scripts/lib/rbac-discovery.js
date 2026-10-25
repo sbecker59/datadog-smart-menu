@@ -33,6 +33,9 @@ const isChromeApi = api => CHROME_APIS.some(re => re.test(api));
 // the page's own data.
 const NOISE_RATIO = 0.6;
 const MIN_BATCH_FOR_NOISE = 30;
+// More single-permission alternatives than this means the base set was most
+// likely enough on its own and its first probe was a false denial.
+const MAX_ALTERNATIVES = 5;
 
 /** Turn a raw probe result into { accessible, missing }, ignoring noise APIs. */
 function classify(result, noise) {
@@ -179,6 +182,12 @@ async function eliminate({ entries, routes, candidates, widen, applyPermissions,
       const results = await probeGroup(group);
       opened = group.filter(r => results.get(r).accessible);
       incomplete = group.filter(r => !results.get(r).accessible);
+      if (incomplete.length) {
+        // Probe once more before an expensive alternatives search.
+        const again = await probeGroup(incomplete);
+        opened = opened.concat(incomplete.filter(r => again.get(r).accessible));
+        incomplete = incomplete.filter(r => !again.get(r).accessible);
+      }
     }
 
     if (opened.length) {
@@ -215,7 +224,8 @@ async function eliminate({ entries, routes, candidates, widen, applyPermissions,
       log(`    with [${S.join(', ') || 'baseline'}] + ${subset.length === 1 ? subset[0] : `${subset.length} permissions (${subset[0]}...)`}`);
       await applyPermissions([...S, ...subset]);
       const results = await probeGroup(pages);
-      const ok = pages.filter(r => results.get(r).accessible);
+      // Stop for pages that already have too many alternatives.
+      const ok = pages.filter(r => results.get(r).accessible && alternatives.get(r).length <= MAX_ALTERNATIVES);
       if (ok.length === 0) return;
       if (subset.length === 1) {
         ok.forEach(r => alternatives.get(r).push([...S, subset[0]].sort()));
@@ -226,8 +236,26 @@ async function eliminate({ entries, routes, candidates, widen, applyPermissions,
       await findAlternatives(subset.slice(half), ok);
     }
     await findAlternatives(others, incomplete);
+
+    // Too many alternatives: check the base set alone once more.
+    const suspicious = incomplete.filter(r => alternatives.get(r).length > MAX_ALTERNATIVES);
+    if (suspicious.length) {
+      log(`    ${suspicious.length} page(s) open with almost any extra permission: re-checking [${S.join(', ') || 'baseline'}] alone`);
+      await applyPermissions(S);
+      const again = await probeGroup(suspicious);
+      for (const r of suspicious.filter(r => again.get(r).accessible)) {
+        set(r, S.length
+          ? { status: 'requires', requires: S, sufficient: [S], reason: undefined }
+          : { status: 'open', requires: [], sufficient: [], reason: undefined });
+        incomplete = incomplete.filter(x => x !== r);
+      }
+    }
     for (const r of incomplete) {
       const alts = alternatives.get(r);
+      if (alts.length > MAX_ALTERNATIVES) {
+        set(r, { status: 'unknown', requires: S, sufficient: [], reason: `inconsistent: denied with [${S.join(', ') || 'baseline'}] alone but opens with almost any extra permission` });
+        continue;
+      }
       set(r, alts.length
         ? { status: 'requires', requires: alts[0], sufficient: alts, reason: undefined }
         : { status: 'requires', requires: C, sufficient: [C], reason: `opens with all candidates; [${S.join(', ') || 'no permission'}] plus any single other one is not enough: not minimized` });
@@ -235,7 +263,7 @@ async function eliminate({ entries, routes, candidates, widen, applyPermissions,
   }
 }
 
-async function discoverRequirements({ routes, applyPermissions, probe, noise, learned = new Set(), candidatesFor, widen, maxRounds = 6, concurrency = 3, log = () => {} }) {
+async function discoverRequirements({ routes, applyPermissions, probe, noise, learned = new Set(), candidatesFor, widen, maxRounds = 6, concurrency = 3, log = () => {}, onCheckpoint = () => {} }) {
   const probeOptions = { noise, learned, log };
   const entries = new Map(routes.map(route => [route, { route, status: 'pending', requires: [], sufficient: [], insufficient: [], evidence: null }]));
 
@@ -279,6 +307,9 @@ async function discoverRequirements({ routes, applyPermissions, probe, noise, le
     }
   }
 
+  const checkpoint = () => onCheckpoint([...entries.values()]);
+  checkpoint();
+
   for (let round = 1; round <= maxRounds && pending.size > 0; round++) {
     log(`Round ${round}: ${pending.size} permission set(s), ${[...pending.values()].reduce((n, g) => n + g.routes.length, 0)} route(s)`);
     const nextPending = new Map();
@@ -301,6 +332,7 @@ async function discoverRequirements({ routes, applyPermissions, probe, noise, le
       }
     }
     pending = nextPending;
+    checkpoint();
   }
 
   for (const { perms, routes: left } of pending.values()) {
@@ -324,6 +356,7 @@ async function discoverRequirements({ routes, applyPermissions, probe, noise, le
         entries, routes: group, candidates: C, widen, applyPermissions, log,
         probeAll: list => probeAll(list, probe, concurrency, probeOptions)
       });
+      checkpoint();
     }
   }
   for (const entry of entries.values()) delete entry.needsSearch;

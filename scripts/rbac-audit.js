@@ -22,6 +22,7 @@
  *   npm run audit:rbac -- --apply --allowed-org <public_id> [--verify-mapping]
  *   npm run audit:rbac -- --restore                      # restore the test user after a crash
  * Options: --only <path prefix>, --concurrency <n> (default 3), --out <file>,
+ *          --resume: keep pages already solved in --out and audit the others,
  *          --settle <seconds> (default 30): wait after each role change, as
  *          Datadog applies it to API calls tens of seconds after current_user.
  */
@@ -92,11 +93,22 @@ function permissionsFromSentence(sentence, displayNames) {
 function createApi({ site, apiKey, appKey, fetchImpl = fetch }) {
   const base = apiBase(site);
   async function call(method, urlPath, body) {
-    const res = await fetchImpl(base + urlPath, {
-      method,
-      headers: { 'DD-API-KEY': apiKey, 'DD-APPLICATION-KEY': appKey, 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: body ? JSON.stringify(body) : undefined
-    });
+    let res;
+    // Retry network errors, rate limits and server errors.
+    for (let attempt = 1; ; attempt++) {
+      try {
+        res = await fetchImpl(base + urlPath, {
+          method,
+          headers: { 'DD-API-KEY': apiKey, 'DD-APPLICATION-KEY': appKey, 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: body ? JSON.stringify(body) : undefined
+        });
+        if ((res.status === 429 || res.status >= 500) && attempt < 5) throw new Error(`HTTP ${res.status}`);
+        break;
+      } catch (e) {
+        if (attempt >= 5) throw e;
+        await new Promise(r => setTimeout(r, attempt * 5000));
+      }
+    }
     const text = await res.text();
     if (!res.ok) throw new Error(`${method} ${urlPath} -> ${res.status} ${text.slice(0, 200)}`);
     return text ? JSON.parse(text) : null;
@@ -162,7 +174,19 @@ async function createBrowser({ site, statePath, setupContext, displayNames = new
       debug.push({ route, api: url.pathname, body: body.slice(0, 300) });
     });
     try {
-      await page.goto(origin + route, { waitUntil: 'domcontentloaded', timeout: 45000 });
+      // Retry transient network errors (Wi-Fi change, VPN, DNS) instead of
+      // aborting a run that may have lasted hours.
+      for (let attempt = 1; ; attempt++) {
+        try {
+          await page.goto(origin + route, { waitUntil: 'domcontentloaded', timeout: 45000 });
+          break;
+        } catch (e) {
+          const transient = /net::ERR_|Timeout|timed out/i.test(e.message);
+          if (!transient || attempt >= 5) throw e;
+          console.warn(`  network error on ${route} (${e.message.split('\n')[0]}), retry ${attempt}/4 in ${attempt * 10} s`);
+          await new Promise(r => setTimeout(r, attempt * 10000));
+        }
+      }
       if (new URL(page.url()).pathname.startsWith('/account/login')) throw new Error('The test user session has expired.');
       await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
       await page.waitForTimeout(1500);
@@ -228,7 +252,13 @@ async function main() {
   const userId = args['user-id'] || process.env.DD_AUDIT_USER_ID;
   if (!userId) throw new Error('Pass the test user ID with --user-id <uuid> (or DD_AUDIT_USER_ID).');
   const statePath = path.resolve(args.state || '.auth/audit-user.json');
-  const routes = loadRoutes(args.only);
+  const out = path.resolve(args.out || DEFAULT_OUT);
+  // Pages already solved by an earlier (possibly interrupted) run.
+  const FINAL = new Set(['open', 'requires', 'not-found']);
+  const previous = args.resume && fs.existsSync(out) ? JSON.parse(fs.readFileSync(out, 'utf8')) : null;
+  const kept = (previous?.routes || []).filter(e => FINAL.has(e.status));
+  const routes = loadRoutes(args.only).filter(r => !kept.some(e => e.route === r));
+  if (args.resume) console.log(`Resume     : ${kept.length} page(s) already solved in ${path.relative(process.cwd(), out)}, ${routes.length} left`);
 
   // Read-only checks (also run in dry-run mode).
   const org = await api.org();
@@ -356,7 +386,32 @@ async function main() {
       // Last resort for pages still denied with their menu's permissions: every
       // permission of the org (found by halving, so about log2(n) changes each).
       const widen = () => universe.filter(n => !baseline.has(n));
-      let entries = await discoverRequirements({ routes, applyPermissions, probe: browser.probe, noise: browser.noise, learned, candidatesFor, widen, concurrency, log });
+      fs.mkdirSync(path.dirname(out), { recursive: true });
+      function writeMatrix(entries, partial) {
+        const solved = new Set(entries.map(e => e.route));
+        const result = [
+          ...kept.filter(e => !solved.has(e.route)),
+          ...entries.map(e => ({ ...e, menu: findMenuForHref(e.route)?.id || null }))
+        ].sort((a, b) => a.route.localeCompare(b.route));
+        fs.writeFileSync(out, JSON.stringify({
+          site: siteUrl(site),
+          measuredAt: new Date().toISOString().slice(0, 10),
+          partial,
+          verifiedMapping: !!args['verify-mapping'],
+          // Held by every role in this org; "open" pages may rely on them.
+          baselinePermissions: [...new Set([...(previous?.baselinePermissions || []), ...baseline])].sort(),
+          routes: result
+        }, null, 1) + '\n');
+        return result;
+      }
+      // Raw 403 bodies and "no permission" texts, to understand unknown pages (not committed).
+      const debugFile = path.join(path.dirname(out), 'last-run-debug.json');
+      // Saved after each step, so an interrupted run can continue with --resume.
+      const checkpoint = (entries) => {
+        writeMatrix(entries, true);
+        fs.writeFileSync(debugFile, JSON.stringify(browser.debug, null, 1) + '\n');
+      };
+      let entries = await discoverRequirements({ routes, applyPermissions, probe: browser.probe, noise: browser.noise, learned, candidatesFor, widen, concurrency, log, onCheckpoint: checkpoint });
 
       if (args['verify-mapping']) {
         const universe = allPermissions.map(p => p.attributes.name);
@@ -370,24 +425,12 @@ async function main() {
         entries = await verifyCandidates({ entries, candidates, applyPermissions, probe: browser.probe, noise: browser.noise, learned, concurrency, log });
       }
 
-      const out = path.resolve(args.out || DEFAULT_OUT);
-      fs.mkdirSync(path.dirname(out), { recursive: true });
-      const result = entries.map(e => ({ ...e, menu: findMenuForHref(e.route)?.id || null }));
-      fs.writeFileSync(out, JSON.stringify({
-        site: siteUrl(site),
-        measuredAt: new Date().toISOString().slice(0, 10),
-        verifiedMapping: !!args['verify-mapping'],
-        // Held by every role in this org; "open" pages may rely on them.
-        baselinePermissions: [...baseline].sort(),
-        routes: result
-      }, null, 1) + '\n');
-      if (baseline.size) console.log(`Baseline permissions (always held): ${[...baseline].sort().join(', ')}`);
-      // Raw 403 bodies and "no permission" texts, to understand unknown pages (not committed).
-      const debugFile = path.join(path.dirname(out), 'last-run-debug.json');
-      fs.writeFileSync(debugFile, JSON.stringify(browser.debug, null, 1) + '\n');
-      console.log(`Diagnostics: ${path.relative(process.cwd(), debugFile)}`);
+      const result = writeMatrix(entries, false);
       const counts = result.reduce((acc, e) => ({ ...acc, [e.status]: (acc[e.status] || 0) + 1 }), {});
       console.log(`\nWrote ${path.relative(process.cwd(), out)}: ${JSON.stringify(counts)}`);
+      if (baseline.size) console.log(`Baseline permissions (always held): ${[...baseline].sort().join(', ')}`);
+      fs.writeFileSync(debugFile, JSON.stringify(browser.debug, null, 1) + '\n');
+      console.log(`Diagnostics: ${path.relative(process.cwd(), debugFile)}`);
     } finally {
       process.removeListener('SIGINT', onSignal);
       await restoreUser(api);

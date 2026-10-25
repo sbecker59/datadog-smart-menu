@@ -312,3 +312,54 @@ test('pages needing a permission outside their menu are solved by widening', asy
   assert.equal(entry.status, 'requires');
   assert.deepEqual(entry.sufficient, [['apm_read', 'logs_read_data']]);
 });
+
+test('a false denial of the necessary set alone does not trigger an alternatives search', async () => {
+  // The page needs aws_configuration_read only; the first probe of that set
+  // alone is a false denial (Datadog still applying the role change).
+  const candidates = ['aws_configuration_read', 'integrations_read', 'apm_read', 'dbm_read', 'logs_read_data', 'monitors_read'];
+  let held = new Set();
+  let applies = 0;
+  let flaked = false;
+  const [entry] = await discoverRequirements({
+    routes: ['/integrations'],
+    candidatesFor: () => candidates,
+    applyPermissions: async (names) => { applies++; held = new Set(names); return { rejected: [] }; },
+    probe: async () => {
+      const ok = held.has('aws_configuration_read');
+      if (ok && held.size === 1 && !flaked) { flaked = true; return { accessible: false, missing: [] }; }
+      return { accessible: ok, missing: [] };
+    }
+  });
+  assert.ok(flaked);
+  assert.deepEqual(entry.sufficient, [['aws_configuration_read']]);
+  assert.ok(applies < 12, `no alternatives search expected, got ${applies} role changes`);
+});
+
+test('progress is saved after each step for --resume', async () => {
+  const snapshots = [];
+  await discoverRequirements({
+    routes: ['/a', '/b'],
+    candidatesFor: () => ['p1', 'p2'],
+    applyPermissions: async () => ({ rejected: [] }),
+    probe: async route => ({ accessible: route === '/a', missing: [] }),
+    onCheckpoint: entries => snapshots.push(entries.map(e => `${e.route}:${e.status}`))
+  });
+  assert.ok(snapshots.length >= 2, 'at least after round 0 and after the elimination');
+  assert.deepEqual(snapshots[0], ['/a:open', '/b:unknown']);
+});
+
+test('a page that opens with almost any extra permission is capped and reported', async () => {
+  const candidates = Array.from({ length: 40 }, (_, i) => `perm_${String(i).padStart(2, '0')}`).concat('base_perm');
+  let held = new Set();
+  let applies = 0;
+  const [entry] = await discoverRequirements({
+    routes: ['/odd'],
+    candidatesFor: () => candidates,
+    applyPermissions: async (names) => { applies++; held = new Set(names); return { rejected: [] }; },
+    // Needs base_perm plus any other permission at all.
+    probe: async () => ({ accessible: held.has('base_perm') && held.size >= 2, missing: [] })
+  });
+  assert.equal(entry.status, 'unknown');
+  assert.match(entry.reason, /almost any extra permission/);
+  assert.ok(applies < 40, `the search must stop early, got ${applies} role changes`);
+});
