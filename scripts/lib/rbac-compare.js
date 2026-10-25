@@ -38,6 +38,7 @@ function expandPatterns(patterns, universe, permissionMatches) {
 
 function compareMapping({ matrix, menus, universe, baseline = [], iterations = 2000, seed = 42, maxRolePermissions = 30 }) {
   const { mapPermissionsToMenus, findMenuForHref, permissionMatches } = menus;
+  const patternsOf = menus.permissionPatterns || (menu => (menu.permissions || []).flat());
   const entries = matrix.filter(e => e.status === 'open' || e.status === 'requires')
     .map(e => ({ ...e, menu: findMenuForHref(e.route) }))
     .filter(e => e.menu);
@@ -72,7 +73,7 @@ function compareMapping({ matrix, menus, universe, baseline = [], iterations = 2
   for (const entry of entries) {
     for (const set of entry.sufficient || []) check(set, 'sufficient-set');
     if (entry.status === 'open') check([], 'empty-role');
-    for (const perm of entry.menu.permissions ? expandPatterns(entry.menu.permissions, universe, permissionMatches) : []) {
+    for (const perm of entry.menu.permissions ? expandPatterns(patternsOf(entry.menu), universe, permissionMatches) : []) {
       check([perm], 'menu-permission');
     }
   }
@@ -80,7 +81,7 @@ function compareMapping({ matrix, menus, universe, baseline = [], iterations = 2
   // Random roles, biased toward permissions that matter for the menus.
   const relevant = [...new Set(entries.flatMap(e => [
     ...(e.sufficient || []).flat(),
-    ...(e.menu.permissions ? expandPatterns(e.menu.permissions, universe, permissionMatches) : [])
+    ...(e.menu.permissions ? expandPatterns(patternsOf(e.menu), universe, permissionMatches) : [])
   ]))];
   const random = prng(seed);
   const pick = list => list[Math.floor(random() * list.length)];

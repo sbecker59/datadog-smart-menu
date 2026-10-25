@@ -43,7 +43,7 @@ test('path prefixes stop at segment boundaries', () => {
 
 test('every permission pattern matches at least one official permission', () => {
   const { permissionMatches } = globalThis.DD_SMART_MENU;
-  const dead = DATADOG_MENUS.flatMap(menu => (menu.permissions || [])
+  const dead = DATADOG_MENUS.flatMap(menu => globalThis.DD_SMART_MENU.permissionPatterns(menu)
     .filter(pattern => ![...officialNames].some(name => permissionMatches(pattern, name)))
     .map(pattern => `${menu.id}: ${pattern}`));
   assert.deepEqual(dead, []);

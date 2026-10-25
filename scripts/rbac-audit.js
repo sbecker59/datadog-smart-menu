@@ -33,7 +33,7 @@ const { siteUrl } = require('./capture-navbar');
 const { discoverRequirements, verifyCandidates } = require('./lib/rbac-discovery');
 
 require('../shared/menu-definitions.js');
-const { DATADOG_MENUS, findMenuForHref, permissionMatches } = globalThis.DD_SMART_MENU;
+const { DATADOG_MENUS, findMenuForHref, permissionMatches, permissionPatterns } = globalThis.DD_SMART_MENU;
 
 const rootDir = path.join(__dirname, '..');
 const RESTORE_FILE = path.join(rootDir, 'audit/.restore.json');
@@ -378,7 +378,7 @@ async function main() {
       function candidatesFor(route) {
         const menu = findMenuForHref(route);
         if (!menu || !menu.permissions) return [];
-        const own = universe.filter(n => menu.permissions.some(pattern => permissionMatches(pattern, n)));
+        const own = universe.filter(n => permissionPatterns(menu).some(pattern => permissionMatches(pattern, n)));
         const groups = new Set(own.map(n => docGroup.get(n)).filter(Boolean));
         return [...new Set([...own, ...universe.filter(n => groups.has(docGroup.get(n)))])].filter(n => !baseline.has(n));
       }
@@ -418,7 +418,7 @@ async function main() {
         const candidates = new Map();
         for (const menu of DATADOG_MENUS.filter(m => m.permissions)) {
           const menuRoutes = routes.filter(r => findMenuForHref(r)?.id === menu.id);
-          for (const perm of universe.filter(n => menu.permissions.some(p => permissionMatches(p, n)))) {
+          for (const perm of universe.filter(n => permissionPatterns(menu).some(p => permissionMatches(p, n)))) {
             candidates.set(perm, [...new Set([...(candidates.get(perm) || []), ...menuRoutes])]);
           }
         }
