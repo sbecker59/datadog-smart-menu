@@ -146,3 +146,6 @@ datadog.html
 
 # Saved Datadog sessions (scripts/capture-navbar.js --save-state)
 .auth/
+
+# RBAC audit restore point (scripts/rbac-audit.js)
+audit/.restore.json

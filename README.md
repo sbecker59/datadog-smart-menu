@@ -144,3 +144,22 @@ Set the `DD_SITE` repository variable when the account is not on the EU site. It
 npm run capture:navbar -- --state .auth/datadog.json    # live capture with a saved session
 npm run capture:navbar -- --from-html datadog.html      # from a page saved with "Save page as..."
 ```
+
+### RBAC audit: which permissions each page really needs
+
+`npm test` checks that the extension applies its menu ↔ permission table, not that the table matches Datadog. The audit measures the real requirements on a **dedicated test organization** and writes `audit/route-permissions.json`; `test/rbac-matrix.test.js` then compares the extension with it on minimal counterexamples and 5,000 random custom roles, and fails on any link shown to a user who would get a 403, or hidden from a user who can open it.
+
+How the audit works: it creates a temporary role, gives it to a test user (their other roles are removed for the run and restored at the end, also on Ctrl+C or with `--restore`), starts from an empty role and opens every navbar page as the test user. When Datadog answers `403 Missing required permission: 'x'`, it grants `x` and retries, until the page opens. With `--verify-mapping`, it also tries each permission a menu accepts alone on that menu's pages (longer, but it checks the "any one of these permissions" model).
+
+Requirements, all in the test organization:
+
+- a **non-admin** test user, and its browser session: `npm run capture:navbar -- --login --save-state .auth/audit-user.json` (log in as that user);
+- admin `DD_API_KEY` / `DD_APP_KEY` allowed to manage roles, and `DD_SITE` if not `datadoghq.eu`.
+
+```bash
+npm run audit:rbac -- --user-id <test user uuid>                       # dry run: read-only checks and plan
+npm run audit:rbac -- --user-id <uuid> --apply --allowed-org <public_id> --verify-mapping
+npm test                                                               # now also runs the random-role comparison
+```
+
+The script refuses to change anything without `--apply` and an `--allowed-org` equal to the organization's public ID, when the saved session belongs to another user, or when the test user is an admin. **Never run it on a production organization.** A page counts as denied when one of its API calls answers 403 or it shows a "no permission" message; pages denied without naming a permission are reported as `unknown`.
