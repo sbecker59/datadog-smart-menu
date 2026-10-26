@@ -37,9 +37,12 @@
 
     // Monitoring
     { id: 'monitors', name: 'Monitors', icon: '🔔', category: 'Monitoring',
-      paths: ['/monitors', '/check/summary', '/watchdog'],
+      paths: ['/monitors', '/watchdog'],
       permissions: ['monitors_read'], // measured: monitors_write alone does not open monitors
       keywords: ['monitor', 'alert', 'downtime', 'watchdog', 'check summary'] },
+    { id: 'check_summary', name: 'Check Summary', icon: '🔔', category: 'Monitoring',
+      paths: ['/check/summary'], permissions: [['monitors_read', 'dashboards_read'], ['monitors_read', 'notebooks_read']], // measured
+      keywords: ['check summary'] },
     { id: 'monitors_quality', name: 'Monitor Quality', icon: '🔔', category: 'Monitoring',
       paths: ['/monitors/quality'], permissions: [['monitors_read', 'monitors_write']], // measured
       keywords: ['monitor quality'] },
@@ -52,7 +55,7 @@
 
     // Developer Portal
     { id: 'software_catalog', name: 'Software Catalog', icon: '🧩', category: 'Developer Portal',
-      paths: ['/software', '/idp'], permissions: ['apm_service_catalog_*', 'apm_api_catalog_*'],
+      paths: ['/software', '/idp'], permissions: ['apm_service_catalog_read'], // measured on Scorecards
       keywords: ['software', 'catalog', 'scorecards', 'developer portal', 'self-service actions'] },
 
     // Incident Response
@@ -85,12 +88,21 @@
     // Infrastructure
     { id: 'infrastructure', name: 'Infrastructure', icon: '🖥️', category: 'Infrastructure',
       paths: ['/infrastructure', '/containers', '/kubernetes', '/orchestration', '/container-images', '/process',
-        '/serverless', '/functions', '/storage-management', '/end-user-devices', '/gpu-monitoring',
-        '/software?selectedComponent=infrastructure'],
+        '/serverless', '/functions', '/end-user-devices', '/gpu-monitoring'],
       permissions: ['hosts_read', 'infrastructure_resource_policies_*', 'guardrails_*', 'containers_generate_image_metrics',
         'orchestration_*', 'processes_generate_metrics', 'process_tags_*', 'serverless_aws_instrumentation_*',
         'terraform_state_file_configurations_*'],
       keywords: ['host', 'container', 'kubernetes', 'serverless', 'process', 'gpu'] },
+    { id: 'infra_resource_catalog', name: 'Infrastructure Resources', icon: '🖥️', category: 'Infrastructure',
+      paths: ['/software?selectedComponent=infrastructure'],
+      permissions: [['apm_read', 'apm_service_catalog_read', 'rum_apps_read']], // measured: the page loads APM, catalog and RUM data
+      keywords: ['resources', 'resource catalog'] },
+    { id: 'infra_catalog', name: 'Infrastructure Catalog', icon: '🖥️', category: 'Infrastructure',
+      paths: ['/infrastructure/catalog'], permissions: ['apm_service_catalog_read'], // measured on Changes
+      keywords: ['changes', 'policies', 'add resources'] },
+    { id: 'storage_management', name: 'Storage Management', icon: '🪣', category: 'Infrastructure',
+      paths: ['/storage-management'], permissions: ['aws_configuration_read'], // measured
+      keywords: ['storage management', 's3'] },
     { id: 'cloud_maps', name: 'Cloudcraft', icon: '🗺️', category: 'Infrastructure',
       paths: ['/cloud-maps'], permissions: ['cloudcraft_read'],
       keywords: ['cloudcraft', 'cloud map'] },
@@ -110,6 +122,9 @@
       paths: ['/cost'],
       permissions: ['cloud_cost_management_*', 'ccm_*', 'generate_ccm_report_schedules', 'manage_ccm_report_schedules'],
       keywords: ['finops', 'cost', 'budget'] },
+    { id: 'cost_onboarding', name: 'Cloud Cost Onboarding', icon: '💰', category: 'Cloud Cost',
+      paths: ['/cost/onboarding'], permissions: ['billing_read', 'usage_read'], // measured
+      keywords: ['cloud cost setup'] },
 
     // APM
     { id: 'apm', name: 'APM', icon: '⚡', category: 'APM',
@@ -129,8 +144,21 @@
       paths: ['/rum'], permissions: ['rum_apps_read'], // measured
       keywords: ['rum', 'real user', 'session replay'] },
     { id: 'synthetics', name: 'Synthetic Monitoring', icon: '🧭', category: 'Digital Experience',
-      paths: ['/synthetics'], permissions: ['synthetics_*', 'dem_journey_*'],
+      paths: ['/synthetics'],
+      // measured on Test Suites and Results Explorer (any one of these)
+      permissions: ['synthetics_read', 'dem_journey_read', 'dem_journey_write', 'synthetics_default_settings_write'],
       keywords: ['synthetics', 'browser test', 'api test'] },
+    { id: 'synthetics_suites', name: 'Synthetic Test Suites', icon: '🧭', category: 'Digital Experience',
+      paths: ['/synthetics/suites'], // measured (any one of these)
+      permissions: ['synthetics_read', 'dem_journey_read', 'dem_journey_write', 'synthetics_default_settings_read', 'synthetics_default_settings_write'],
+      keywords: ['test suites'] },
+    { id: 'synthetics_explorer', name: 'Synthetic Results Explorer', icon: '🧭', category: 'Digital Experience',
+      paths: ['/synthetics/explorer'], // measured (any one of these)
+      permissions: ['synthetics_read', 'dem_journey_read', 'dem_journey_write', 'synthetics_default_settings_write', 'synthetics_global_variable_read'],
+      keywords: ['results explorer', 'continuous testing'] },
+    { id: 'synthetics_suite_create', name: 'New Test Suite', icon: '🧭', category: 'Digital Experience',
+      paths: ['/synthetics/test-suite/create'], permissions: ['synthetics_read'], // measured
+      keywords: ['new test suite'] },
     { id: 'dem_journeys', name: 'Journey Monitoring', icon: '🧭', category: 'Digital Experience',
       paths: ['/dem'], permissions: ['dem_journey_read'], // measured
       keywords: ['journey monitoring', 'journeys'] },
@@ -154,7 +182,7 @@
       paths: ['/ci/deployment-gates'], permissions: ['deployment_gates_read'], // measured
       keywords: ['deployment gates'] },
     { id: 'feature_flags', name: 'Feature Flags', icon: '🚩', category: 'Software Delivery',
-      paths: ['/feature-flags'], permissions: ['feature_flag_*'],
+      paths: ['/feature-flags'], permissions: [['feature_flag_config_read', 'feature_flag_environment_config_read']], // measured
       keywords: ['feature flag'] },
     { id: 'feature_flag_environments', name: 'Feature Flag Environments', icon: '🚩', category: 'Software Delivery',
       paths: ['/feature-flags/settings/environments'], permissions: ['feature_flag_environment_config_read'], // measured
@@ -195,7 +223,7 @@
 
     // Errors / Metrics / Logs
     { id: 'error_tracking', name: 'Error Tracking', icon: '🐛', category: 'Telemetry',
-      paths: ['/error-tracking'], permissions: ['error_tracking_*'],
+      paths: ['/error-tracking'], permissions: ['error_tracking_read'], // measured
       keywords: ['error tracking', 'errors'] },
     { id: 'metrics', name: 'Metrics', icon: '📈', category: 'Telemetry',
       paths: ['/metric'], permissions: ['metrics_read', 'metric_tags_write', 'metrics_metadata_write', 'timeseries_query'],

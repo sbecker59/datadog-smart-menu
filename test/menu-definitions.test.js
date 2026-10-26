@@ -18,7 +18,7 @@ test('the most specific path wins', () => {
     '/logs': 'logs',
     '/logs/archive-search': 'logs_archives',
     '/software?lens=Ownership': 'software_catalog',
-    '/software?selectedComponent=infrastructure': 'infrastructure',
+    '/software?selectedComponent=infrastructure': 'infra_resource_catalog',
     '/software?selectedComponent=endpoint': 'apm',
     '/security/overview': 'security',
     '/security/code-security/summary': 'code_security',
@@ -27,7 +27,7 @@ test('the most specific path wins', () => {
     '/llm/ai-agents-console': 'agent_console',
     '/organization-settings/users': 'user_management',
     '/organization-settings/teams': 'organization_settings',
-    '/check/summary': 'monitors',
+    '/check/summary': 'check_summary',
     '/network-path': 'network'
   };
   for (const [href, id] of Object.entries(cases)) {
