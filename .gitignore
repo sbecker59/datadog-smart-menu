@@ -141,3 +141,12 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+# Saved Datadog pages (contain account details)
+datadog.html
+
+# Saved Datadog sessions (scripts/capture-navbar.js --save-state)
+.auth/
+
+# RBAC audit restore point (scripts/rbac-audit.js)
+audit/.restore.json
+audit/last-run-debug.json

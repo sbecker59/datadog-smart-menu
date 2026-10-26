@@ -1,32 +1,19 @@
 /**
  * Datadog Smart Menu - Content Script
+ *
+ * Menu definitions come from shared/menu-definitions.js, loaded before this
+ * file by the manifest.
  */
 
-const DATADOG_MENUS = [
-  { id: 'dashboards', name: 'Dashboards', icon: '📊', selector: 'dashboards, /dashboard, /dash', keywords: ['dashboard', 'overview', 'chart', 'widget'], category: 'Core' },
-  { id: 'infrastructure', name: 'Infrastructure', icon: '🖥️', selector: 'infrastructure, /infrastructure, /host', keywords: ['host', 'container', 'k8s', 'kubernetes', 'serverless', 'process'], category: 'Core' },
-  { id: 'monitors', name: 'Monitors & Alerts', icon: '🔔', selector: 'monitors, /monitors, /watchdog', keywords: ['alert', 'watchdog', 'downtime', 'slo'], category: 'Core' },
-  { id: 'error_tracking', name: 'Error Tracking', icon: '🐛', selector: 'error tracking, /error-tracking', keywords: ['error tracking'], category: 'Telemetry' },
-  { id: 'observability_pipelines', name: 'Observability Pipelines', icon: '🛠️', selector: 'observability pipelines, /observability-pipelines', keywords: ['observability pipelines'], category: 'Telemetry' },
-  { id: 'logs_archives', name: 'Log Archives', icon: '🗄️', selector: 'logs archives, /logs/archives, /archives', keywords: ['archive'], category: 'Telemetry' },
-  { id: 'apm', name: 'APM & Tracing', icon: '⚡', selector: 'apm, /apm, /services', keywords: ['service', 'trace', 'catalog', 'profiling', 'error'], category: 'Telemetry' },
-  { id: 'logs', name: 'Logs', icon: '📝', selector: 'logs, /logs', keywords: ['log', 'pattern', 'pipeline', 'analytics'], category: 'Telemetry' },
-  { id: 'metrics', name: 'Metrics', icon: '📈', selector: 'metrics, /metric', keywords: ['explorer', 'summary', 'custom metric'], category: 'Telemetry' },
-  { id: 'ux_monitoring', name: 'Digital Experience (UX / RUM)', icon: '👥', selector: 'ux_monitoring, /rum, /synthetics', keywords: ['rum', 'synthetics', 'session', 'replay', 'product'], category: 'Experience' },
-  { id: 'security', name: 'Security & Compliance', icon: '🛡️', selector: 'security, /security, /appsec', keywords: ['security', 'appsec', 'audit', 'csm', 'threat', 'vulnerability'], category: 'Security' },
-  { id: 'network', name: 'Network', icon: '🌐', selector: 'network, /network', keywords: ['npm', 'network', 'dns', 'device'], category: 'Telemetry' },
-  { id: 'automation', name: 'Automation', icon: '🤖', selector: 'automation, /workflow-automation, /automations', keywords: ['automation', 'app builder', 'workflow automation'], category: 'Operations' },
-  { id: 'bits_ai', name: 'Bits AI', icon: '✨', selector: 'bits assistant, bits ai, /bits', keywords: ['bits assistant', 'bits ai', 'bits chat'], category: 'Operations' },
-  { id: 'ci_visibility', name: 'CI Visibility', icon: '🧪', selector: 'ci visibility, /ci', keywords: ['ci visibility', 'test optimization'], category: 'Operations' },
-  { id: 'llm_observability', name: 'LLM Observability', icon: '🧠', selector: 'llm observability, /llm-observability, /llmobs', keywords: ['llm observability'], category: 'Telemetry' },
-  { id: 'incidents', name: 'Service Mgmt & Incidents', icon: '🚨', selector: 'incidents, /incidents, /on-call', keywords: ['incident', 'on-call', 'change', 'workflow'], category: 'Operations' },
-  { id: 'notebooks', name: 'Notebooks', icon: '📓', selector: 'notebooks, /notebook', keywords: ['note', 'postmortem', 'runbook'], category: 'Operations' },
-  { id: 'cost_management', name: 'Cloud Cost Mgmt (FinOps)', icon: '💰', selector: 'cost_management, /cost, /billing', keywords: ['finops', 'billing', 'cost', 'usage', 'budget'], category: 'Business' },
-  { id: 'integrations', name: 'Integrations', icon: '🔌', selector: 'integrations, /account/settings', keywords: ['integrations', 'api', 'plugin', 'aws configurations', 'gcp', 'azure', 'agent'], category: 'Admin' },
-  { id: 'organization_settings', name: 'Organization Settings', icon: '⚙️', selector: 'organization_settings, /organization-settings', keywords: ['user', 'role', 'permission', 'team'], category: 'Admin' }
-];
+const { DATADOG_MENUS, ALL_MENU_IDS, mapPermissionsToMenus, findMenuForHref } = globalThis.DD_SMART_MENU;
 
-const ALL_MENU_IDS = DATADOG_MENUS.map(m => m.id);
+const HIDDEN_CLASSES = ['dd-smart-menu-hidden', 'dd-smart-menu-collapsed'];
+// Sidebar, plus the account popover opened from the top bar avatar (rendered
+// outside the sidebar).
+const NAV_ROOT_SELECTOR = 'nav, [class*="navbar_navbar"], [class*="top-bar-avatar-popover"], [data-testid="sidebar"], .druids-sidebar';
+// Datadog navbar containers: a top-level entry and a section inside its flyout.
+const TOP_LEVEL_SELECTOR = '[class*="navbar-menu__list-item"]';
+const SECTION_SELECTOR = '[class*="navbar-sub-menu__section"]';
 
 let currentSettings = null;
 let commandPaletteElement = null;
@@ -181,53 +168,6 @@ async function fetchDatadogUserProfile() {
   }
 }
 
-/**
- * Ordered permission-to-menu mapping, most specific rules first.
- * Source: https://docs.datadoghq.com/account_management/rbac/permissions/
- */
-const PERMISSION_MENU_MAP = [
-  ['logs_archives', ['logs_read_archives', 'logs_write_archives', 'logs_write_archive_search']],
-  ['observability_pipelines', ['observability_pipeline']],
-  ['error_tracking', ['error_tracking']],
-  ['llm_observability', ['llm_observability']],
-  ['ci_visibility', ['ci_visibility', 'test_optimization', 'ci_provider', 'ci_ingestion', 'cd_visibility', 'code_analysis', 'code_coverage', 'dora_', 'quality_gates', 'static_analysis']],
-  ['bits_ai', ['assistant_access', 'bits_investigations', 'bits_dev_']],
-  ['security', ['bits_security', 'security_', 'appsec_', 'ai_guard', 'data_scanner', 'audit_logs_']],
-  ['automation', ['workflows_', 'workflow_automation', 'apps_', 'agent_builder', 'actions_interface', 'connections_', 'execution_groups', 'on_prem_runner', 'app_builder', 'mcp_']],
-  ['incidents', ['incident_', 'cases_', 'on_call_', 'status_pages']],
-  ['ux_monitoring', ['rum_', 'synthetics_', 'product_analytics', 'audience_management', 'dem_journey', 'feature_flag']],
-  ['cost_management', ['cloud_cost_management', 'ccm_', 'billing_', 'usage_']],
-  ['integrations', ['integrations', 'aws_configuration', 'azure_configuration', 'gcp_configuration', 'oci_configuration', 'api_keys', 'client_tokens', 'org_app_keys', 'user_app_keys', 'repo_info', 'repo_settings']],
-  ['organization_settings', ['org_management', 'org_group', 'org_connections', 'user_access', 'service_account', 'teams_manage', 'governance_console', 'workload_identity', 'coterm']],
-  ['infrastructure', ['infrastructure_', 'guardrails', 'agent_upgrade', 'agent_flare', 'fleet_policies', 'orchestration_', 'terraform_state', 'process_tags', 'processes_generate', 'containers_generate', 'disaster_recovery', 'serverless_']],
-  ['apm', ['apm_', 'continuous_profiler', 'debugger_', 'live_debugger', 'dbm_', 'data_streams_']],
-  ['monitors', ['monitors_', 'monitor_config', 'slos_', 'watchdog']],
-  ['network', ['network_connections', 'network_health', 'ndm_']],
-  ['logs', ['logs_', 'telemetry_rules', 'events_write', 'event_correlation', 'generate_log_reports', 'manage_log_reports', 'saved_views', 'facets_']],
-  ['metrics', ['metric_tags', 'metrics_metadata', 'host_tags', 'reference_tables', 'ddsql_editor']],
-  ['notebooks', ['notebooks']],
-  ['dashboards', ['dashboards_', 'embeddable_graphs', 'product_dashboards']]
-];
-
-/**
- * Map list of technical permission names to accessible Datadog menu IDs
- */
-function mapPermissionsToMenus(permNames) {
-  const menus = new Set();
-  menus.add('dashboards'); // Dashboards basic access
-
-  permNames.forEach(p => {
-    for (const [menuId, tokens] of PERMISSION_MENU_MAP) {
-      if (tokens.some(token => p.includes(token))) {
-        menus.add(menuId);
-        break;
-      }
-    }
-  });
-
-  return Array.from(menus);
-}
-
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
@@ -251,6 +191,34 @@ function getAllowedMenus() {
 }
 
 // Core Menu Filtering Logic
+
+function setMenuVisibility(element, visible) {
+  if (visible) {
+    element.classList.remove(...HIDDEN_CLASSES);
+    return;
+  }
+  const hideClass = currentSettings.collapseHiddenItems ? 'dd-smart-menu-collapsed' : 'dd-smart-menu-hidden';
+  element.classList.add(hideClass);
+  element.classList.remove(...HIDDEN_CLASSES.filter(c => c !== hideClass));
+}
+
+/**
+ * Hide a container (section or top-level entry) when every Datadog link it
+ * holds belongs to a menu the user cannot access. Links the extension does not
+ * know about keep the container visible.
+ */
+function applyContainerVisibility(container, linkState) {
+  const links = Array.from(container.querySelectorAll('a[href]')).filter(a => linkState.has(a) || isInternalLink(a));
+  if (links.length === 0) return;
+  const allHidden = links.every(a => linkState.get(a) === false);
+  setMenuVisibility(container, !allHidden);
+}
+
+function isInternalLink(anchor) {
+  const href = anchor.getAttribute('href') || '';
+  return href.startsWith('/') && !href.startsWith('//');
+}
+
 function applyMenuFilters() {
   if (!isExtensionContextValid()) return;
   if (!currentSettings || !currentSettings.enabled) {
@@ -258,52 +226,35 @@ function applyMenuFilters() {
     return;
   }
 
-  const allowedList = getAllowedMenus();
-
-  const navContainers = document.querySelectorAll('nav, [data-testid="sidebar"], .druids-sidebar, [class*="sidebar"]');
-  if (!navContainers || navContainers.length === 0) return;
+  const allowed = new Set(getAllowedMenus());
+  const navRoots = document.querySelectorAll(NAV_ROOT_SELECTOR);
+  if (navRoots.length === 0) return;
 
   const uniqueVisibleMenus = new Set();
+  // anchor -> true (allowed) / false (not allowed); unknown links are absent.
+  const linkState = new Map();
 
-  navContainers.forEach((nav) => {
-    const menuItems = nav.querySelectorAll('a, button, [role="link"], [data-dd-action-name]');
-    
-    menuItems.forEach((item) => {
-      const text = (item.textContent || '').toLowerCase();
-      const href = (item.getAttribute('href') || '').toLowerCase();
-      const actionName = (item.getAttribute('data-dd-action-name') || '').toLowerCase();
-
-      const matchedMenu = DATADOG_MENUS.find(m => {
-        const selParts = m.selector.split(',').map(s => s.trim().toLowerCase());
-        return selParts.some(part => actionName.includes(part) || href.includes(part)) ||
-               m.keywords.some(kw => text.includes(kw));
-      });
-
-      if (matchedMenu) {
-        const isAllowed = allowedList.includes(matchedMenu.id);
-
-        if (isAllowed) {
-          item.classList.remove('dd-smart-menu-hidden', 'dd-smart-menu-collapsed');
-          uniqueVisibleMenus.add(matchedMenu.id);
-        } else {
-          if (currentSettings.collapseHiddenItems) {
-            item.classList.add('dd-smart-menu-collapsed');
-            item.classList.remove('dd-smart-menu-hidden');
-          } else {
-            item.classList.add('dd-smart-menu-hidden');
-            item.classList.remove('dd-smart-menu-collapsed');
-          }
-        }
-      }
+  navRoots.forEach((nav) => {
+    nav.querySelectorAll('a[href]').forEach((anchor) => {
+      if (!isInternalLink(anchor)) return;
+      const menu = findMenuForHref(anchor.getAttribute('href'), window.location.origin);
+      if (!menu) return;
+      const isAllowed = allowed.has(menu.id);
+      linkState.set(anchor, isAllowed);
+      setMenuVisibility(anchor, isAllowed);
+      if (isAllowed) uniqueVisibleMenus.add(menu.id);
     });
+
+    nav.querySelectorAll(SECTION_SELECTOR).forEach(section => applyContainerVisibility(section, linkState));
+    nav.querySelectorAll(TOP_LEVEL_SELECTOR).forEach(entry => applyContainerVisibility(entry, linkState));
   });
 
-  const visibleCount = uniqueVisibleMenus.size > 0 ? uniqueVisibleMenus.size : allowedList.length;
+  const visibleCount = uniqueVisibleMenus.size > 0 ? uniqueVisibleMenus.size : allowed.size;
 
-  safeSendMessage({ 
-    action: 'UPDATE_BADGE_COUNT', 
+  safeSendMessage({
+    action: 'UPDATE_BADGE_COUNT',
     visibleCount,
-    detectedUserInfo 
+    detectedUserInfo
   });
 }
 
@@ -470,12 +421,7 @@ function renderPaletteResults(query) {
       const targetMenu = DATADOG_MENUS.find(m => m.id === id);
       if (targetMenu) {
         toggleCommandPalette(false);
-        const pageLink = document.querySelector(`a[href*="${id}"], [data-dd-action-name*="${id}"]`);
-        if (pageLink && pageLink.href) {
-          window.location.href = pageLink.href;
-        } else {
-          window.location.href = `${window.location.origin}/${id}`;
-        }
+        window.location.href = `${window.location.origin}${targetMenu.paths[0]}`;
       }
     });
   });

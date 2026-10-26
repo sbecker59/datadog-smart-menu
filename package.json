@@ -5,7 +5,12 @@
     "author": "Sébastien BECKER",
     "private": true,
     "scripts": {
-        "build": "node scripts/build.js"
+        "build": "node scripts/build.js",
+        "test": "node --test test/*.test.js",
+        "preview": "node scripts/preview-menu.js",
+        "test:e2e": "npm run build && node --test --test-concurrency=1 test/e2e/*.test.js",
+        "capture:navbar": "node scripts/capture-navbar.js",
+        "audit:rbac": "node scripts/rbac-audit.js"
     },
     "license": "MIT",
     "repository": {
@@ -15,5 +20,8 @@
     "bugs": {
         "url": "https://github.com/sbecker59/datadog-smart-menu/issues"
     },
-    "homepage": "https://github.com/sbecker59/datadog-smart-menu#readme"
+    "homepage": "https://github.com/sbecker59/datadog-smart-menu#readme",
+    "devDependencies": {
+        "playwright": "^1.63.0"
+    }
 }
